@@ -10,12 +10,26 @@ body {
     text-align: center;
 }
 
-footer {
+.conteudoPrincipal {
+    width: 50%;
+    margin: auto;
+    padding: 10px;
+    text-align: center, justify;
+}
+
+.tituloConteudo{
+    text-align: center;
+    background-color: rgba(187, 206, 198, 0.349);
+    border-radius: 15px;
+}
+
+
+#rodape {
     background: gray;
     width: 100%;
-    height: 100px;
+    height: 40px;
     position: fixed;
     bottom: 0;
-    left: 0;
     text-align: center;
+    
 }
