@@ -1,5 +1,8 @@
 body {
     background-color: #a1909050;
+}
+
+.conteudoPrincipalbody {
     margin-block-end: 100px;
 }
 
@@ -9,21 +12,17 @@ body {
     padding: 10px;
     text-align: center;
 }
-
 .conteudoPrincipal {
     width: 50%;
     margin: auto;
     padding: 10px;
     text-align: center, justify;
 }
-
 .tituloConteudo{
     text-align: center;
     background-color: rgba(187, 206, 198, 0.349);
     border-radius: 15px;
 }
-
-
 #rodape {
     background: gray;
     width: 100%;
@@ -32,5 +31,10 @@ body {
     bottom: 0;
     text-align: center;
     left: 0;
-    
 }
+
+#back-to-top {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+  }
