@@ -1,7 +1,6 @@
-body {
-    background-color: #a1909050;
+body{
+    text-align: center;
 }
-
 .conteudoPrincipalbody {
     margin-block-end: 100px;
 }
@@ -23,18 +22,3 @@ body {
     background-color: rgba(187, 206, 198, 0.349);
     border-radius: 15px;
 }
-#rodape {
-    background: gray;
-    width: 100%;
-    height: 40px;
-    position: fixed;
-    bottom: 0;
-    text-align: center;
-    left: 0;
-}
-
-#back-to-top {
-    position: fixed;
-    bottom: 50px;
-    right: 50px;
-  }
