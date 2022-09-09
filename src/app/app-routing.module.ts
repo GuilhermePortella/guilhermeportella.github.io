@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import  { NewsComponent } from './news/news.component';
 import { CotacaoComponent } from './cotacao/cotacao.component';
 import { GithubComponent } from './github/github.component';
+import { HomeComponent } from './home/home.component';
 import { JavaComponent } from './java/java.component';
-import { TutorialComponent } from './tutorial/tutorial.component';
-
+import { NewsComponent } from './news/news.component';
+import { TutoriaisComponent } from './tutoriais/tutoriais.component';
 
 const routes: Routes = [
   {
@@ -43,7 +42,7 @@ const routes: Routes = [
   },
   {
     path: 'tutorial',
-    component: TutorialComponent
+    component: TutoriaisComponent
   }
 
 ];
