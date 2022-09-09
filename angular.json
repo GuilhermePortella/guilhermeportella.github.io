@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "analytics": "346c8370-9a93-4ca4-b8f9-06ba81966b54"
+    "analytics": "4492b539-e7d1-44a5-90fe-7d2836353ebc"
   },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "GuilhermePortellaGitPages": {
+    "GuilhermePortella": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/GuilhermePortellaGitPages",
+            "outputPath": "dist/GuilhermePortella",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "GuilhermePortellaGitPages:build:production"
+              "browserTarget": "GuilhermePortella:build:production"
             },
             "development": {
-              "browserTarget": "GuilhermePortellaGitPages:build:development"
+              "browserTarget": "GuilhermePortella:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "GuilhermePortellaGitPages:build"
+            "browserTarget": "GuilhermePortella:build"
           }
         },
         "test": {
@@ -102,15 +102,9 @@
             ],
             "scripts": []
           }
-        },
-        "deploy": {
-          "builder": "angular-cli-ghpages:deploy",
-          "options": {
-            "baseHref": "https://guilhermeportella.github.io/"
-          }
         }
       }
     }
   },
-  "defaultProject": "GuilhermePortellaGitPages"
+  "defaultProject": "GuilhermePortella"
 }
