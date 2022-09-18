@@ -15,6 +15,7 @@ import { HomeComponent } from './home/home.component';
 import { JavaComponent } from './java/java.component';
 import { NewsComponent } from './news/news.component';
 import { TutoriaisComponent } from './tutoriais/tutoriais.component';
+import { HeaderMenuComponent } from './header-menu/header-menu.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { TutoriaisComponent } from './tutoriais/tutoriais.component';
     HomeComponent,
     JavaComponent,
     NewsComponent,
-    TutoriaisComponent
+    TutoriaisComponent,
+    HeaderMenuComponent
   ],
   imports: [
     BrowserModule,
