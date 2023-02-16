@@ -1,7 +1,8 @@
 html {
     position: relative;
     min-height: 100%;
-  }
+}
+
 body {
     background-color: #a1909050;
     margin-block-end: 100px;
@@ -15,13 +16,14 @@ body {
     margin: auto;
     padding: 10px;
     text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
-.imgCod{
-    width: 90%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
+.imgCod {
+    width: 350px;
+    max-width: 100%;
+    height: auto;
 }
 
 .conteudoPrincipal {
@@ -32,8 +34,8 @@ body {
     margin-top: 50px;
 }
 
-.imgPrincipal{
-    padding-right: 2%;
+.imgPrincipal {
+    padding-right: 2% !important;
 }
 
 .tituloConteudo {
@@ -53,7 +55,7 @@ footer {
 }
 
 p {
-    
+
     font-size: 14px;
     margin: 0;
 }
