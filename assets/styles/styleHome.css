@@ -2,12 +2,12 @@ html {
     position: relative;
     min-height: 100%;
   }
+
 body {
     background-color: #a1909050;
     margin-block-end: 100px;
     padding-bottom: 100px;
     margin: 0;
-
 }
 
 .container {
@@ -18,7 +18,7 @@ body {
 }
 
 .imgCod{
-    width: 90%;
+    width: 350px;
     height: 100%;
     padding: 0;
     margin: 0;
@@ -33,7 +33,7 @@ body {
 }
 
 .imgPrincipal{
-    padding-right: 2%;
+    padding-right: 2%!important;
 }
 
 .tituloConteudo {
@@ -41,7 +41,6 @@ body {
     background-color: rgba(187, 206, 198, 0.349);
     border-radius: 15px;
 }
-
 
 footer {
     position: relative;
@@ -53,7 +52,6 @@ footer {
 }
 
 p {
-    
     font-size: 14px;
     margin: 0;
 }
