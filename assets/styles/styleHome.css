@@ -1,13 +1,14 @@
 html {
     position: relative;
     min-height: 100%;
-  }
+}
 
 body {
     background-color: #a1909050;
     margin-block-end: 100px;
     padding-bottom: 100px;
     margin: 0;
+
 }
 
 .container {
@@ -15,13 +16,14 @@ body {
     margin: auto;
     padding: 10px;
     text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
-.imgCod{
+.imgCod {
     width: 350px;
-    height: 100%;
-    padding: 0;
-    margin: 0;
+    max-width: 100%;
+    height: auto;
 }
 
 .conteudoPrincipal {
@@ -32,8 +34,8 @@ body {
     margin-top: 50px;
 }
 
-.imgPrincipal{
-    padding-right: 2%!important;
+.imgPrincipal {
+    padding-right: 2% !important;
 }
 
 .tituloConteudo {
@@ -41,6 +43,7 @@ body {
     background-color: rgba(187, 206, 198, 0.349);
     border-radius: 15px;
 }
+
 
 footer {
     position: relative;
@@ -52,6 +55,7 @@ footer {
 }
 
 p {
+
     font-size: 14px;
     margin: 0;
 }
