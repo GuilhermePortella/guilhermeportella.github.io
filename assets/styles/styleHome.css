@@ -59,3 +59,40 @@ p {
     font-size: 14px;
     margin: 0;
 }
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .contact-list li {
+    margin-bottom: 10px;
+  }
+  
+  .contact-list a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  
+  .contact-list a:hover {
+    color: #f00;
+  }
+  
+  .contact-list i {
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  .contatos {
+    position: absolute;
+    top: 10%;
+    margin-top: 10%;
+    left: 15%;
+    transform: translateY(-50%);
+    width: 100px;
+    height: 100px;
+  }
+  
