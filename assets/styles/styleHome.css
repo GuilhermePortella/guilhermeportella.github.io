@@ -1,7 +1,8 @@
 html {
     position: relative;
     min-height: 100%;
-  }
+}
+
 body {
     background-color: #a1909050;
     margin-block-end: 100px;
@@ -15,13 +16,14 @@ body {
     margin: auto;
     padding: 10px;
     text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
-.imgCod{
-    width: 90%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
+.imgCod {
+    width: 350px;
+    max-width: 100%;
+    height: auto;
 }
 
 .conteudoPrincipal {
@@ -32,8 +34,8 @@ body {
     margin-top: 50px;
 }
 
-.imgPrincipal{
-    padding-right: 2%;
+.imgPrincipal {
+    padding-right: 2% !important;
 }
 
 .tituloConteudo {
@@ -53,7 +55,44 @@ footer {
 }
 
 p {
-    
+
     font-size: 14px;
     margin: 0;
 }
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .contact-list li {
+    margin-bottom: 10px;
+  }
+  
+  .contact-list a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  
+  .contact-list a:hover {
+    color: #f00;
+  }
+  
+  .contact-list i {
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  .contatos {
+    position: absolute;
+    top: 10%;
+    margin-top: 10%;
+    left: 15%;
+    transform: translateY(-50%);
+    width: 100px;
+    height: 100px;
+  }
+  
