@@ -32,7 +32,6 @@ body {
   padding: 10px;
   text-align: center, justify;
   margin-top: 50px;
-
 }
 
 .imgPrincipal {
@@ -48,7 +47,6 @@ body {
 
 .tituloConteudo {
   text-align: center;
-
   border-radius: 15px;
 }
 
@@ -117,6 +115,61 @@ p {
   transform: translateY(-50%);
   width: 130px;
   height: 130px;
+}
+
+@media screen and (max-width: 1000px) {
+  .contatos {
+    left: 2%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .contatos {
+    margin-top: 40%;
+    left: 2%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .contatos {
+    margin-top: 50%;
+    left: 2%;
+  }
+  .conteudoPrincipal {
+    text-align: left;
+    font-size: 10px;
+    margin-right: 10%;
+  }
+  .tituloConteudo{
+    font-size: 20px;
+    text-align: left;
+  }
+  .textPrincipal{
+    font-size: 15px;
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .contatos {
+    margin-top: 78%;
+    left: 2%;
+  }
+  .conteudoPrincipal {
+    width: 80%;
+    text-align: left;
+    font-size: 10px;
+    margin-right: -20%;
+    margin-top: 10%;
+  }
+  .tituloConteudo{
+    font-size: 20px;
+    text-align: left;
+  }
+  .textPrincipal{
+    font-size: 15px;
+    text-align: left;
+  }
 }
 
 div {
