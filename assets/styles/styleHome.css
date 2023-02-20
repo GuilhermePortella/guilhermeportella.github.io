@@ -57,7 +57,7 @@ footer {
   width: 100%;
   height: 100px;
   text-align: center;
-  padding-top: 20%;
+  padding-top: 10%;
 }
 
 p {
@@ -150,7 +150,7 @@ p {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 460px) {
   .contatos {
     margin-top: 78%;
     left: 2%;
@@ -171,6 +171,8 @@ p {
     text-align: left;
   }
 }
+
+
 
 div {
   background-color: #C0C0C0;
