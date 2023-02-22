@@ -61,7 +61,6 @@ footer {
 }
 
 p {
-
   font-size: 14px;
   margin: 0;
 }
@@ -71,7 +70,7 @@ p {
   padding: 0;
 }
 
-.buton{
+.buton {
   padding-top: 25px;
   font-size: 12px;
   text-align: center;
@@ -113,8 +112,8 @@ p {
   margin-top: 10%;
   left: 10%;
   transform: translateY(-50%);
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: auto;
 }
 
 @media screen and (max-width: 1000px) {
@@ -135,16 +134,19 @@ p {
     margin-top: 50%;
     left: 2%;
   }
+
   .conteudoPrincipal {
     text-align: left;
     font-size: 10px;
     margin-right: 10%;
   }
-  .tituloConteudo{
+
+  .tituloConteudo {
     font-size: 20px;
     text-align: left;
   }
-  .textPrincipal{
+
+  .textPrincipal {
     font-size: 15px;
     text-align: left;
   }
@@ -155,6 +157,7 @@ p {
     margin-top: 78%;
     left: 2%;
   }
+
   .conteudoPrincipal {
     width: 80%;
     text-align: left;
@@ -162,17 +165,17 @@ p {
     margin-right: -20%;
     margin-top: 10%;
   }
-  .tituloConteudo{
+
+  .tituloConteudo {
     font-size: 20px;
     text-align: left;
   }
-  .textPrincipal{
+
+  .textPrincipal {
     font-size: 15px;
     text-align: left;
   }
 }
-
-
 
 div {
   background-color: #C0C0C0;
