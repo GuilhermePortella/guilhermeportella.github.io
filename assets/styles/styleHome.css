@@ -153,6 +153,7 @@ p {
 }
 
 @media screen and (max-width: 700px) {
+
   /* Menu responsivo: hamburger para telas pequenas */
   .contatos {
     position: static;
@@ -160,10 +161,11 @@ p {
     margin: 0;
     transform: none;
     background: #C0C0C0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px 0;
     z-index: 1000;
   }
+
   .contact-list {
     display: none;
     flex-direction: column;
@@ -173,16 +175,18 @@ p {
     margin: 0;
     padding: 0;
   }
+
   .contact-list.show {
     display: flex;
   }
-.menu-toggle {
-  display: none;
-}
+
+  .menu-toggle {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 700px) {
-    .menu-toggle {
+  .menu-toggle {
     display: block;
     background: none;
     border: none;
@@ -190,7 +194,13 @@ p {
     margin: 0 auto 10px auto;
     cursor: pointer;
     color: #333;
+    width: 100%;
+    /* Torna o botão ocupar toda a largura */
+    padding: 16px 0 16px 0;
+    /* Aumenta a área clicável verticalmente */
+    text-align: center;
   }
+
   .container,
   .conteudoPrincipal {
     width: 95% !important;
@@ -198,23 +208,47 @@ p {
     padding: 10px !important;
     font-size: 16px;
   }
+
   .imgCod {
     width: 90vw;
     max-width: 100%;
     height: auto;
   }
+
   .tituloConteudo {
     font-size: 22px;
     text-align: center;
   }
+
   .textPrincipal {
     font-size: 15px;
     text-align: left;
     padding: 0 !important;
   }
+
   footer {
     padding-top: 30px;
     height: auto;
+  }
+
+  .contact-list.show {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Centraliza verticalmente se houver espaço */
+    text-align: center;
+    /* Centraliza o texto dos links */
+    width: 100%;
+  }
+
+  .contact-list.show li {
+    width: 100%;
+  }
+
+  .contact-list.show a {
+    justify-content: center;
+    width: 100%;
   }
 }
 
@@ -222,13 +256,15 @@ p {
   .contatos {
     position: static;
     width: 100%;
-    margin: 0;           /* Remove margens extras */
-    padding: 5px 0 0 0;  /* Reduz padding superior */
+    margin: 0;
+    /* Remove margens extras */
+    padding: 5px 0 0 0;
+    /* Reduz padding superior */
     top: auto;
     left: auto;
     transform: none;
     background: #C0C0C0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
   }
 
@@ -253,14 +289,18 @@ p {
 
 /* Ajuste para telas muito pequenas */
 @media screen and (max-width: 400px) {
+
   .container,
   .conteudoPrincipal {
-    margin-top: 10px;    /* Reduz espaço acima do conteúdo */
+    margin-top: 10px;
+    /* Reduz espaço acima do conteúdo */
     padding-top: 10px;
   }
+
   .tituloConteudo {
     font-size: 16px;
   }
+
   .imgCod {
     width: 80vw;
   }
@@ -279,4 +319,3 @@ div {
 div:hover {
   border: 2px solid #000;
 }
-
