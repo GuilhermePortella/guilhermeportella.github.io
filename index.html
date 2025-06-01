@@ -17,31 +17,63 @@
     </div>
 
     <div class="contatos">
+        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
         <ul class="contact-list">
-            <li><a href="mailto:guilhermeportella2@gmail.com?subject="subject text target="_blank"><i class="buton"></i>E-mail</a></li>
-            
-            <li><a href="https://www.linkedin.com/in/myprofileguilhermeportella/"target="_blank"><i class="buton"></i>
-                    LinkedIn</a></li>
-            <li><a href="https://github.com/GuilhermePortella"target="_blank"><i class="buton"></i> GitHub</a></li>
-
-            <li><a href="projects.html"><i class="buton"></i> My Projects</a></li>
+            <li>
+                <a href="mailto:guilhermeportella2@gmail.com?subject=subject%20text" target="_blank">
+                    <i class="buton"></i>E-mail
+                </a>
+            </li>
+            <li>
+                <a href="https://www.linkedin.com/in/myprofileguilhermeportella/" target="_blank">
+                    <i class="buton"></i>LinkedIn
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/GuilhermePortella" target="_blank">
+                    <i class="buton"></i>GitHub
+                </a>
+            </li>
+            <li>
+                <a href="projects.html"><i class="buton"></i>My Projects</a>
+            </li>
         </ul>
     </div>
 
     <div class="conteudoPrincipal">
         <h2 class="tituloConteudo">My name is Guilherme Portella</h2>
-
-        <p class="textPrincipal">I am a Full Stack developer working at IBM as a consultant in one of the main banks in Brazil, in this bank I
-        work in several areas such as maintenance of a bank application, in this I work in the front end, and in an
-        internal website for employees that contains important information with holidays and booking places and
-        work-from-home days and our back-end system.</p>
+        <p class="textPrincipal">
+            I am a Full Stack developer working at IBM as a consultant in one of the main banks in Brazil, in this bank I
+            work in several areas such as maintenance of a bank application, in this I work in the front end, and in an
+            internal website for employees that contains important information with holidays and booking places and
+            work-from-home days and our back-end system.
+        </p>
     </div>
-
 
     <footer>
         <p>&copy; Guilherme Portella</p>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.contact-list');
+            function checkMenu() {
+                if (window.innerWidth <= 700) {
+                    toggle.style.display = 'block';
+                    menu.classList.remove('show');
+                } else {
+                    toggle.style.display = 'none';
+                    menu.style.display = '';
+                }
+            }
+            toggle.addEventListener('click', function () {
+                menu.classList.toggle('show');
+            });
+            window.addEventListener('resize', checkMenu);
+            checkMenu();
+        });
+    </script>
 </body>
 
 </html>

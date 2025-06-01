@@ -11,25 +11,22 @@
 </head>
 
 <body>
-
     <div class="container">
         <h1>Hi, These are my projects</h1>
         <img class="imgCod" src="./assets/images/projects.png">
     </div>
 
-
-
     <div class="contatos">
+        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
         <ul class="contact-list">
             <li><a href="index.html"><i class="buton"></i> Home</a></li>
         </ul>
     </div>
 
-
     <div class="conteudoPrincipal">
         <h2 class="tituloConteudo">My name is Guilherme Portella</h2>
-
-        <p class="textPrincipal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer in orci facilisis,
+        <p class="textPrincipal">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer in orci facilisis,
             fringilla ante id, laoreet lectus. Fusce malesuada quam eu velit sodales, vel volutpat nibh sodales. Ut
             dictum ex nibh, ut gravida risus imperdiet sit amet. Nunc commodo aliquet tortor quis fermentum. Vivamus
             massa nibh, dapibus quis mollis eget, ultricies ornare lectus. Class aptent taciti sociosqu ad litora
@@ -63,14 +60,34 @@
             mattis feugiat. Phasellus fermentum orci sit amet tortor rutrum, sit amet ornare ante mollis. Nam vulputate
             odio at sem convallis dictum. Sed vel quam in justo lacinia hendrerit. Donec sodales nisi at quam sagittis
             vestibulum eget vitae neque. Morbi pulvinar arcu risus. In hac habitasse platea dictumst. Pellentesque vel
-            eros eget quam lacinia faucibus sed facilisis lorem. Morbi accumsan id eros ut volutpat..</p>
+            eros eget quam lacinia faucibus sed facilisis lorem. Morbi accumsan id eros ut volutpat..
+        </p>
     </div>
-
 
     <footer>
         <p>&copy; Guilherme Portella</p>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.contact-list');
+            function checkMenu() {
+                if (window.innerWidth <= 700) {
+                    toggle.style.display = 'block';
+                    menu.classList.remove('show');
+                } else {
+                    toggle.style.display = 'none';
+                    menu.style.display = '';
+                }
+            }
+            toggle.addEventListener('click', function () {
+                menu.classList.toggle('show');
+            });
+            window.addEventListener('resize', checkMenu);
+            checkMenu();
+        });
+    </script>
 </body>
 
 </html>
