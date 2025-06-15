@@ -277,6 +277,7 @@ html {
     border: 2px solid #000;
   }
   
+  /* Grid de projetos em cards - visual moderno e responsivo */
 .projects-grid {
   display: flex;
   flex-wrap: wrap;
@@ -291,14 +292,14 @@ html {
   box-shadow: 0 4px 18px rgba(0,0,0,0.10);
   padding: 28px 22px 20px 22px;
   width: 300px;
+  max-width: 370px;
+  min-width: 220px;
   min-height: 160px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   border: 1px solid #e0e0e0;
   transition: transform 0.18s, box-shadow 0.18s;
-  max-width: 370px;
-  min-width: 220px;
 }
 .project-card:hover {
   transform: translateY(-6px) scale(1.035);
