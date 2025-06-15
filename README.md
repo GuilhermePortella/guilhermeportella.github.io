@@ -16,17 +16,6 @@ Este é o site pessoal de Guilherme Portella, desenvolvido para apresentar proje
 - JavaScript (ES6+)
 - Consumo da API pública do GitHub
 
-## Como usar
-
-1. Clone ou baixe este repositório.
-2. Abra o arquivo `index.html` em seu navegador.
-3. Navegue pelas páginas usando o menu.
-
-## Personalização
-
-- Para alterar os projetos exibidos, basta fixar/desafixar repositórios no seu GitHub ou ajustar o filtro no JavaScript.
-- Para mudar estilos, edite os arquivos em `assets/styles/`.
-
 ## Estrutura do Projeto
 
 ```
@@ -49,4 +38,4 @@ Este é o site pessoal de Guilherme Portella, desenvolvido para apresentar proje
 [Guilherme Portella](https://github.com/guilhermeportella)
 
 ---
-Sinta-se à vontade para contribuir ou sugerir melhorias!
+Sinta-se à vontade para sugerir melhorias!
