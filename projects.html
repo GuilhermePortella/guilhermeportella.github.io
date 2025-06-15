@@ -24,45 +24,62 @@
     </div>
 
     <div class="conteudoPrincipal">
-        <h2 class="tituloConteudo">My name is Guilherme Portella</h2>
-        <p class="textPrincipal">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer in orci facilisis,
-            fringilla ante id, laoreet lectus. Fusce malesuada quam eu velit sodales, vel volutpat nibh sodales. Ut
-            dictum ex nibh, ut gravida risus imperdiet sit amet. Nunc commodo aliquet tortor quis fermentum. Vivamus
-            massa nibh, dapibus quis mollis eget, ultricies ornare lectus. Class aptent taciti sociosqu ad litora
-            torquent per conubia nostra, per inceptos himenaeos. Pellentesque tincidunt, mauris id condimentum viverra,
-            purus ligula consequat risus, sed tempor purus ante nec odio. In hac habitasse platea dictumst.
-
-            Suspendisse rhoncus lacus urna, ut tincidunt eros posuere ut. Donec suscipit rutrum nisl tempor auctor.
-            Curabitur fringilla diam nulla, sit amet tincidunt dolor facilisis vel. Quisque sollicitudin magna justo, ac
-            imperdiet orci porta nec. Phasellus non tincidunt lacus. Morbi dapibus maximus massa sed euismod. Maecenas
-            in urna enim. Vestibulum id risus a ante ornare lacinia. Nam ultrices rutrum lorem vitae imperdiet. Donec ut
-            enim ac nibh consequat aliquet. Maecenas in libero orci. Fusce tincidunt, quam eu scelerisque eleifend,
-            tellus risus porttitor risus, vel feugiat dui orci eu nunc. Morbi hendrerit leo in lobortis hendrerit.
-
-            Donec facilisis convallis arcu et posuere. Etiam ac vulputate mi. Curabitur suscipit mi euismod quam iaculis
-            dapibus. In eu viverra odio. Integer sit amet pellentesque justo. Aliquam neque sapien, aliquet eu volutpat
-            vel, condimentum eu tellus. Praesent tempor congue nibh, non molestie odio lobortis nec. Pellentesque at
-            felis in est feugiat malesuada. Phasellus fringilla rutrum massa eget eleifend. Mauris molestie sagittis
-            libero. Phasellus ac maximus massa. Cras purus justo, mattis eu porttitor ac, convallis id risus. Nullam
-            mauris mi, sagittis vitae libero vitae, consequat ornare nunc. Fusce bibendum ante sed molestie
-            pellentesque.
-
-            Praesent at sem lobortis, volutpat turpis a, iaculis neque. Aenean mollis mi eget ligula congue, eget ornare
-            erat molestie. Mauris lobortis purus est, at ultrices erat tristique id. Aliquam erat volutpat. Sed
-            pellentesque, dui ut lobortis commodo, eros ligula molestie ante, id luctus velit eros sit amet turpis.
-            Vivamus faucibus est vel justo commodo, ut dictum erat vulputate. Suspendisse eleifend ipsum viverra,
-            iaculis mauris congue, dictum erat. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-            inceptos himenaeos. Nulla dolor nibh, imperdiet nec bibendum id, sagittis vel ligula. Proin nec erat mattis,
-            imperdiet odio eu, gravida metus. Sed libero nibh, dignissim tincidunt lacus eu, fermentum pharetra felis.
-
-            Donec vitae tortor tincidunt, tempus nulla non, tempor elit. Pellentesque et lacinia dolor. Cras interdum
-            mattis feugiat. Phasellus fermentum orci sit amet tortor rutrum, sit amet ornare ante mollis. Nam vulputate
-            odio at sem convallis dictum. Sed vel quam in justo lacinia hendrerit. Donec sodales nisi at quam sagittis
-            vestibulum eget vitae neque. Morbi pulvinar arcu risus. In hac habitasse platea dictumst. Pellentesque vel
-            eros eget quam lacinia faucibus sed facilisis lorem. Morbi accumsan id eros ut volutpat..
-        </p>
+        <h2 class="tituloConteudo">Projetos no GitHub</h2>
+        <div id="github-projects">
+            <p>Carregando projetos...</p>
+        </div>
     </div>
+    <script src="assets/scripts/scripts.js"></script>
+    <script>
+        // Função para substituir shortcodes de emoji por emojis reais
+        function parseEmojis(text) {
+            if (!text) return '';
+            return text
+                .replace(/:camera:/g, '📷')
+                .replace(/:rocket:/g, '🚀')
+                .replace(/:star:/g, '⭐')
+                .replace(/:fire:/g, '🔥')
+                .replace(/:zap:/g, '⚡')
+                .replace(/:computer:/g, '💻')
+                .replace(/:bug:/g, '🐛')
+                .replace(/:tada:/g, '🎉')
+                .replace(/:art:/g, '🎨')
+                .replace(/:memo:/g, '📝')
+                .replace(/:lock:/g, '🔒')
+                .replace(/:mag:/g, '🔍')
+                .replace(/:books?:/g, '📚')
+                .replace(/:pencil:/g, '✏️')
+                .replace(/:eyes:/g, '👀');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('github-projects');
+            fetch('https://api.github.com/users/guilhermeportella/repos')
+                .then(response => response.json())
+                .then(repos => {
+                    if (!Array.isArray(repos) || repos.length === 0) {
+                        container.innerHTML = '<p>Nenhum projeto encontrado.</p>';
+                        return;
+                    }
+                    const grid = document.createElement('div');
+                    grid.className = 'projects-grid';
+                    repos.forEach(repo => {
+                        const card = document.createElement('div');
+                        card.className = 'project-card';
+                        card.innerHTML = `
+                            <h3>${repo.name}</h3>
+                            <p>${repo.description ? parseEmojis(repo.description) : 'Sem descrição.'}</p>
+                            <a href="${repo.html_url}" target="_blank">Ver no GitHub</a>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    container.innerHTML = '';
+                    container.appendChild(grid);
+                })
+                .catch(() => {
+                    container.innerHTML = '<p>Erro ao carregar projetos do GitHub.</p>';
+                });
+        });
+    </script>
 
     <footer>
         <p>&copy; Guilherme Portella</p>
