@@ -153,7 +153,6 @@ p {
 }
 
 @media screen and (max-width: 700px) {
-  /* Menu responsivo: hamburger para telas pequenas */
   .contatos {
     position: static;
     width: 100%;
@@ -222,9 +221,8 @@ p {
   .contatos {
     position: static;
     width: 100%;
-    margin: 0;           /* Remove margens extras */
-    padding: 5px 0 0 0;  /* Reduz padding superior */
-    top: auto;
+    margin: 0;            
+    padding: 5px 0 0 0;      top: auto;
     left: auto;
     transform: none;
     background: #C0C0C0;
@@ -251,11 +249,10 @@ p {
   }
 }
 
-/* Ajuste para telas muito pequenas */
 @media screen and (max-width: 400px) {
   .container,
   .conteudoPrincipal {
-    margin-top: 10px;    /* Reduz espaço acima do conteúdo */
+    margin-top: 10px;    
     padding-top: 10px;
   }
   .tituloConteudo {
