@@ -1,6 +1,6 @@
 # Portfolio Guilherme Portella
 
-Este é o site pessoal de Guilherme Portella, desenvolvido para apresentar projetos, links úteis e informações profissionais de forma moderna e responsiva.
+Este é o site meu site pessoal, desenvolvido para apresentar projetos, links úteis e informações profissionais de forma moderna e responsiva.
 
 ## Funcionalidades
 
