@@ -31,6 +31,26 @@
     </div>
     <script src="assets/scripts/scripts.js"></script>
     <script>
+        // Função para substituir shortcodes de emoji por emojis reais
+        function parseEmojis(text) {
+            if (!text) return '';
+            return text
+                .replace(/:camera:/g, '📷')
+                .replace(/:rocket:/g, '🚀')
+                .replace(/:star:/g, '⭐')
+                .replace(/:fire:/g, '🔥')
+                .replace(/:zap:/g, '⚡')
+                .replace(/:computer:/g, '💻')
+                .replace(/:bug:/g, '🐛')
+                .replace(/:tada:/g, '🎉')
+                .replace(/:art:/g, '🎨')
+                .replace(/:memo:/g, '📝')
+                .replace(/:lock:/g, '🔒')
+                .replace(/:mag:/g, '🔍')
+                .replace(/:books?:/g, '📚')
+                .replace(/:pencil:/g, '✏️')
+                .replace(/:eyes:/g, '👀');
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('github-projects');
             fetch('https://api.github.com/users/guilhermeportella/repos')
@@ -47,7 +67,7 @@
                         card.className = 'project-card';
                         card.innerHTML = `
                             <h3>${repo.name}</h3>
-                            <p>${repo.description ? repo.description : 'Sem descrição.'}</p>
+                            <p>${repo.description ? parseEmojis(repo.description) : 'Sem descrição.'}</p>
                             <a href="${repo.html_url}" target="_blank">Ver no GitHub</a>
                         `;
                         grid.appendChild(card);
