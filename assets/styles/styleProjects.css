@@ -1,3 +1,5 @@
+@import url('./styleMyLinks.css');
+
 html {
     position: relative;
     min-height: 100%;
@@ -63,192 +65,7 @@ html {
     font-size: 14px;
     margin: 0;
   }
-  
-  .contact-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .buton {
-    padding-top: 25px;
-    font-size: 12px;
-    text-align: center;
-    cursor: pointer;
-    outline: none;
-  }
-  
-  .buton:hover {
-    background-color: #D3D3D3;
-    border: 2px solid #000;
-  }
-  
-  .contact-list li {
-    margin-bottom: 10px;
-  }
-  
-  .contact-list a {
-    color: #333;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
-  }
-  
-  .contact-list a:hover {
-    background-color: #D3D3D3;
-    border: 2px solid #000;
-    padding-left: 20%;
-  }
-  
-  .contact-list i {
-    font-size: 20px;
-    margin-right: 10px;
-  }
-  
-  .contatos {
-    position: absolute;
-    top: 10%;
-    margin-top: 10%;
-    left: 10%;
-    transform: translateY(-50%);
-    width: 140px;
-    height: auto;
-  }
-  
-  @media screen and (max-width: 1000px) {
-    .contatos {
-      left: 2%;
-    }
-  }
-  
-  @media screen and (max-width: 900px) {
-    .contatos {
-      margin-top: 40%;
-      left: 2%;
-    }
-  }
-  
-  @media screen and (max-width: 800px) {
-    .contatos {
-      margin-top: 50%;
-      left: 2%;
-    }
-  
-    .conteudoPrincipal {
-      text-align: left;
-      font-size: 10px;
-      margin-right: 10%;
-    }
-  
-    .tituloConteudo {
-      font-size: 20px;
-      text-align: left;
-    }
-  
-    .textPrincipal {
-      font-size: 15px;
-      text-align: left;
-    }
-  }
-  
-  @media screen and (max-width: 700px) {
-    .contatos {
-      position: static;
-      width: 100%;
-      margin: 0;
-      transform: none;
-      background: #C0C0C0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      padding: 10px 0;
-      z-index: 1000;
-    }
-    .contact-list {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      background: #C0C0C0;
-      margin: 0;
-      padding: 0;
-    }
-    .contact-list.show {
-      display: flex;
-    }
-    .menu-toggle {
-      display: none;
-    }
-  }
-  
-  @media screen and (max-width: 700px) {
-    .menu-toggle {
-      display: block;
-      background: none;
-      border: none;
-      font-size: 28px;
-      margin: 0 auto 10px auto;
-      cursor: pointer;
-      color: #333;
-    }
-    .container,
-    .conteudoPrincipal {
-      width: 95% !important;
-      margin: 10px auto !important;
-      padding: 10px !important;
-      font-size: 16px;
-    }
-    .imgCod {
-      width: 90vw;
-      max-width: 100%;
-      height: auto;
-    }
-    .tituloConteudo {
-      font-size: 22px;
-      text-align: center;
-    }
-    .textPrincipal {
-      font-size: 15px;
-      text-align: left;
-      padding: 0 !important;
-    }
-    footer {
-      padding-top: 30px;
-      height: auto;
-    }
-  }
-  
-  @media screen and (max-width: 460px) {
-    .contatos {
-      position: static;
-      width: 100%;
-      margin: 0;
-      padding: 5px 0 0 0;
-      top: auto;
-      left: auto;
-      transform: none;
-      background: #C0C0C0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
-  
-    .conteudoPrincipal {
-      width: 80%;
-      text-align: left;
-      font-size: 10px;
-      margin-right: -20%;
-      margin-top: 10%;
-    }
-  
-    .tituloConteudo {
-      font-size: 20px;
-      text-align: left;
-    }
-  
-    .textPrincipal {
-      font-size: 15px;
-      text-align: left;
-    }
-  }
-  
+
   @media screen and (max-width: 400px) {
     .container,
     .conteudoPrincipal {
@@ -277,7 +94,6 @@ html {
     border: 2px solid #000;
   }
   
-  /* Grid de projetos em cards - visual moderno e responsivo */
 .projects-grid {
   display: flex;
   flex-wrap: wrap;

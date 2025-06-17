@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/styles/styleMyLinks.css" />
     <link rel="stylesheet" href="./assets/styles/styleProjects.css" />
     <title>Guilherme Portella Projects</title>
 </head>
@@ -19,7 +20,12 @@
     <div class="contatos">
         <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
         <ul class="contact-list">
-            <li><a href="index.html"><i class="buton"></i> Home</a></li>
+            <li>
+                <a href="index.html"><i class="buton"></i> Home</a>
+            </li>
+            <li>
+                <a href="midias.html"><i class="buton"></i>Musicas e jogos</a>
+            </li>
         </ul>
     </div>
 
@@ -50,7 +56,7 @@
                 .replace(/:pencil:/g, '✏️')
                 .replace(/:eyes:/g, '👀');
         }
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const container = document.getElementById('github-projects');
             const PROJECTS_PER_PAGE = 6;
             let currentPage = 1;
