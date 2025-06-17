@@ -88,13 +88,11 @@
                 } else {
                     pagination.innerHTML = '';
                 }
-                // Botão anterior
                 const prev = document.createElement('button');
                 prev.textContent = 'Anterior';
                 prev.disabled = currentPage === 1;
                 prev.onclick = () => { currentPage--; renderPage(currentPage); };
                 pagination.appendChild(prev);
-                // Números das páginas
                 for (let i = 1; i <= totalPages; i++) {
                     const btn = document.createElement('button');
                     btn.textContent = i;

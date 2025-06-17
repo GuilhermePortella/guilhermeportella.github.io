@@ -333,6 +333,21 @@ div:hover {
     gap: 24px;
     justify-content: center;
     margin: 32px 0;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0;
+}
+.tech-cards-container::before,
+.tech-cards-container::after {
+    content: none !important;
+}
+
+/* Linha suave acima das tecnologias */
+.tech-section-hr {
+    border: none;
+    border-top: 1.5px solid #b0b0b0;
+    margin: 32px 0 24px 0;
 }
 .tech-card {
     background: #e5e2e2; /* cor de fundo igual ao site */
@@ -392,4 +407,49 @@ div:hover {
         width: 90%;
         min-width: 220px;
     }
+}
+
+.midia-section {
+    background: #e5e2e2;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #0001;
+    padding: 24px 18px 18px 18px;
+    margin: 24px auto 24px auto;
+    max-width: 600px;
+    text-align: center;
+}
+.fav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.08em;
+}
+.fav-list li {
+    margin-bottom: 10px;
+    color: #222;
+    font-size: 1.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+}
+.btn-home {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 8px 22px;
+    background: linear-gradient(90deg, #205080 0%, #3a6ea5 100%);
+    color: #fff;
+    border-radius: 8px;
+    border: 1.5px solid #205080;
+    font-family: Tahoma, Verdana, Segoe UI, Arial, sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 1px 1px 0 #fff4, 2px 2px 0 #20508022;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-home:hover {
+    background: #fff;
+    color: #205080;
+    border-color: #205080;
 }
