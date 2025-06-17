@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/styles/styleMyLinks.css" />
     <link rel="stylesheet" href="./assets/styles/styleHome.css" />
-    <title>Midias Favoritas - Guilherme Portella</title>
+    <title>Guilherme Portella</title>
 </head>
+
+
 <body>
     <div class="container">
-        <h1>isso é um pouco do que eu curto</h1>
+        <h1>Um pouco do que eu curto</h1>
         <img class="imgCod" src="./assets/images/midias.gif">
     </div>
-    <div class="contatos">
 
+    <div class="contatos">
+        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
         <ul class="contact-list">
-            <li><a href="index.html"><i class="buton"></i> Home</a></li>
+            <li>
+                <a href="index.html"><i class="buton"></i> Home</a>
+            </li>
+            <li>
+                <a href="projects.html"><i class="buton"></i>My Projects</a>
+            </li>
         </ul>
     </div>
+
+
+
     <div class="conteudoPrincipal">
         <h2 class="tituloConteudo">Músicas Favoritas</h2>
         <div class="midia-section">
 
 
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/7KXF49SUtOOCDdwjfekKvk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/playlist/7KXF49SUtOOCDdwjfekKvk?utm_source=generator" width="100%"
+                height="352" frameBorder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
 
             <p style="margin-top:8px; font-size:0.98em; color:#444;">Playlist de músicas favoritas (Spotify)</p>
         </div>
@@ -49,5 +68,32 @@
             </ul>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; Guilherme Portella</p>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.contact-list');
+            function checkMenu() {
+                if (window.innerWidth <= 700) {
+                    toggle.style.display = 'block';
+                    menu.classList.remove('show');
+                } else {
+                    toggle.style.display = 'none';
+                    menu.style.display = '';
+                }
+            }
+            toggle.addEventListener('click', function () {
+                menu.classList.toggle('show');
+            });
+            window.addEventListener('resize', checkMenu);
+            checkMenu();
+        });
+    </script>
 </body>
+
 </html>
