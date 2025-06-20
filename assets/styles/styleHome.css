@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-  width: 500px;
+  width: 800px;
   margin: auto;
   padding: 10px;
   text-align: center;
@@ -29,7 +29,7 @@ body {
 }
 
 .conteudoPrincipal {
-  width: 50%;
+  width: 80%;
   margin: auto;
   padding: 10px;
   text-align: center, justify;
@@ -87,7 +87,33 @@ p {
   }
 }
 
-div {
+/* TradingView Widget Container */
+.tradingview-container {
+    width: 100%;
+    max-width: 900px;
+    min-width: 320px;
+    min-height: 480px;
+    height: auto;
+    margin: 0 auto 24px auto;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Evita que o CSS global afete widgets externos */
+.tradingview-container > div,
+.tradingview-container > script {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+div:not(.tradingview-container):not(.crypto-footer):not(.binance-widget-marquee) {
   background-color: #C0C0C0;
   border: 2px solid #808080;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
@@ -97,7 +123,7 @@ div {
   text-align: center;
 }
 
-div:hover {
+div:not(.tradingview-container):not(.crypto-footer):not(.binance-widget-marquee):hover {
   border: 2px solid #000;
 }
 
@@ -196,7 +222,7 @@ div:hover {
     box-shadow: 0 2px 8px #0001;
     padding: 24px 18px 18px 18px;
     margin: 24px auto 24px auto;
-    max-width: 600px;
+    width: 95%;
     text-align: center;
 }
 .fav-list {
@@ -214,23 +240,22 @@ div:hover {
     gap: 8px;
     justify-content: flex-start;
 }
-.btn-home {
-    display: inline-block;
-    margin-top: 18px;
-    padding: 8px 22px;
-    background: linear-gradient(90deg, #205080 0%, #3a6ea5 100%);
-    color: #fff;
-    border-radius: 8px;
-    border: 1.5px solid #205080;
-    font-family: Tahoma, Verdana, Segoe UI, Arial, sans-serif;
-    font-size: 1em;
-    font-weight: 500;
-    text-decoration: none;
-    box-shadow: 1px 1px 0 #fff4, 2px 2px 0 #20508022;
-    transition: background 0.2s, color 0.2s;
+.tradingview-widget-container {
+    width: 100%;
+    max-width: 900px;
+    min-width: 320px;
+    min-height: 480px;
+    margin: 0 auto 24px auto;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.btn-home:hover {
-    background: #fff;
-    color: #205080;
-    border-color: #205080;
+.tradingview-widget-container__widget {
+    width: 100% !important;
+    min-height: 480px !important;
+    height: 480px !important;
 }
