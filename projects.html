@@ -106,7 +106,7 @@
                     btn.onclick = () => { currentPage = i; renderPage(currentPage); };
                     pagination.appendChild(btn);
                 }
-                // Botão próximo
+
                 const next = document.createElement('button');
                 next.textContent = 'Próxima';
                 next.disabled = currentPage === totalPages;

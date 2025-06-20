@@ -214,23 +214,3 @@ div:hover {
     gap: 8px;
     justify-content: flex-start;
 }
-.btn-home {
-    display: inline-block;
-    margin-top: 18px;
-    padding: 8px 22px;
-    background: linear-gradient(90deg, #205080 0%, #3a6ea5 100%);
-    color: #fff;
-    border-radius: 8px;
-    border: 1.5px solid #205080;
-    font-family: Tahoma, Verdana, Segoe UI, Arial, sans-serif;
-    font-size: 1em;
-    font-weight: 500;
-    text-decoration: none;
-    box-shadow: 1px 1px 0 #fff4, 2px 2px 0 #20508022;
-    transition: background 0.2s, color 0.2s;
-}
-.btn-home:hover {
-    background: #fff;
-    color: #205080;
-    border-color: #205080;
-}
