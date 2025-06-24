@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/styles/styleMyLinks.css" />
+    <link rel="stylesheet" href="./assets/styles/styleBlog.css" />
+    <title>Guilherme Portella - Blog</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Blog & Estudos</h1>
+        <img class="imgCod" src="./assets/images/coding.gif">
+    </div>
+
+    <div class="contatos">
+        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
+        <ul class="contact-list">
+            <li>
+                <a href="index.html"><i class="buton"></i> Home</a>
+            </li>
+            <li>
+                <a href="projects.html"><i class="buton"></i>My Projects</a>
+            </li>
+            <li>
+                <a href="midias.html"><i class="buton"></i>Musicas e jogos</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="conteudoPrincipal">
+        <h2 class="tituloConteudo">Posts Recentes</h2>
+        <div id="blog-posts">
+            <!-- Posts will be loaded here -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; Guilherme Portella</p>
+    </footer>
+
+    <script>
+        // Blog posts data
+        const blogPosts = [
+            {
+                id: 1,
+                title: "Introdução ao Spring Boot",
+                date: "2024-01-15",
+                summary: "Aprenda os conceitos básicos do Spring Boot e como criar sua primeira aplicação",
+                tags: ["Java", "Spring", "Backend"],
+                url: "./posts/spring-boot-intro.html"
+            },
+            // Add more posts here
+        ];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('blog-posts');
+            const POSTS_PER_PAGE = 6;
+            let currentPage = 1;
+            let totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);
+
+            function renderPosts(page) {
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'blog-grid';
+                
+                const start = (page - 1) * POSTS_PER_PAGE;
+                const end = start + POSTS_PER_PAGE;
+                
+                blogPosts.slice(start, end).forEach(post => {
+                    const card = document.createElement('div');
+                    card.className = 'blog-card';
+                    card.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <div class="post-meta">
+                            <span class="post-date">${new Date(post.date).toLocaleDateString('pt-BR')}</span>
+                            <div class="post-tags">
+                                ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <p>${post.summary}</p>
+                        <a href="${post.url}" class="read-more">Ler mais</a>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                container.appendChild(grid);
+                renderPagination();
+            }
+
+            // Reuse your existing pagination logic from projects.html
+            function renderPagination() {
+                // ... (same pagination code as in projects.html)
+            }
+
+            // Initial render
+            renderPosts(currentPage);
+
+            // Mobile menu toggle (reuse your existing menu code)
+            const toggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.contact-list');
+            
+            function checkMenu() {
+                if (window.innerWidth <= 700) {
+                    toggle.style.display = 'block';
+                    menu.classList.remove('show');
+                } else {
+                    toggle.style.display = 'none';
+                    menu.style.display = '';
+                }
+            }
+            
+            toggle.addEventListener('click', function () {
+                menu.classList.toggle('show');
+            });
+            
+            window.addEventListener('resize', checkMenu);
+            checkMenu();
+        });
+    </script>
+</body>
+
+</html>
