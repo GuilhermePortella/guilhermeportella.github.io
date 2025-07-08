@@ -9,11 +9,46 @@
 </head>
 <body>
     <h1>Retro Jump Game</h1>
-    <div class="game-container">
-        <canvas id="gameCanvas" width="800" height="400"></canvas>
-        <div class="score">Score: <span id="scoreDisplay">0</span></div>
-        <div id="startMessage" class="start-message">Pressione ESPAÇO para iniciar!</div>
+    <div class="game-wrapper">
+        <div id="playerForm" class="player-form">
+            <h2>Digite seu nome para jogar</h2>
+            <input type="text" id="playerName" placeholder="Seu nome" maxlength="20">
+            <button id="startButton">Começar Jogo</button>
+        </div>
+        <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <div class="score">Score: <span id="scoreDisplay">0</span></div>
+            <div id="startMessage" class="start-message">Pressione ESPAÇO para iniciar!</div>
+        </div>
+        <div class="ranking-container">
+            <h2>Top 10 Jogadores</h2>
+            <div id="rankingList"></div>
+        </div>
     </div>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyBCHFQ5b9pzojBLyUV5hHMM1PKOTM09KTE",
+        authDomain: "guilhermeportella-47661.firebaseapp.com",
+        databaseURL: "https://guilhermeportella-47661-default-rtdb.firebaseio.com",
+        projectId: "guilhermeportella-47661",
+        storageBucket: "guilhermeportella-47661.firebasestorage.app",
+        messagingSenderId: "86680299174",
+        appId: "1:86680299174:web:caf8beded5dadcee907667",
+        measurementId: "G-PF8LV4SCNN"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
     <script src="game.js"></script>
 </body>
 </html>

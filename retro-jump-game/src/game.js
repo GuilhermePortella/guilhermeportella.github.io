@@ -1,6 +1,14 @@
+// Firebase modular imports
+import { getDatabase, ref, push, query, orderByChild, limitToLast, get } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const playerForm = document.getElementById('playerForm');
+const playerNameInput = document.getElementById('playerName');
+const startButton = document.getElementById('startButton');
+const rankingList = document.getElementById('rankingList');
 
+let currentPlayer = '';
 let player = {
     x: 50,
     y: canvas.height - 60,
@@ -11,21 +19,21 @@ let player = {
     jumpPower: -10,
     score: 0,
     isJumping: false,
-    rotation: 0 // Nova propriedade para rotação
+    rotation: 0
 };
 
 let obstacles = [];
-let obstacleFrequency = 1500; // milliseconds
+let obstacleFrequency = 1500;
 let gameOver = false;
 
-let clouds = Array.from({length: 3}, () => ({
+let clouds = Array.from({ length: 3 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * 100,
     width: 60,
     speed: 1
 }));
 
-let trees = Array.from({length: 4}, () => ({
+let trees = Array.from({ length: 4 }, () => ({
     x: Math.random() * canvas.width,
     width: 40,
     height: 60
@@ -35,6 +43,9 @@ let gameStarted = false;
 const startMessage = document.getElementById('startMessage');
 
 let obstacleInterval;
+
+// Firebase
+const db = getDatabase();
 
 function startGame() {
     if (!gameStarted) {
@@ -59,27 +70,23 @@ function handleKeydown(e) {
 
 function drawInitialScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Desenha o céu
     ctx.fillStyle = '#87CEEB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Desenha o chão
+
     ctx.fillStyle = '#90EE90';
     ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-    
-    // Desenha o jogador
+
     drawPlayer();
 }
 
 function generateObstacle() {
-    const difficultyFactor = Math.floor(player.score / 10); // Aumenta a cada 10 pontos
+    const difficultyFactor = Math.floor(player.score / 10);
     const obstacle = {
         x: canvas.width,
         y: canvas.height - 40,
-        width: 20 + (difficultyFactor * 2), // Aumenta a largura
-        height: 40 + (difficultyFactor * 3), // Aumenta a altura
-        speed: 5 + (difficultyFactor * 0.5) // Aumenta a velocidade
+        width: 20 + (difficultyFactor * 2),
+        height: 40 + (difficultyFactor * 3),
+        speed: 5 + (difficultyFactor * 0.5)
     };
     obstacles.push(obstacle);
 }
@@ -88,28 +95,24 @@ function gameLoop() {
     if (gameOver) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Desenha o céu
+
     ctx.fillStyle = '#87CEEB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Desenha as nuvens
+
     drawClouds();
-    
-    // Desenha o chão
+
     ctx.fillStyle = '#90EE90';
     ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-    
-    // Desenha as árvores
+
     drawTrees();
-    
+
     updatePlayer();
     updateObstacles();
     checkCollisions();
     drawPlayer();
     drawObstacles();
     updateScore();
-    
+
     requestAnimationFrame(gameLoop);
 }
 
@@ -131,16 +134,53 @@ function updateObstacles() {
         if (obstacles[i].x + obstacles[i].width < 0) {
             obstacles.splice(i, 1);
             player.score++;
-            
-            // Ajusta a frequência de geração de obstáculos
+
             if (player.score % 10 === 0) {
                 obstacleFrequency = Math.max(1000, obstacleFrequency - 100);
-                // Reinicia o intervalo com nova frequência
+
                 clearInterval(obstacleInterval);
                 obstacleInterval = setInterval(generateObstacle, obstacleFrequency);
             }
         }
     }
+}
+
+async function saveScore(name, score) {
+    const scoresRef = ref(db, 'scores');
+    await push(scoresRef, { name, score: Number(score) });
+    updateRankingDisplay();
+}
+
+async function updateRankingDisplay() {
+    const scoresRef = ref(db, 'scores');
+    const topScoresQuery = query(scoresRef, orderByChild('score'), limitToLast(10));
+    const snapshot = await get(topScoresQuery);
+    let scores = [];
+    snapshot.forEach(child => {
+        scores.push(child.val());
+    });
+
+    scores.sort((a, b) => b.score - a.score);
+    rankingList.innerHTML = '';
+    scores.forEach((score, index) => {
+        const rankingItem = document.createElement('div');
+        rankingItem.className = 'ranking-item';
+        rankingItem.innerHTML = `
+            <span class="ranking-position">#${index + 1} ${score.name}</span>
+            <span class="ranking-score">${score.score}</span>
+        `;
+        rankingList.appendChild(rankingItem);
+    });
+}
+
+function handleGameOver() {
+    gameOver = true;
+    saveScore(currentPlayer, player.score);
+    startMessage.textContent = 'Game Over! Pressione ESPAÇO para reiniciar';
+    startMessage.classList.remove('hidden');
+    setTimeout(() => {
+        document.location.reload();
+    }, 2000);
 }
 
 function checkCollisions() {
@@ -149,42 +189,35 @@ function checkCollisions() {
             player.x + player.width > obstacle.x &&
             player.y < obstacle.y + obstacle.height &&
             player.y + player.height > obstacle.y) {
-            gameOver = true;
-            startMessage.textContent = 'Game Over! Pressione ESPAÇO para reiniciar';
-            startMessage.classList.remove('hidden');
-            setTimeout(() => {
-                document.location.reload();
-            }, 2000);
+            handleGameOver();
+            return;
         }
     }
 }
 
 function drawPlayer() {
     ctx.save();
-    ctx.translate(player.x + player.width/2, player.y + player.height/2);
-    
-    // Rotação baseada no movimento vertical
+    ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+
     if (player.isJumping) {
-        player.rotation = player.dy * 2; // Rotação proporcional à velocidade vertical
+        player.rotation = player.dy * 2;
     } else {
         player.rotation = 0;
     }
     ctx.rotate(player.rotation * Math.PI / 180);
-    
-    // Corpo principal
+
     ctx.fillStyle = 'blue';
-    ctx.fillRect(-player.width/2, -player.height/2, player.width, player.height);
-    
-    // Efeito de "propulsão" quando pulando
+    ctx.fillRect(-player.width / 2, -player.height / 2, player.width, player.height);
+
     if (player.isJumping) {
         ctx.fillStyle = '#FFD700';
         ctx.beginPath();
-        ctx.moveTo(-player.width/2, player.height/2);
-        ctx.lineTo(0, player.height/2 + 15);
-        ctx.lineTo(player.width/2, player.height/2);
+        ctx.moveTo(-player.width / 2, player.height / 2);
+        ctx.lineTo(0, player.height / 2 + 15);
+        ctx.lineTo(player.width / 2, player.height / 2);
         ctx.fill();
     }
-    
+
     ctx.restore();
 }
 
@@ -203,7 +236,7 @@ function drawClouds() {
         ctx.arc(cloud.x - 15, cloud.y + 10, 15, 0, Math.PI * 2);
         ctx.arc(cloud.x + 15, cloud.y + 10, 15, 0, Math.PI * 2);
         ctx.fill();
-        
+
         cloud.x -= cloud.speed;
         if (cloud.x < -60) {
             cloud.x = canvas.width + 60;
@@ -214,18 +247,17 @@ function drawClouds() {
 
 function drawTrees() {
     for (let tree of trees) {
-        // Tronco
+
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(tree.x, canvas.height - tree.height - 30, 20, tree.height);
-        
-        // Copa
+
         ctx.fillStyle = '#228B22';
         ctx.beginPath();
         ctx.moveTo(tree.x - 20, canvas.height - tree.height - 30);
         ctx.lineTo(tree.x + 40, canvas.height - tree.height - 30);
         ctx.lineTo(tree.x + 10, canvas.height - tree.height - 70);
         ctx.fill();
-        
+
         tree.x -= 2;
         if (tree.x < -40) {
             tree.x = canvas.width + 40;
@@ -237,4 +269,16 @@ function updateScore() {
     document.getElementById('scoreDisplay').textContent = player.score;
 }
 
-startGame();
+
+startButton.addEventListener('click', () => {
+    const name = playerNameInput.value.trim();
+    if (name) {
+        currentPlayer = name;
+        playerForm.style.display = 'none';
+        startGame();
+    } else {
+        alert('Por favor, digite seu nome para começar!');
+    }
+});
+
+updateRankingDisplay();
