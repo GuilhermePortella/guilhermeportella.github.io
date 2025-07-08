@@ -12,17 +12,19 @@
     <div class="game-wrapper">
         <div id="playerForm" class="player-form">
             <h2>Digite seu nome para jogar</h2>
-            <input type="text" id="playerName" placeholder="Seu nome" maxlength="20">
+            <input type="text" id="playerName" placeholder="Seu nome" maxlength="20" required>
             <button id="startButton">Começar Jogo</button>
         </div>
-        <div class="game-container">
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
-            <div class="score">Score: <span id="scoreDisplay">0</span></div>
-            <div id="startMessage" class="start-message">Pressione ESPAÇO para iniciar!</div>
-        </div>
-        <div class="ranking-container">
-            <h2>Top 10 Jogadores</h2>
-            <div id="rankingList"></div>
+        <div class="main-content">
+            <div class="game-container">
+                <canvas id="gameCanvas" width="800" height="400"></canvas>
+                <div class="score">Score: <span id="scoreDisplay">0</span></div>
+                <div id="startMessage" class="start-message">Pressione ESPAÇO para iniciar!</div>
+            </div>
+            <div class="ranking-container">
+                <h2>Top 10 Jogadores</h2>
+                <div id="rankingList"></div>
+            </div>
         </div>
     </div>
     <script type="module" src="game.js"></script>
