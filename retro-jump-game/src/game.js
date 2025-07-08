@@ -1,5 +1,21 @@
-// Firebase modular imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getDatabase, ref, push, query, orderByChild, limitToLast, get } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBCHFQ5b9pzojBLyUV5hHMM1PKOTM09KTE",
+  authDomain: "guilhermeportella-47661.firebaseapp.com",
+  databaseURL: "https://guilhermeportella-47661-default-rtdb.firebaseio.com",
+  projectId: "guilhermeportella-47661",
+  storageBucket: "guilhermeportella-47661.firebasestorage.app",
+  messagingSenderId: "86680299174",
+  appId: "1:86680299174:web:caf8beded5dadcee907667",
+  measurementId: "G-PF8LV4SCNN"
+};
+
+// Inicializa o Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -43,9 +59,6 @@ let gameStarted = false;
 const startMessage = document.getElementById('startMessage');
 
 let obstacleInterval;
-
-// Firebase
-const db = getDatabase();
 
 function startGame() {
     if (!gameStarted) {
@@ -159,28 +172,33 @@ async function updateRankingDisplay() {
     snapshot.forEach(child => {
         scores.push(child.val());
     });
-
+    console.log('Ranking lido do Firebase:', scores);
     scores.sort((a, b) => b.score - a.score);
     rankingList.innerHTML = '';
-    scores.forEach((score, index) => {
-        const rankingItem = document.createElement('div');
-        rankingItem.className = 'ranking-item';
-        rankingItem.innerHTML = `
-            <span class="ranking-position">#${index + 1} ${score.name}</span>
-            <span class="ranking-score">${score.score}</span>
-        `;
-        rankingList.appendChild(rankingItem);
-    });
+    if (scores.length === 0) {
+        rankingList.innerHTML = '<div style="text-align:center;color:#888;">Nenhum dado de ranking ainda.</div>';
+    } else {
+        scores.forEach((score, index) => {
+            const rankingItem = document.createElement('div');
+            rankingItem.className = 'ranking-item';
+            rankingItem.innerHTML = `
+                <span class="ranking-position">#${index + 1} ${score.name}</span>
+                <span class="ranking-score">${score.score}</span>
+            `;
+            rankingList.appendChild(rankingItem);
+        });
+    }
 }
 
 function handleGameOver() {
     gameOver = true;
-    saveScore(currentPlayer, player.score);
-    startMessage.textContent = 'Game Over! Pressione ESPAÇO para reiniciar';
-    startMessage.classList.remove('hidden');
-    setTimeout(() => {
-        document.location.reload();
-    }, 2000);
+    saveScore(currentPlayer, player.score).then(() => {
+        startMessage.textContent = 'Game Over! Pressione ESPAÇO para reiniciar';
+        startMessage.classList.remove('hidden');
+        setTimeout(() => {
+            document.location.reload();
+        }, 2000);
+    });
 }
 
 function checkCollisions() {
