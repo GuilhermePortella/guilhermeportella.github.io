@@ -15,8 +15,66 @@ h1 {
 
 .game-wrapper {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
-    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.player-form {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.player-form h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.player-form input {
+    width: 80%;
+    max-width: 300px;
+    display: block;
+    margin: 0 auto 15px auto;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.player-form input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.player-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.player-form button:hover {
+    background-color: #45a049;
+}
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
 }
 
 .game-container {
@@ -25,7 +83,7 @@ h1 {
 
 canvas {
     border: 2px solid #333;
-    background-color: white;
+    border-radius: 5px;
 }
 
 button {
@@ -49,7 +107,9 @@ button:hover {
     left: 10px;
     font-size: 24px;
     color: #333;
-    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
 #scoreDisplay {
@@ -62,55 +122,17 @@ button:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #333;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
     border-radius: 10px;
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .hidden {
     display: none;
-}
-
-.player-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.player-form h2 {
-    margin-top: 0;
-    color: #333;
-    font-size: 20px;
-}
-
-.player-form input {
-    width: 200px;
-    padding: 8px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.player-form button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-.player-form button:hover {
-    background-color: #45a049;
 }
 
 .ranking-container {
@@ -119,6 +141,8 @@ button:hover {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     min-width: 250px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .ranking-container h2 {
@@ -137,6 +161,11 @@ button:hover {
     justify-content: space-between;
     padding: 8px;
     border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.ranking-item:hover {
+    background-color: #f9f9f9;
 }
 
 .ranking-item:last-child {
@@ -145,7 +174,7 @@ button:hover {
 
 .ranking-position {
     font-weight: bold;
-    color: #666;
+    color: #333;
 }
 
 .ranking-score {
@@ -160,15 +189,14 @@ button:hover {
 }
 
 @media (max-width: 1100px) {
-    .game-wrapper {
+    .main-content {
         flex-direction: column;
         align-items: center;
-        gap: 10px;
     }
+    
     .ranking-container {
-        min-width: unset;
         width: 100%;
-        margin-top: 10px;
+        max-width: 800px;
     }
 }
 

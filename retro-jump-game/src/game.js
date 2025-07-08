@@ -60,6 +60,10 @@ const startMessage = document.getElementById('startMessage');
 
 let obstacleInterval;
 
+// Adicionar variáveis para controle de dificuldade
+let minObstacleDistance = 200; // Distância mínima entre obstáculos
+let lastObstacleX = 0; // Posição X do último obstáculo
+
 function startGame() {
     if (!gameStarted) {
         document.addEventListener('keydown', handleKeydown);
@@ -94,6 +98,8 @@ function drawInitialScene() {
 
 function generateObstacle() {
     const difficultyFactor = Math.floor(player.score / 10);
+    
+    // Aumenta a velocidade e tamanho com base na pontuação
     const obstacle = {
         x: canvas.width,
         y: canvas.height - 40,
@@ -101,7 +107,22 @@ function generateObstacle() {
         height: 40 + (difficultyFactor * 3),
         speed: 5 + (difficultyFactor * 0.5)
     };
-    obstacles.push(obstacle);
+
+    // Diminui a distância mínima entre obstáculos conforme a pontuação aumenta
+    minObstacleDistance = Math.max(150, 200 - (difficultyFactor * 5));
+
+    // Verifica se há espaço suficiente para gerar um novo obstáculo
+    const lastObstacle = obstacles[obstacles.length - 1];
+    if (!lastObstacle || (lastObstacle.x < canvas.width - minObstacleDistance)) {
+        // Adiciona variação aleatória na altura dos obstáculos
+        obstacle.height += Math.random() * 20 - 10;
+        
+        // Adiciona variação na velocidade
+        obstacle.speed += Math.random() * 2 - 1;
+
+        obstacles.push(obstacle);
+        lastObstacleX = obstacle.x;
+    }
 }
 
 function gameLoop() {
@@ -148,9 +169,9 @@ function updateObstacles() {
             obstacles.splice(i, 1);
             player.score++;
 
-            if (player.score % 10 === 0) {
-                obstacleFrequency = Math.max(1000, obstacleFrequency - 100);
-
+            // Ajusta a frequência de geração de obstáculos
+            if (player.score % 5 === 0) { // Mudado de 10 para 5 para aumentar a dificuldade mais rapidamente
+                obstacleFrequency = Math.max(800, obstacleFrequency - 100); // Diminuído o mínimo de 1000 para 800
                 clearInterval(obstacleInterval);
                 obstacleInterval = setInterval(generateObstacle, obstacleFrequency);
             }
