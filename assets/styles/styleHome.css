@@ -1,5 +1,13 @@
 @import url('./styleMyLinks.css');
 
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+}
+
 html {
   position: relative;
   min-height: 100%;
@@ -45,6 +53,11 @@ body {
   text-align: justify;
   padding-left: 2% !important;
   margin-bottom: 15%;
+  color: #2c3e50;
+  background-color: #e5e2e2; /* cinza suave e retro */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .tituloConteudo {
@@ -131,8 +144,8 @@ div:hover {
     margin: 32px 0 24px 0;
 }
 .tech-card {
-    background: #e5e2e2; /* cor de fundo igual ao site */
-    border: 2px solid #222; /* borda escura e fina */
+    background: #e5e2e2; /* cinza suave e retro */
+    border: 2px solid #222;
     border-radius: 6px;     /* borda levemente arredondada */
     width: 270px;
     min-height: 180px;
@@ -142,6 +155,11 @@ div:hover {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+.tech-card:hover {
+    transform: translateY(-2px);
 }
 .tech-card strong {
   display: block;
@@ -167,31 +185,34 @@ div:hover {
     display: flex;
     align-items: center;
     word-break: break-word;
+    margin-bottom: 0.5rem;
+    color: #34495e;
 }
-@media (max-width: 900px) {
-  .tech-grid {
-    flex-direction: column;
-    align-items: center;
-  }
-  .tech-card {
-    width: 90vw;
-    min-width: 0;
-    max-width: 98vw;
-  }
-}
-@media (max-width: 900px) {
-    .tech-cards-container {
-        flex-direction: column;
-        align-items: center;
+
+/* Ajuste para telas de alta resolução */
+@media screen and (min-width: 1920px) {
+    body {
+        font-size: 18px;
     }
-    .tech-card {
-        width: 90%;
-        min-width: 220px;
+    
+    .textPrincipal {
+        max-width: 1000px;
+    }
+}
+
+/* Ajuste para melhorar a legibilidade em monitores grandes */
+@media screen and (min-width: 2560px) {
+    body {
+        font-size: 20px;
+    }
+    
+    .textPrincipal {
+        max-width: 1200px;
     }
 }
 
 .midia-section {
-    background: #e5e2e2;
+    background: #e5e2e2; /* cinza suave e retro */
     border-radius: 10px;
     box-shadow: 0 2px 8px #0001;
     padding: 24px 18px 18px 18px;
@@ -213,4 +234,15 @@ div:hover {
     align-items: center;
     gap: 8px;
     justify-content: flex-start;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #2980b9;
+    text-decoration: none;
 }
