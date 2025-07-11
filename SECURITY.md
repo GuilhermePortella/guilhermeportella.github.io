@@ -1,21 +1,22 @@
-# Security Policy
+# Política de Segurança
 
-## Supported Versions
+## Versões Suportadas
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Este projeto é um portfólio pessoal e não possui versões lançadas formalmente. O código é atualizado continuamente e recomenda-se sempre utilizar a versão mais recente disponível neste repositório.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+## Relato de Vulnerabilidades
 
-## Reporting a Vulnerability
+Se você encontrar alguma vulnerabilidade de segurança neste site ou em qualquer código relacionado, por favor, siga os passos abaixo:
 
-Use this section to tell people how to report a vulnerability.
+1. **Envie um e-mail para:** [guilherme.portella.dev@gmail.com](mailto:guilhermeportella2@gmail.com)
+2. Forneça detalhes suficientes para que a vulnerabilidade possa ser reproduzida e analisada.
+3. Aguarde um retorno em até 7 dias úteis.
+4. Se confirmado, a correção será priorizada e você será informado sobre o andamento.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+## Boas Práticas
+
+- Não envie informações sensíveis nos relatórios públicos.
+- Sempre utilize a versão mais recente do site.
+
+---
+Obrigado por contribuir para a segurança deste projeto!
