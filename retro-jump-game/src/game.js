@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getDatabase, ref, push, query, orderByChild, limitToLast, get } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
-// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBCHFQ5b9pzojBLyUV5hHMM1PKOTM09KTE",
   authDomain: "guilhermeportella-47661.firebaseapp.com",
@@ -13,7 +12,6 @@ const firebaseConfig = {
   measurementId: "G-PF8LV4SCNN"
 };
 
-// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -60,9 +58,8 @@ const startMessage = document.getElementById('startMessage');
 
 let obstacleInterval;
 
-// Adicionar variáveis para controle de dificuldade
-let minObstacleDistance = 200; // Distância mínima entre obstáculos
-let lastObstacleX = 0; // Posição X do último obstáculo
+let minObstacleDistance = 200; 
+let lastObstacleX = 0;
 
 function startGame() {
     if (!gameStarted) {
@@ -99,7 +96,6 @@ function drawInitialScene() {
 function generateObstacle() {
     const difficultyFactor = Math.floor(player.score / 10);
     
-    // Aumenta a velocidade e tamanho com base na pontuação
     const obstacle = {
         x: canvas.width,
         y: canvas.height - 40,
@@ -108,16 +104,12 @@ function generateObstacle() {
         speed: 5 + (difficultyFactor * 0.5)
     };
 
-    // Diminui a distância mínima entre obstáculos conforme a pontuação aumenta
     minObstacleDistance = Math.max(150, 200 - (difficultyFactor * 5));
 
-    // Verifica se há espaço suficiente para gerar um novo obstáculo
     const lastObstacle = obstacles[obstacles.length - 1];
     if (!lastObstacle || (lastObstacle.x < canvas.width - minObstacleDistance)) {
-        // Adiciona variação aleatória na altura dos obstáculos
         obstacle.height += Math.random() * 20 - 10;
         
-        // Adiciona variação na velocidade
         obstacle.speed += Math.random() * 2 - 1;
 
         obstacles.push(obstacle);
@@ -169,9 +161,8 @@ function updateObstacles() {
             obstacles.splice(i, 1);
             player.score++;
 
-            // Ajusta a frequência de geração de obstáculos
-            if (player.score % 5 === 0) { // Mudado de 10 para 5 para aumentar a dificuldade mais rapidamente
-                obstacleFrequency = Math.max(800, obstacleFrequency - 100); // Diminuído o mínimo de 1000 para 800
+            if (player.score % 5 === 0) { 
+                obstacleFrequency = Math.max(800, obstacleFrequency - 100); 
                 clearInterval(obstacleInterval);
                 obstacleInterval = setInterval(generateObstacle, obstacleFrequency);
             }
