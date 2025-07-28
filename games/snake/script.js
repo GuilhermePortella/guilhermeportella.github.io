@@ -122,8 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
    function handleKeyPress(event) {
       const keyPressed = event.key;
 
-      // Bloqueia os controles do jogo se o modal de nome estiver visível.
-      // Isso previne que o jogo comece acidentalmente (ex: com a barra de espaço).
       if (nameModal.style.display !== 'none') {
          return;
       }
@@ -158,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
    }
 
    function saveScoreToFirebase(name, score) {
-      if (!name || score === 0) return; // Não salva se não houver nome ou pontuação
+      if (!name || score === 0) return;
       const newScoreRef = database.ref('snake_scores').push();
       newScoreRef.set({
          name: name,
@@ -174,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
          snapshot.forEach((childSnapshot) => {
             scores.push(childSnapshot.val());
          });
-         // Inverte para mostrar o maior score primeiro
          scores.reverse().forEach((scoreData) => {
             const li = document.createElement('li');
             li.textContent = `${scoreData.name}: ${scoreData.score}`;
@@ -188,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
    restartButton.addEventListener('click', () => {
       restartButton.style.display = 'none';
       nameModal.style.display = 'flex';
-      // O ranking agora é fixo e atualiza em tempo real, não precisa recarregar aqui.
    });
 
    startGameButton.addEventListener('click', () => {
@@ -199,13 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
       startGame();
    });
 
-   // Permite iniciar o jogo pressionando Enter no campo de nome
    playerNameInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-         event.preventDefault(); // Previne o comportamento padrão do Enter
-         startGameButton.click(); // Simula o clique no botão de iniciar
+         event.preventDefault(); 
+         startGameButton.click();
       }
    });
 
-   loadLeaderboard(); // Carrega o ranking quando a página abre
+   loadLeaderboard();
 });

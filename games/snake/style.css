@@ -159,7 +159,7 @@ body {
 
     #leaderboard {
         width: 90%;
-        max-width: 504px; /* Ajustado para o novo tamanho do canvas (500px + 4px de borda) */
+        max-width: 504px;
         margin-top: 20px;
     }
 }
