@@ -22,7 +22,7 @@ body {
 #gameCanvas {
     background-color: #000;
     border: 2px solid #444;
-    box-shadow: 0 0 15px #0f0;
+    box-shadow: 0 0 15px #00aaff;
 }
 
 #score-board {
@@ -36,13 +36,130 @@ body {
     padding: 10px 20px;
     font-size: 1em;
     cursor: pointer;
-    background-color: #008f11;
+    background-color: #0088cc;
     color: white;
     border: none;
     border-radius: 5px;
-    box-shadow: 0 0 10px #0f0;
+    box-shadow: 0 0 10px #00aaff;
 }
 
 #restart-button:hover {
-    background-color: #00af16;
+    background-color: #0099e6;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    text-align: center;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid #00aaff;
+    box-shadow: 0 0 20px #00aaff;
+    font-family: 'Poppins', sans-serif;
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #00aaff;
+}
+
+.modal-content input {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    width: 80%;
+    border-radius: 5px;
+    border: 1px solid #00aaff;
+    background: #333;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #00aaff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.modal-content button:hover {
+    background-color: #fff;
+}
+
+.game-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+#leaderboard {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #00aaff;
+    width: 280px;
+    box-shadow: 0 0 20px #00aaff;
+}
+
+#leaderboard h3 {
+    margin-top: 0;
+    color: #00aaff;
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+#leaderboard-list {
+    list-style-position: inside;
+    padding-left: 0;
+    text-align: left;
+    max-height: 320px;
+    overflow-y: auto;
+    color: #ccc;
+}
+
+#leaderboard-list li {
+    padding: 8px 10px;
+    border-bottom: 1px solid #444;
+    font-size: 0.9em;
+}
+
+#leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 800px) {
+    .game-area {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #leaderboard {
+        width: 90%;
+        max-width: 504px; /* Ajustado para o novo tamanho do canvas (500px + 4px de borda) */
+        margin-top: 20px;
+    }
 }
