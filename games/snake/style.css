@@ -128,7 +128,7 @@ body {
     margin-top: 0;
     color: #00aaff;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1.3em;
     margin-bottom: 15px;
 }
 
@@ -144,7 +144,7 @@ body {
 #leaderboard-list li {
     padding: 8px 10px;
     border-bottom: 1px solid #444;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 #leaderboard-list li:last-child {

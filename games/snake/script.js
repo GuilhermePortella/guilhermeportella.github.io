@@ -121,7 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
    function handleKeyPress(event) {
       const keyPressed = event.key;
-      if (!gameStarted) {
+
+      // Bloqueia os controles do jogo se o modal de nome estiver visível.
+      // Isso previne que o jogo comece acidentalmente (ex: com a barra de espaço).
+      if (nameModal.style.display !== 'none') {
+         return;
+      }
+      if (!gameStarted || gameOver) {
          return;
       }
 
@@ -191,6 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
          playerName = playerName.substring(0, 12);
       }
       startGame();
+   });
+
+   // Permite iniciar o jogo pressionando Enter no campo de nome
+   playerNameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+         event.preventDefault(); // Previne o comportamento padrão do Enter
+         startGameButton.click(); // Simula o clique no botão de iniciar
+      }
    });
 
    loadLeaderboard(); // Carrega o ranking quando a página abre
