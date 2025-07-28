@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game - Guilherme Portella</title>
+    <link rel="stylesheet" href="../../assets/styles/styleMyLinks.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Classic Snake Game</h1>
+    </div>
+
+    <div class="contatos">
+        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
+        <ul class="contact-list">
+            <li>
+                <a href="../../index.html"><i class="buton"></i> Home</a>
+            </li>
+            <li>
+                <a href="../../projects.html"><i class="buton"></i>My Projects</a>
+            </li>
+            <li>
+                <a href="../../midias.html"><i class="buton"></i>Musicas e jogos</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="conteudoPrincipal">
+        <div id="game-container">
+            <div id="score-board">Score: <span id="score">0</span></div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <button id="restart-button" style="display:none;">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; Guilherme Portella</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.menu-toggle');
+            const menu = document.querySelector('.contact-list');
+            function checkMenu() {
+                if (window.innerWidth <= 700) {
+                    toggle.style.display = 'block';
+                    menu.classList.remove('show');
+                } else {
+                    toggle.style.display = 'none';
+                    menu.style.display = '';
+                }
+            }
+            toggle.addEventListener('click', () => menu.classList.toggle('show'));
+            window.addEventListener('resize', checkMenu);
+            checkMenu();
+        });
+    </script>
+</body>
+
+</html>
