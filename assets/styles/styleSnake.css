@@ -20,8 +20,8 @@ body {
 }
 
 #canvas-wrapper {
-    position: relative; /* Define o contexto de posicionamento para o modal */
-    line-height: 0; /* Remove espaço extra que pode aparecer abaixo do canvas */
+    position: relative;
+    line-height: 0;
 }
 
 #gameCanvas {
@@ -41,12 +41,12 @@ body {
 .heart {
     font-size: 24px;
     margin: 0 5px;
-    color: #444; /* Cor da vida inativa */
+    color: #444;
     transition: color 0.3s ease;
 }
 
 .heart.active {
-    color: #ff4757; /* Cor da vida ativa (vermelho) */
+    color: #ff4757; 
 }
 
 #score-board {
