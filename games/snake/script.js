@@ -121,7 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
    function handleKeyPress(event) {
       const keyPressed = event.key;
-      if (!gameStarted) {
+
+      if (nameModal.style.display !== 'none') {
+         return;
+      }
+      if (!gameStarted || gameOver) {
          return;
       }
 
@@ -152,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
    }
 
    function saveScoreToFirebase(name, score) {
-      if (!name || score === 0) return; // Não salva se não houver nome ou pontuação
+      if (!name || score === 0) return;
       const newScoreRef = database.ref('snake_scores').push();
       newScoreRef.set({
          name: name,
@@ -168,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
          snapshot.forEach((childSnapshot) => {
             scores.push(childSnapshot.val());
          });
-         // Inverte para mostrar o maior score primeiro
          scores.reverse().forEach((scoreData) => {
             const li = document.createElement('li');
             li.textContent = `${scoreData.name}: ${scoreData.score}`;
@@ -182,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
    restartButton.addEventListener('click', () => {
       restartButton.style.display = 'none';
       nameModal.style.display = 'flex';
-      // O ranking agora é fixo e atualiza em tempo real, não precisa recarregar aqui.
    });
 
    startGameButton.addEventListener('click', () => {
@@ -193,5 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
       startGame();
    });
 
-   loadLeaderboard(); // Carrega o ranking quando a página abre
+   playerNameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+         event.preventDefault(); 
+         startGameButton.click();
+      }
+   });
+
+   loadLeaderboard();
 });
