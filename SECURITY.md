@@ -8,7 +8,7 @@ Este projeto é um portfólio pessoal e não possui versões lançadas formalmen
 
 Se você encontrar alguma vulnerabilidade de segurança neste site ou em qualquer código relacionado, por favor, siga os passos abaixo:
 
-1. **Envie um e-mail para:** [guilherme.portella.dev@gmail.com](mailto:guilhermeportella2@gmail.com)
+1. **Envie um e-mail para:** [guilhermeportella.dev@gmail.com](mailto:guilhermeportella.dev@gmail.com)
 2. Forneça detalhes suficientes para que a vulnerabilidade possa ser reproduzida e analisada.
 3. Aguarde um retorno em até 7 dias úteis.
 4. Se confirmado, a correção será priorizada e você será informado sobre o andamento.
