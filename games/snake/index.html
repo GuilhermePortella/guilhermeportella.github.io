@@ -5,35 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game - Guilherme Portella</title>
-    <link rel="stylesheet" href="../../assets/styles/styleMyLinks.css" />
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h2>Snake Game</h2>
+            <p>Digite seu nome para jogar</p>
+            <input type="text" id="playerNameInput" placeholder="Seu Nome" maxlength="12">
+            <button id="start-game-button">Iniciar Jogo</button>
+        </div>
+    </div>
+
     <div class="container">
         <h1>Classic Snake Game</h1>
     </div>
 
-    <div class="contatos">
-        <button class="menu-toggle" aria-label="Abrir menu">&#9776;</button>
-        <ul class="contact-list">
-            <li>
-                <a href="../../index.html"><i class="buton"></i> Home</a>
-            </li>
-            <li>
-                <a href="../../projects.html"><i class="buton"></i>My Projects</a>
-            </li>
-            <li>
-                <a href="../../midias.html"><i class="buton"></i>Musicas e jogos</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="conteudoPrincipal">
-        <div id="game-container">
-            <div id="score-board">Score: <span id="score">0</span></div>
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <button id="restart-button" style="display:none;">Jogar Novamente</button>
+    <div class="conteudoPrincipal"> <!-- Este será o container principal -->
+        <div class="game-area"> <!-- Este agrupa o jogo e o ranking lado a lado -->
+            <div id="game-container">
+                <div id="score-board">Score: <span id="score">0</span></div>
+                <canvas id="gameCanvas" width="500" height="500"></canvas>
+                <button id="restart-button" style="display:none;">Jogar Novamente</button>
+            </div>
+            <div id="leaderboard">
+                <h3>🏆 Top 10 Jogadores 🏆</h3>
+                <ol id="leaderboard-list"></ol>
+            </div>
         </div>
     </div>
 
@@ -41,25 +40,10 @@
         <p>&copy; Guilherme Portella</p>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggle = document.querySelector('.menu-toggle');
-            const menu = document.querySelector('.contact-list');
-            function checkMenu() {
-                if (window.innerWidth <= 700) {
-                    toggle.style.display = 'block';
-                    menu.classList.remove('show');
-                } else {
-                    toggle.style.display = 'none';
-                    menu.style.display = '';
-                }
-            }
-            toggle.addEventListener('click', () => menu.classList.toggle('show'));
-            window.addEventListener('resize', checkMenu);
-            checkMenu();
-        });
-    </script>
 </body>
 
 </html>
