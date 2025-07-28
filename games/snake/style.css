@@ -136,8 +136,6 @@ body {
     list-style-position: inside;
     padding-left: 0;
     text-align: left;
-    max-height: 320px;
-    overflow-y: auto;
     color: #ccc;
 }
 
