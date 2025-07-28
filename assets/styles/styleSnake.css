@@ -19,10 +19,34 @@ body {
     align-items: center;
 }
 
+#canvas-wrapper {
+    position: relative; /* Define o contexto de posicionamento para o modal */
+    line-height: 0; /* Remove espaço extra que pode aparecer abaixo do canvas */
+}
+
 #gameCanvas {
     background-color: #000;
     border: 2px solid #444;
     box-shadow: 0 0 15px #00aaff;
+}
+
+#lives-container {
+    margin-bottom: 5px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heart {
+    font-size: 24px;
+    margin: 0 5px;
+    color: #444; /* Cor da vida inativa */
+    transition: color 0.3s ease;
+}
+
+.heart.active {
+    color: #ff4757; /* Cor da vida ativa (vermelho) */
 }
 
 #score-board {
@@ -48,7 +72,7 @@ body {
 }
 
 .modal {
-    position: fixed;
+    position: absolute; /* Posiciona o modal sobre o canvas-wrapper */
     top: 0;
     left: 0;
     width: 100%;
@@ -64,7 +88,7 @@ body {
 
 .modal-content {
     background: #1a1a1a;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     border: 2px solid #00aaff;
     box-shadow: 0 0 20px #00aaff;
@@ -82,7 +106,7 @@ body {
     display: block;
     margin: 15px auto;
     padding: 10px;
-    width: 80%;
+    width: 90%;
     border-radius: 5px;
     border: 1px solid #00aaff;
     background: #333;
@@ -105,6 +129,19 @@ body {
 
 .modal-content button:hover {
     background-color: #fff;
+}
+
+.game-instructions {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #ccc;
+    text-align: left;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+}
+
+.game-instructions p {
+    margin: 20px 0;
 }
 
 .game-area {
