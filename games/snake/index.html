@@ -5,19 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game - Guilherme Portella</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./../../assets/styles/styleSnake.css" />
 </head>
 
 <body>
-    <div id="name-modal" class="modal">
-        <div class="modal-content">
-            <h2>Snake Game</h2>
-            <p>Digite seu nome para jogar</p>
-            <input type="text" id="playerNameInput" placeholder="Seu Nome" maxlength="12">
-            <button id="start-game-button">Iniciar Jogo</button>
-        </div>
-    </div>
-
     <div class="container">
         <h1>Classic Snake Game</h1>
     </div>
@@ -25,8 +16,19 @@
     <div class="conteudoPrincipal">
         <div class="game-area">
             <div id="game-container">
+                <div id="lives-container"></div>
                 <div id="score-board">Score: <span id="score">0</span></div>
-                <canvas id="gameCanvas" width="500" height="500"></canvas>
+                <div id="canvas-wrapper">
+                    <div id="name-modal" class="modal">
+                        <div class="modal-content">
+                            <h2>Snake Game</h2>
+                            <p>Digite seu nome para jogar</p>
+                            <input type="text" id="playerNameInput" placeholder="Seu Nome" maxlength="12">
+                            <button id="start-game-button">Iniciar Jogo</button>
+                        </div>
+                    </div>
+                    <canvas id="gameCanvas" width="500" height="500"></canvas>
+                </div>
                 <button id="restart-button" style="display:none;">Jogar Novamente</button>
             </div>
             <div id="leaderboard">

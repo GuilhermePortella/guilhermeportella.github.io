@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
    const playerNameInput = document.getElementById('playerNameInput');
    const startGameButton = document.getElementById('start-game-button');
    const leaderboardList = document.getElementById('leaderboard-list');
+   const livesContainer = document.getElementById('lives-container');
 
    const gridSize = 20;
    let snake = [];
@@ -18,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
    let gameOver = false;
    let gameInterval = null;
    let gameStarted = false;
+   let lives = 0;
+   let gameSpeed = 150;
+   const INITIAL_SPEED = 150;
+   const MAX_LIVES = 3;
+   const lifeMilestones = [50, 100, 150];
+   let awardedMilestones = [];
 
    const firebaseConfig = {
       apiKey: "AIzaSyBGwL4mcZXQd4p089oXJFOWMQPSMwrKhCc",
@@ -67,13 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
-         gameOver = true;
+         handleCollision();
          return;
       }
 
       for (let i = 1; i < snake.length; i++) {
          if (head.x === snake[i].x && head.y === snake[i].y) {
-            gameOver = true;
+            handleCollision();
             return;
          }
       }
@@ -83,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (head.x === food.x && head.y === food.y) {
          score++;
          scoreElement.textContent = score;
+         checkAndAwardLife();
+         checkAndIncreaseSpeed();
          generateFood();
       } else {
          snake.pop();
@@ -119,6 +128,57 @@ document.addEventListener('DOMContentLoaded', () => {
       } while (foodIsOnSnake);
    }
 
+   function updateHeartsDisplay() {
+      livesContainer.innerHTML = '';
+      for (let i = 0; i < MAX_LIVES; i++) {
+         const heart = document.createElement('span');
+         heart.classList.add('heart');
+         heart.textContent = '❤';
+         if (i < lives) {
+            heart.classList.add('active');
+         }
+         livesContainer.appendChild(heart);
+      }
+   }
+
+   function handleCollision() {
+      if (lives > 0) {
+         lives--;
+         updateHeartsDisplay();
+         const currentLength = snake.length;
+         snake = [];
+         const startX = 10;
+         const startY = 10;
+         for (let i = 0; i < currentLength; i++) {
+            snake.push({ x: startX - i, y: startY });
+         }
+         direction = 'right';
+         nextDirection = 'right';
+      } else {
+         gameOver = true;
+      }
+   }
+
+   function checkAndAwardLife() {
+      lifeMilestones.forEach(milestone => {
+         if (score >= milestone && !awardedMilestones.includes(milestone)) {
+            if (lives < MAX_LIVES) {
+               lives++;
+               updateHeartsDisplay();
+            }
+            awardedMilestones.push(milestone);
+         }
+      });
+   }
+
+   function checkAndIncreaseSpeed() {
+      if (score > 0 && score % 20 === 0) {
+         gameSpeed = Math.max(50, gameSpeed * 0.96); // 4% faster, with a 50ms minimum interval
+         clearInterval(gameInterval);
+         gameInterval = setInterval(main, gameSpeed);
+      }
+   }
+
    function handleKeyPress(event) {
       const keyPressed = event.key;
 
@@ -148,11 +208,15 @@ document.addEventListener('DOMContentLoaded', () => {
       nextDirection = 'right';
       score = 0;
       scoreElement.textContent = score;
+      lives = 0;
+      awardedMilestones = [];
+      gameSpeed = INITIAL_SPEED;
+      updateHeartsDisplay();
       gameOver = false;
       restartButton.style.display = 'none';
       generateFood();
       if (gameInterval) clearInterval(gameInterval);
-      gameInterval = setInterval(main, 150);
+      gameInterval = setInterval(main, gameSpeed);
    }
 
    function saveScoreToFirebase(name, score) {
