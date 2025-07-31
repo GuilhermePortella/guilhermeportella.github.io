@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/styles/styleMyLinks.css" />
     <link rel="stylesheet" href="./assets/styles/styleBlogPages.css" />
-    <title>Guilherme Portella Projects</title>
+    <title>Blog & Estudos - Guilherme Portella</title>
 </head>
 
 <body>
     <div class="container">
-        <h1>Hi, These are my projects</h1>
-        <img class="imgCod" src="./assets/images/projects.png">
+        <h1>Blog & Estudos</h1>
+        <img class="imgCod" src="./assets/images/projects.png" alt="Ilustração de uma pessoa escrevendo em um blog">
     </div>
 
     <div class="contatos">
@@ -22,6 +22,9 @@
         <ul class="contact-list">
             <li>
                 <a href="index.html"><i class="buton"></i> Home</a>
+            </li>
+            <li>
+                <a href="projects.html"><i class="buton"></i>Projects</a>
             </li>
             <li>
                 <a href="midias.html"><i class="buton"></i>Musicas e jogos</a>
@@ -44,20 +47,25 @@
         document.addEventListener('DOMContentLoaded', function () {
             const toggle = document.querySelector('.menu-toggle');
             const menu = document.querySelector('.contact-list');
-            function checkMenu() {
-                if (window.innerWidth <= 700) {
-                    toggle.style.display = 'block';
-                    menu.classList.remove('show');
-                } else {
-                    toggle.style.display = 'none';
-                    menu.style.display = '';
+
+            if (toggle && menu) {
+                function checkMenu() {
+                    if (window.innerWidth <= 700) {
+                        toggle.style.display = 'block';
+                    } else {
+                        toggle.style.display = 'none';
+                        menu.classList.remove('show');
+                        menu.style.display = '';
+                    }
                 }
-            }
-            toggle.addEventListener('click', function () {
-                menu.classList.toggle('show');
+
+                toggle.addEventListener('click', function () {
+                    menu.classList.toggle('show');
+                });
+
                 window.addEventListener('resize', checkMenu);
                 checkMenu();
-            });
+            }
 
             const blogPosts = [
                 {
@@ -65,28 +73,42 @@
                     title: "Como aprendi Spring Boot",
                     summary: "Dicas e recursos que usei para aprender Spring Boot do zero.",
                     date: "2024-06-25",
-                    url: "posts/spring-boot-aprendizado.html"
+                    url: "blogpagesPost.html" // Usando o template genérico por enquanto
                 },
                 {
                     id: 2,
                     title: "Estudando Clean Architecture",
                     summary: "Resumo dos principais conceitos e exemplos práticos.",
                     date: "2024-06-20",
-                    url: "posts/clean-architecture.html"
+                    url: "blogpagesPost.html" // Usando o template genérico por enquanto
                 }
             ];
 
+            function formatPostDate(dateString) {
+                // Adiciona um horário para evitar problemas de fuso horário (off-by-one day)
+                const date = new Date(dateString + 'T12:00:00Z');
+                const options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+                return date.toLocaleDateString('pt-BR', options);
+            }
+
             const blogContainer = document.getElementById('blog-posts');
-            blogPosts.forEach(post => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.summary}</p>
-                <a href="${post.url}">Ler post</a>
-            `;
-                blogContainer.appendChild(card);
-            });
+            if (blogContainer) {
+                if (blogPosts.length > 0) {
+                    blogPosts.forEach(post => {
+                        const card = document.createElement('article'); // Usar <article> é mais semântico
+                        card.className = 'project-card';
+                        card.innerHTML = `
+                            <small class="post-date">${formatPostDate(post.date)}</small>
+                            <h3>${post.title}</h3>
+                            <p>${post.summary}</p>
+                            <a href="${post.url}" class="read-more-btn">Ler post</a>
+                        `;
+                        blogContainer.appendChild(card);
+                    });
+                } else {
+                    blogContainer.innerHTML = '<p>Nenhum post para exibir no momento.</p>';
+                }
+            }
         });
     </script>
 </body>
