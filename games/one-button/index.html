@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+   <title>Lane Switcher — Hyper-Light</title>
+   <meta name="description" content="Jogo one-button leve: troque de faixa, desvie de obstáculos e pegue moedas.">
+   <style>
+      :root {
+         color-scheme: dark light;
+         --fg: #eaeef2;
+         --bg: #0d1117;
+         --accent: #6ee7ff;
+         --warn: #ff6b6b;
+         --coin: #ffd54a;
+         --muted: #94a3b8;
+      }
+
+      * {
+         box-sizing: border-box;
+      }
+
+      html,
+      body {
+         margin: 0;
+         height: 100%;
+         background: var(--bg);
+         color: var(--fg);
+         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      #wrap {
+         display: grid;
+         place-items: center;
+         height: 100%;
+         gap: 12px;
+         padding: 12px;
+      }
+
+      canvas {
+         width: min(92vw, 720px);
+         aspect-ratio: 16/9;
+         border-radius: 16px;
+         background: linear-gradient(180deg, #0b0f14, #121722);
+         box-shadow: 0 10px 30px rgba(0, 0, 0, .5), inset 0 0 60px rgba(110, 231, 255, .08);
+         display: block;
+      }
+
+      .hud {
+         width: min(92vw, 720px);
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         font-size: 14px;
+         gap: 8px;
+         user-select: none;
+      }
+
+      .hud .left,
+      .hud .right {
+         display: flex;
+         gap: 8px;
+         align-items: center;
+      }
+
+      .pill {
+         padding: 6px 10px;
+         border-radius: 999px;
+         background: rgba(255, 255, 255, .06);
+         color: var(--fg);
+         border: 1px solid rgba(255, 255, 255, .08);
+      }
+
+      button {
+         border: 1px solid rgba(255, 255, 255, .12);
+         background: rgba(255, 255, 255, .05);
+         color: var(--fg);
+         padding: 6px 10px;
+         border-radius: 10px;
+         cursor: pointer;
+         transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      }
+
+      button:hover {
+         background: rgba(255, 255, 255, .12);
+      }
+
+      button:active {
+         transform: scale(.98);
+      }
+
+      .muted {
+         color: var(--muted);
+      }
+
+      a {
+         color: var(--accent);
+         text-decoration: none;
+      }
+
+      a:hover {
+         text-decoration: underline;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="wrap">
+      <canvas id="game" aria-label="Lane Switcher game"></canvas>
+      <div class="hud" aria-hidden="false">
+         <div class="left">
+            <span class="pill">Score: <strong id="score">0</strong></span>
+            <span class="pill">Best: <strong id="best">0</strong></span>
+            <span class="pill">Coins: <strong id="coins">0</strong></span>
+         </div>
+         <div class="right">
+            <button id="btnDaily" title="Daily Challenge">Desafio Diário</button>
+            <button id="btnHard" title="Hard Mode">Hard: OFF</button>
+            <button id="btnPause" title="Pause/Resume (P)">Pausar</button>
+            <span class="muted">Troque de faixa: clique/toque ou [Espaço]/[↑]</span>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      // ======= util / rng (com seed para modo diário) =======
+      const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+      const lerp = (a, b, t) => a + (b - a) * t;
+      function seededRng(seed) {
+         // xorshift32 simples
+         let x = seed | 0; if (x === 0) x = 1234567;
+         return () => {
+            x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+            // 0..1
+            return ((x >>> 0) / 4294967296);
+         };
+      }
+      function dailySeed() {
+         const d = new Date();
+         const key = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
+         // hash pobre mas suficiente
+         let h = 2166136261;
+         for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+         return h >>> 0;
+      }
+
+      // ======= setup canvas responsivo =======
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      function resize() {
+         const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+         // proporção 16:9 usando largura CSS já definida
+         const cssW = canvas.clientWidth;
+         const cssH = Math.round(cssW * 9 / 16);
+         canvas.width = cssW * dpr;
+         canvas.height = cssH * dpr;
+         ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // desenhar em unidade CSS
+      }
+      addEventListener('resize', resize, { passive: true });
+      resize();
+
+      // ======= estado do jogo =======
+      const state = {
+         playing: false,
+         paused: false,
+         hard: false,
+         useDaily: false,
+         rng: Math.random,
+         invuln: 0,
+         t: 0,
+         speed: 150,             // px/s base
+         speedGain: 0.035,        // aceleração por segundo
+         laneY: [0, 0],           // calculado on layout
+         lane: 0,                // 0 = top, 1 = bottom
+         playerX: 120,
+         playerR: 14,
+         obstacles: [],
+         coins: [],
+         spawnCooldown: 0,
+         coinCooldown: 0,
+         score: 0,
+         best: Number(localStorage.getItem('lane_best') || 0),
+         totalCoins: Number(localStorage.getItem('lane_coins') || 0),
+         flash: 0,
+      };
+
+      // HUD
+      const elScore = document.getElementById('score');
+      const elBest = document.getElementById('best');
+      const elCoins = document.getElementById('coins');
+      const btnPause = document.getElementById('btnPause');
+      const btnHard = document.getElementById('btnHard');
+      const btnDaily = document.getElementById('btnDaily');
+
+      elBest.textContent = state.best;
+      elCoins.textContent = state.totalCoins;
+
+      function layout() {
+         const W = canvas.clientWidth, H = canvas.clientHeight;
+         const pad = Math.max(40, Math.min(70, W * 0.05));
+         state.laneY[0] = H * 0.35;
+         state.laneY[1] = H * 0.65;
+         state.playerR = Math.max(10, Math.min(18, Math.round(W * 0.018)));
+         state.playerX = Math.max(90, Math.min(140, Math.round(W * 0.14)));
+      }
+      layout();
+
+      // ======= entrada =======
+      function switchLane() {
+         if (!state.playing) { startGame(); return; }
+         if (state.paused) return;
+         state.lane = 1 - state.lane;
+         // micro feedback (flash leve)
+         state.flash = 0.15;
+      }
+      canvas.addEventListener('click', switchLane);
+      addEventListener('keydown', (e) => {
+         if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); switchLane(); }
+         if (e.code === 'KeyP') togglePause();
+         if (e.code === 'KeyR') if (!state.playing) startGame();
+      }, { passive: false });
+      // toque mobile (área inteira)
+      addEventListener('touchstart', (e) => { e.preventDefault(); switchLane(); }, { passive: false });
+
+      btnPause.onclick = () => togglePause();
+      btnHard.onclick = () => {
+         state.hard = !state.hard;
+         btnHard.textContent = `Hard: ${state.hard ? 'ON' : 'OFF'}`;
+         // reset se mudar configuração
+         if (!state.playing) draw(0);
+      };
+      btnDaily.onclick = () => {
+         state.useDaily = !state.useDaily;
+         btnDaily.textContent = state.useDaily ? 'Diário: ON' : 'Desafio Diário';
+         // reset se mudar seed
+         if (!state.playing) draw(0);
+      };
+
+      function togglePause() {
+         if (!state.playing) return;
+         state.paused = !state.paused;
+         btnPause.textContent = state.paused ? 'Retomar' : 'Pausar';
+      }
+
+      // ======= iniciar / reset =======
+      function startGame() {
+         state.playing = true;
+         state.paused = false;
+         state.obstacles.length = 0;
+         state.coins.length = 0;
+         state.score = 0;
+         state.speed = state.hard ? 200 : 150;
+         state.spawnCooldown = 0;
+         state.coinCooldown = 0.6;
+         state.lane = 1; // começa embaixo: muda rápido e cria hábito
+         state.t = 0;
+         state.invuln = 1.5;
+
+         const seed = state.useDaily ? dailySeed() : (Date.now() & 0xffffffff);
+         state.rng = seededRng(seed || 1);
+
+         // pré-gera alguns elementos fora da tela para instant feedback
+         for (let i = 0; i < 4; i++) trySpawn(0.5);
+      }
+
+      // ======= spawns =======
+      function trySpawn(dt) {
+         state.spawnCooldown -= dt;
+         // curva: no início spawns mais raros, depois acelera
+         const spawnBase = lerp(1.2, 0.65, clamp(state.t / 60, 0, 1)); // antes ~0.9→0.45
+         if (state.spawnCooldown <= 0) {
+            state.spawnCooldown = spawnBase;
+
+            const lane = (state.rng() < 0.5) ? 0 : 1;
+            const size = lerp(22, 36, state.rng()); // antes: 26..42 (menores agora)
+
+            // gaps mais largos (especialmente no normal)
+            const baseGap = state.hard ? 170 : 210;   // antes: ~150
+            const varGap = state.hard ? 25 : 40;
+            const gap = baseGap + (state.rng() * varGap);
+
+            const x = canvas.clientWidth + gap;
+
+            // Regra de segurança da fase 1 (até 20s):
+            // - no começo, no máximo 1 obstáculo na tela
+            if (state.t < 20) {
+               const last = state.obstacles[state.obstacles.length - 1];
+               if (last && (last.x - last.w / 2) > canvas.clientWidth * 0.55) {
+                  // ainda tem um na tela: adia o próximo
+               } else {
+                  state.obstacles.push({ x, yLane: lane, w: size, h: size });
+               }
+            } else {
+               state.obstacles.push({ x, yLane: lane, w: size, h: size });
+            }
+         }
+         state.coinCooldown -= dt;
+         const coinBase = lerp(1.0, 0.8, clamp(state.t / 60, 0, 1));
+         if (state.coinCooldown <= 0) {
+            state.coinCooldown = coinBase;
+            const lane = (state.rng() < 0.5) ? 0 : 1;
+            const x = canvas.clientWidth + 40 + state.rng() * 60;
+            state.coins.push({ x, yLane: lane, r: 10, taken: false });
+         }
+      }
+
+      // ======= update =======
+      let last = performance.now();
+      function step(now) {
+         const dt = Math.min(0.033, (now - last) / 1000); // trava no máx 30ms
+         last = now;
+         if (state.playing && !state.paused) {
+            state.t += dt;
+            state.speed += (state.hard ? 0.06 : state.speedGain) * dt * 60;
+
+            // invulnerabilidade decai
+            if (state.invuln > 0) state.invuln = Math.max(0, state.invuln - dt);
+
+            trySpawn(dt);
+
+            const vx = -state.speed * dt;
+
+            // move e remove fora da tela
+            state.obstacles.forEach(o => o.x += vx);
+            state.coins.forEach(c => c.x += vx);
+            state.obstacles = state.obstacles.filter(o => o.x + o.w > -40);
+            state.coins = state.coins.filter(c => c.x + c.r > -20 && !c.taken);
+
+            // colisões
+            const py = state.laneY[state.lane];
+            const px = state.playerX;
+            const pr = state.playerR;
+            const prEff = pr * 0.82;
+
+            // obstáculo: AABB vs círculo simples
+            for (const o of state.obstacles) {
+               const oy = state.laneY[o.yLane] - o.h / 2;
+               const ox = o.x - o.w / 2;
+               const cx = clamp(px, ox, ox + o.w);
+               const cy = clamp(py, oy, oy + o.h);
+               const dx = px - cx, dy = py - cy;
+               if (state.invuln <= 0 && (dx * dx + dy * dy) <= prEff * prEff) {
+                  gameOver();
+                  break;
+               }
+            }
+
+            // coleta moedas
+            for (const c of state.coins) {
+               const cy = state.laneY[c.yLane];
+               const dx = px - c.x, dy = py - cy;
+               const rr = (pr + c.r) * (pr + c.r);
+               if ((dx * dx + dy * dy) <= rr) {
+                  if (!c.taken) {
+                     c.taken = true;
+                     state.totalCoins++;
+                     localStorage.setItem('lane_coins', String(state.totalCoins));
+                     elCoins.textContent = state.totalCoins;
+                     state.score += 3; // moeda vale mais
+                     state.flash = 0.2;
+                  }
+               }
+            }
+
+            // score passivo
+            state.score += dt * (state.hard ? 2 : 1);
+            elScore.textContent = Math.floor(state.score);
+
+            if (state.flash > 0) state.flash = Math.max(0, state.flash - dt * 1.5);
+         }
+
+         draw(dt);
+         requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+
+      // ======= desenhar =======
+      function draw(dt) {
+         layout(); // garante lanes corretas em redimensionamentos
+         const W = canvas.clientWidth, H = canvas.clientHeight;
+         ctx.clearRect(0, 0, W, H);
+
+         // fundo com linhas de velocidade
+         const stripes = 10;
+         for (let i = 0; i < stripes; i++) {
+            const y = (i / stripes) * H;
+            const alpha = 0.06 + 0.04 * Math.sin((state.t * 3 + i) * 0.7);
+            ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+            ctx.fillRect(0, y, W, 2);
+         }
+
+         // trilhas das faixas
+         for (let i = 0; i < 2; i++) {
+            const y = state.laneY[i];
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+         }
+
+         // obstáculos
+         for (const o of state.obstacles) {
+            const y = state.laneY[o.yLane] - o.h / 2;
+            const x = o.x - o.w / 2;
+            ctx.fillStyle = 'rgba(255,107,107,0.9)'; // --warn
+            // leve “neon”
+            ctx.shadowColor = 'rgba(255,107,107,0.25)';
+            ctx.shadowBlur = 12;
+            ctx.fillRect(x, y, o.w, o.h);
+            ctx.shadowBlur = 0;
+         }
+
+         // moedas
+         for (const c of state.coins) {
+            const y = state.laneY[c.yLane];
+            ctx.beginPath();
+            ctx.arc(c.x, y, c.r, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255,213,74,0.95)'; // --coin
+            ctx.shadowColor = 'rgba(255,213,74,0.3)';
+            ctx.shadowBlur = 14;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            // brilho interno
+            ctx.beginPath();
+            ctx.arc(c.x, y, c.r * 0.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.fill();
+         }
+
+         // player
+         const px = state.playerX, py = state.laneY[state.lane], pr = state.playerR;
+         ctx.beginPath();
+         ctx.arc(px, py, pr, 0, Math.PI * 2);
+         ctx.closePath();
+
+         const glow = state.invuln > 0 ? 1 : 0.35;
+         ctx.fillStyle = state.flash > 0
+            ? `rgba(110,231,255,${0.9 - state.flash * 0.5})`
+            : `rgba(110,231,255,0.9)`;
+         ctx.shadowColor = `rgba(110,231,255,${glow})`;
+         ctx.shadowBlur = state.invuln > 0 ? 24 : 16;
+         ctx.fill();
+         ctx.shadowBlur = 0;
+
+         // overlays
+         if (!state.playing) {
+            centerText("LANE SWITCHER", W / 2, H * 0.33, 28, 'rgba(255,255,255,0.95)');
+            centerText("Clique/Toque ou [Espaço]/[↑] para alternar de faixa", W / 2, H * 0.33 + 34, 14, 'rgba(255,255,255,0.7)');
+            centerText(state.useDaily ? "Modo: Desafio Diário" : "Modo: Aleatório", W / 2, H * 0.33 + 54, 13, 'rgba(255,255,255,0.6)');
+            centerText(`Hard: ${state.hard ? 'ON' : 'OFF'}  •  Recorde: ${state.best}`, W / 2, H * 0.33 + 74, 13, 'rgba(255,255,255,0.6)');
+            centerText("Pressione [R] para reiniciar a qualquer momento", W / 2, H * 0.33 + 94, 12, 'rgba(255,255,255,0.45)');
+         }
+         if (state.paused) {
+            centerText("PAUSADO", W / 2, H * 0.5, 26, 'rgba(255,255,255,0.95)');
+            centerText("Pressione [P] ou clique em Retomar", W / 2, H * 0.5 + 28, 14, 'rgba(255,255,255,0.7)');
+         }
+      }
+
+      function centerText(txt, x, y, size, color) {
+         ctx.font = `600 ${size}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+         ctx.textAlign = 'center';
+         ctx.fillStyle = color;
+         ctx.fillText(txt, x, y);
+      }
+
+      function gameOver() {
+         state.playing = false;
+         state.paused = false;
+         btnPause.textContent = 'Pausar';
+         const sc = Math.floor(state.score);
+         if (sc > state.best) {
+            state.best = sc;
+            localStorage.setItem('lane_best', String(sc));
+            elBest.textContent = sc;
+         }
+         // mensagem de fim de jogo
+         const W = canvas.clientWidth, H = canvas.clientHeight;
+         setTimeout(() => {
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.restore();
+            centerText("GAME OVER", W / 2, H * 0.45, 30, 'rgba(255,255,255,0.95)');
+            centerText(`Score: ${sc}   •   Recorde: ${state.best}`, W / 2, H * 0.45 + 28, 16, 'rgba(255,255,255,0.8)');
+            centerText("Clique/Toque ou [R] para jogar novamente", W / 2, H * 0.45 + 52, 14, 'rgba(255,255,255,0.65)');
+         }, 30);
+      }
+
+      // desenha tela inicial
+      draw(0);
+   </script>
+</body>
+
+</html>
