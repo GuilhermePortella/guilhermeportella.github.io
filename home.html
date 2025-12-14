@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BYTE_GHOST404 // Offensive Security Research</title>
+    <style>
+      :root {
+        --bg: #020714;
+        --bg-elevated: #040b18;
+        --bg-terminal: #060b16;
+        --accent: #24ff7c;
+        --accent-soft: rgba(36, 255, 124, 0.5);
+        --accent-soft-alt: rgba(0, 255, 204, 0.35);
+        --text-main: #f2fbff;
+        --text-muted: #7f8ba3;
+        --border-soft: #1a2434;
+        --danger: #ff4b81;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, "Fira Code", "JetBrains Mono", Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background:
+          radial-gradient(circle at top, #101a32 0, #020714 55%, #000 100%);
+        color: var(--text-main);
+        padding: 0 32px 32px;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: radial-gradient(
+            circle at 20% 20%,
+            rgba(0, 255, 204, 0.15),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 80% 0%,
+            rgba(116, 66, 255, 0.15),
+            transparent 60%
+          ),
+          linear-gradient(
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          );
+        background-size: 100% 100%, 100% 100%, 100% 22px, 26px 100%;
+        mix-blend-mode: screen;
+        opacity: 0.5;
+        z-index: -2;
+      }
+
+      .page {
+        min-height: 100vh;
+        max-width: 1180px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .scanline {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.3) 0,
+          rgba(0, 0, 0, 0.3) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.6;
+        z-index: -1;
+      }
+
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 0 10px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(14px);
+      }
+
+      .top-bar::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        opacity: 0.8;
+      }
+
+      .logo {
+        font-size: 14px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .logo span {
+        font-size: 10px;
+        letter-spacing: 0.26em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .main-nav {
+        display: flex;
+        gap: 28px;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .main-nav a {
+        position: relative;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding-bottom: 4px;
+        transition: color 0.18s ease-out;
+      }
+
+      .main-nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -4px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.2s ease-out;
+      }
+
+      .main-nav a:hover {
+        color: var(--text-main);
+      }
+
+      .main-nav a:hover::after,
+      .main-nav a.is-active::after {
+        transform: scaleX(1);
+      }
+
+      .main-nav a.is-active {
+        color: var(--accent);
+      }
+
+      .header-icons {
+        display: flex;
+        gap: 12px;
+      }
+
+      .icon-button {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 14px;
+        cursor: pointer;
+        background: radial-gradient(circle at 30% 0, #1b2535, #020714);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6),
+          0 0 0 2px rgba(255, 255, 255, 0.05);
+        transition: border 0.14s, color 0.14s, box-shadow 0.14s,
+          transform 0.07s ease-out;
+      }
+
+      .icon-button:hover {
+        border-color: var(--accent-soft);
+        color: var(--accent);
+        box-shadow: 0 0 14px rgba(0, 255, 204, 0.22);
+        transform: translateY(-1px);
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        padding-top: 40px;
+      }
+
+      .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .hero-line {
+        width: 100%;
+        max-width: 680px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(17, 40, 61, 0.6);
+        position: relative;
+        padding: 9px 0;
+      }
+
+      .hero-line::before,
+      .hero-line::after {
+        content: "";
+        position: absolute;
+        height: 2px;
+        width: 9%;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+        opacity: 0.7;
+      }
+
+      .hero-line::before {
+        left: 0;
+      }
+
+      .hero-line::after {
+        right: 0;
+      }
+
+      .hero-tagline {
+        font-size: 11px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .skull-holo {
+        position: relative;
+        width: min(420px, 70vw);
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        isolation: isolate;
+        border-radius: 12px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 0, rgba(0, 255, 204, 0.22), transparent 60%),
+          radial-gradient(circle at 50% 100%, rgba(0, 255, 124, 0.25), transparent 60%),
+          rgba(4, 10, 24, 0.96);
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.85),
+          0 0 40px rgba(0, 255, 204, 0.18);
+      }
+
+      .skull-holo::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          );
+        background-size: 100% 20px, 20px 100%;
+        opacity: 0.25;
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+      }
+
+      .skull-holo::after {
+        content: "";
+        position: absolute;
+        inset: -14%;
+        background: radial-gradient(
+          circle at center,
+          transparent 45%,
+          rgba(5, 10, 22, 0.95) 100%
+        );
+        pointer-events: none;
+      }
+
+      .skull-holo img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        border-radius: 50%;
+        opacity: 0.9;
+        mix-blend-mode: screen;
+        filter: saturate(1.05) brightness(0.94);
+      }
+
+      .skull-core {
+        position: relative;
+        width: 66%;
+        aspect-ratio: 1 / 1.18;
+        border-radius: 45% 45% 55% 55%;
+        background: radial-gradient(circle at 30% 18%, #1bffb1, transparent),
+          radial-gradient(circle at 70% 18%, #00ffcc, transparent),
+          radial-gradient(circle at 50% 65%, #00ff80, transparent);
+        box-shadow: 0 0 40px rgba(36, 255, 124, 0.5),
+          0 0 120px rgba(0, 255, 204, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid rgba(0, 255, 204, 0.6);
+      }
+
+      .skull-symbol {
+        font-size: clamp(4rem, 6vw, 5.2rem);
+        color: var(--accent);
+        text-shadow: 0 0 14px rgba(0, 255, 204, 0.9),
+          0 0 36px rgba(0, 255, 204, 0.8);
+        transform: translateY(-6%);
+      }
+
+      .skull-ring {
+        position: absolute;
+        inset: 8%;
+        border-radius: 50%;
+        border: 1px dashed rgba(0, 255, 204, 0.4);
+        box-shadow: 0 0 18px rgba(0, 255, 204, 0.35);
+        animation: orbit 16s linear infinite;
+      }
+
+      .skull-ring:nth-child(1) {
+        inset: 0;
+        border-style: solid;
+        opacity: 0.3;
+        animation-duration: 22s;
+      }
+
+      .skull-ring:nth-child(2) {
+        inset: 14%;
+        border-style: dotted;
+        animation-direction: reverse;
+        animation-duration: 18s;
+      }
+
+      .skull-ring:nth-child(3) {
+        inset: 26%;
+        border-style: dashed;
+        animation-duration: 10s;
+        opacity: 0.7;
+      }
+
+      .skull-grid {
+        position: absolute;
+        inset: 16%;
+        border-radius: 50%;
+        background-image: linear-gradient(
+            rgba(0, 255, 204, 0.12) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to right,
+            rgba(0, 255, 204, 0.12) 1px,
+            transparent 1px
+          );
+        background-size: 100% 11px, 12px 100%;
+        opacity: 0.45;
+        mix-blend-mode: screen;
+        mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+      }
+
+      .skull-noise {
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+        mix-blend-mode: screen;
+        opacity: 0.25;
+        pointer-events: none;
+      }
+
+      .skull-wires {
+        position: absolute;
+        inset: 4%;
+        border-radius: 48%;
+        border: 1px solid rgba(0, 255, 204, 0.22);
+        box-shadow: 0 0 28px rgba(0, 255, 204, 0.35);
+        mix-blend-mode: screen;
+        opacity: 0.6;
+      }
+
+      .skull-wires::before,
+      .skull-wires::after {
+        content: "";
+        position: absolute;
+        inset: 12% 22%;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        box-shadow: 0 0 26px rgba(0, 255, 204, 0.4);
+      }
+
+      .skull-wires::after {
+        inset: 32% 18%;
+      }
+
+      .scan-dot {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px rgba(0, 255, 204, 0.9);
+        animation: scan 4.4s linear infinite;
+      }
+
+      .scan-dot:nth-child(1) {
+        top: 10%;
+        left: 18%;
+        animation-delay: -1s;
+      }
+
+      .scan-dot:nth-child(2) {
+        top: 32%;
+        right: 14%;
+        animation-delay: -2s;
+      }
+
+      .scan-dot:nth-child(3) {
+        bottom: 16%;
+        left: 26%;
+        animation-delay: -3.2s;
+      }
+
+      .terminal-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 12px;
+      }
+
+      .terminal {
+        background: radial-gradient(circle at 0 0, #111827, #020714);
+        border-radius: 10px;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 0 0 1px rgba(9, 12, 20, 0.9),
+          0 28px 60px rgba(0, 0, 0, 0.9),
+          0 0 40px rgba(0, 255, 204, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 260px;
+        position: relative;
+      }
+
+      .terminal::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 204, 0.08),
+          transparent 35%,
+          transparent 65%,
+          rgba(0, 255, 124, 0.14)
+        );
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+        opacity: 0.8;
+      }
+
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: radial-gradient(circle at 0 0, #151a24, #020916);
+        font-size: 11px;
+        color: var(--text-muted);
+        z-index: 1;
+      }
+
+      .terminal-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .terminal-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      .terminal-dot:nth-child(1) {
+        background: #ff5f57;
+      }
+
+      .terminal-dot:nth-child(2) {
+        background: #febc2e;
+      }
+
+      .terminal-dot:nth-child(3) {
+        background: #28c840;
+      }
+
+      .terminal-body {
+        padding: 10px 14px 14px;
+        font-size: 12px;
+        line-height: 1.38;
+        color: #d1fbe5;
+        overflow: hidden;
+        white-space: pre;
+        z-index: 1;
+      }
+
+      .terminal-body .comment {
+        color: #38f08e;
+      }
+
+      .terminal-body .danger {
+        color: var(--danger);
+      }
+
+      .terminal-body .muted {
+        color: #5f6f88;
+      }
+
+      .terminal-body .success {
+        color: #4dfaa2;
+      }
+
+      .terminal-scrollbar {
+        position: absolute;
+        right: 6px;
+        top: 36px;
+        bottom: 10px;
+        width: 3px;
+        border-radius: 999px;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.12),
+          transparent
+        );
+        opacity: 0.5;
+        z-index: 0;
+      }
+
+      footer {
+        margin-top: 26px;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @keyframes orbit {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateX(-6px);
+          opacity: 0;
+        }
+        15% {
+          opacity: 1;
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(8px);
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding-inline: 18px;
+        }
+
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 14px;
+        }
+
+        .main-nav {
+          flex-wrap: wrap;
+          justify-content: center;
+          width: 100%;
+        }
+
+        .terminal-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .hero {
+          margin-top: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scanline" aria-hidden="true"></div>
+
+    <div class="page">
+      <header class="top-bar">
+      <div class="logo">
+        BYTE_GHOST404
+        <span>// OFFENSIVE SECURITY RESEARCH</span>
+      </div>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#" class="is-active">Home</a>
+        <a href="#">Advisories</a>
+        <a href="#">Tools &amp; Exploits</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact</a>
+      </nav>
+
+      <div class="header-icons">
+        <button class="icon-button" aria-label="Toggle theme">
+          ◐
+        </button>
+        <button class="icon-button" aria-label="Search">
+          ⌕
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-tagline">BYTE_GHOST404 // skull console</div>
+        <div class="hero-line" aria-hidden="true"></div>
+
+        <div class="skull-holo" aria-hidden="true">
+          <div class="skull-ring"></div>
+          <div class="skull-ring"></div>
+          <div class="skull-ring"></div>
+
+          <div class="skull-grid"></div>
+          <div class="skull-noise"></div>
+          <div class="skull-wires"></div>
+
+          <div class="scan-dot"></div>
+          <div class="scan-dot"></div>
+          <div class="scan-dot"></div>
+
+          <img src="assets/images/image_1b6dda82.png" alt="Wireframe skull" style="width: 100%; height: auto; object-fit: contain; border-radius: 50%; opacity: 0.85; mix-blend-mode: screen;">
+        </div>
+      </section>
+
+      <section class="terminal-grid" aria-label="Console output">
+        <article class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+            </div>
+            <span class="muted">rop_chain.c</span>
+          </div>
+          <div class="terminal-scrollbar"></div>
+          <div class="terminal-body" data-typewriter>
+<span class="comment">// ROP CHAIN</span>
+<span class="comment">// STAGE 0x01: SETUP</span>
+int main(void) {
+    struct exploit_ctx ctx = {0};
+
+    ctx.fd = open("/dev/vuln", O_RDWR);
+    if (ctx.fd &lt; 0) {
+        perror("open");
+        return 1;
+    }
+
+    ctx.leak = leak_kernel_base(ctx.fd);
+    printf("[*] kernel base: 0x%llx\n", ctx.leak.base);
+
+    build_rop_chain(&amp;ctx);
+    spray_heap(&amp;ctx);
+
+    trigger_overflow(ctx.fd, ctx.rop, ctx.rop_len);
+
+    puts("[+] returned from kernel, popping shell...");
+    system("/bin/sh");
+}
+
+<span class="comment">// NOTES</span>
+// * SMEP/SMAP bypass using ret2dir
+// * KASLR defeated via info leak
+// * cleanup payload on exit for stealth
+          </div>
+        </article>
+
+        <article class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+            </div>
+            <span class="muted">session.log</span>
+          </div>
+          <div class="terminal-scrollbar"></div>
+          <div class="terminal-body" data-typewriter>
+$ <span class="muted">nmap -p- --open 127.0.0.1</span>
+Starting Nmap...
+PORT   STATE  SERVICE
+22/tcp open   ssh
+80/tcp open   http
+443/tcp open   https
+
+$ <span class="muted">exploit.py --target=127.0.0.1 --lport=443</span>
+<span class="success">[+] crafting payload...</span>
+<span class="success">[+] spraying kernel heap...</span>
+<span class="success">[+] triggering overflow...</span>
+<span class="success">[+] got shell!</span>
+
+BYTE_GHOST404@target:~$ <span class="muted">whoami</span>
+root
+
+BYTE_GHOST404@target:~$ <span class="muted">hostname</span>
+offsec-lab
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <span>© 2023 BYTE_GHOST404. ALL RIGHTS RESERVED.</span>
+      <span>PGP: <a href="#">[LINK]</a></span>
+    </footer>
+    </div>
+
+    <script>
+      // Simples efeito de digitação para os terminais
+      document.addEventListener("DOMContentLoaded", () => {
+        const blocks = document.querySelectorAll("[data-typewriter]");
+
+        blocks.forEach((block, idx) => {
+          const rawHTML = block.innerHTML.trim();
+          block.innerHTML = "";
+
+          let i = 0;
+          const step = () => {
+            // Avança por caracteres no HTML bruto
+            block.innerHTML = rawHTML.slice(0, i);
+            i += 2;
+
+            if (i <= rawHTML.length) {
+              const baseDelay = 14 + idx * 4;
+              const jitter = Math.random() * 18;
+              setTimeout(step, baseDelay + jitter);
+            }
+          };
+
+          setTimeout(step, 500 + idx * 600);
+        });
+      });
+    </script>
+  </body>
+</html>
