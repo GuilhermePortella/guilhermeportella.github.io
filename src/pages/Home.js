@@ -1,13 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const FEATURED_PROJECTS_URL = 'https://api.github.com/users/guilhermeportella/repos?sort=pushed&per_page=3';
+
 const Home = () => {
-  // Placeholder data
-  const featuredProjects = [
-    { id: 1, title: 'Project One', description: 'A brief description of the first project, highlighting the technologies used and its purpose.', imageUrl: 'https://via.placeholder.com/400x250', link: '/projects/one' },
-    { id: 2, title: 'Project Two', description: 'A brief description of the second project, what problem it solves, and my role in it.', imageUrl: 'https://via.placeholder.com/400x250', link: '/projects/two' },
-    { id: 3, title: 'Project Three', description: 'A brief description of the third project, focusing on the outcome and impact.', imageUrl: 'https://via.placeholder.com/400x250', link: '/projects/three' },
-  ];
+  const [featuredProjects, setFeaturedProjects] = useState([]);
+  const [featuredStatus, setFeaturedStatus] = useState('loading');
+  const [featuredError, setFeaturedError] = useState('');
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchFeaturedProjects = async () => {
+      setFeaturedStatus('loading');
+      setFeaturedError('');
+
+      try {
+        const response = await fetch(FEATURED_PROJECTS_URL, {
+          signal: controller.signal,
+          headers: {
+            Accept: 'application/vnd.github+json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('GitHub API request failed.');
+        }
+
+        const data = await response.json();
+        const mappedProjects = data.map((repo) => ({
+          id: repo.id,
+          title: repo.name,
+          description: repo.description || 'No description provided yet.',
+          repoUrl: repo.html_url,
+        }));
+
+        setFeaturedProjects(mappedProjects);
+        setFeaturedStatus('success');
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          return;
+        }
+
+        setFeaturedError('Unable to load featured projects right now.');
+        setFeaturedStatus('error');
+      }
+    };
+
+    fetchFeaturedProjects();
+
+    return () => controller.abort();
+  }, []);
 
   const latestPosts = [
     { id: 1, title: 'My Journey into React', excerpt: 'A short summary of the blog post about learning and mastering React...', category: 'Web Development', link: '/blog/react-journey' },
@@ -51,15 +94,29 @@ const Home = () => {
               </p>
             </div>
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProjects.map(project => (
+              {featuredStatus === 'loading' && (
+                <div className="col-span-full text-center text-gray-600">
+                  Loading featured projects...
+                </div>
+              )}
+              {featuredStatus === 'error' && (
+                <div className="col-span-full text-center text-red-600">
+                  {featuredError}
+                </div>
+              )}
+              {featuredStatus === 'success' && featuredProjects.length === 0 && (
+                <div className="col-span-full text-center text-gray-600">
+                  No featured projects available yet.
+                </div>
+              )}
+              {featuredStatus === 'success' && featuredProjects.map(project => (
                 <div key={project.id} className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 hover:shadow-xl">
-                  <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
                     <p className="text-gray-600 mb-4">{project.description}</p>
-                    <Link to={project.link} className="font-semibold text-blue-600 hover:underline">
-                      View Details &rarr;
-                    </Link>
+                    <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:underline">
+                      View on GitHub &rarr;
+                    </a>
                   </div>
                 </div>
               ))}
