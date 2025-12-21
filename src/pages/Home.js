@@ -111,15 +111,15 @@ const Home = () => {
               I'm always open to discussing new projects, creative ideas, or opportunities to be part of an amazing team.
             </p>
             <div className="mt-10">
-              <a href="mailto:your-email@example.com" className="text-xl text-blue-600 font-semibold hover:underline">
-                your-email@example.com
+              <a href="mailto:guilhermeportella.dev@gmail.com" className="text-xl text-blue-600 font-semibold hover:underline">
+                guilhermeportella.dev@gmail.com
               </a>
             </div>
             <div className="flex justify-center space-x-6 mt-6">
               {/* In a real app, you would use SVG icons here */}
-              <a href="https://github.com/your-username" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">GitHub</a>
-              <a href="https://linkedin.com/in/your-username" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">LinkedIn</a>
-              <a href="https://twitter.com/your-username" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">Twitter</a>
+              <a href="https://github.com/GuilhermePortella" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">GitHub</a>
+              <a href="https://www.linkedin.com/in/myprofileguilhermeportella/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">LinkedIn</a>
+              <a href="https://x.com/BYTE_GHOST404" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-800">Twitter</a>
             </div>
           </div>
         </section>
