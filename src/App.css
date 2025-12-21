@@ -1,0 +1,26 @@
+﻿.App {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #0f172a;
+}
+
+.nav a {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav a.active {
+  color: #38bdf8;
+}
+
+.page {
+  padding: 24px;
+}
