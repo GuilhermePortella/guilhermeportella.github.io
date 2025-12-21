@@ -1,4 +1,4 @@
-﻿import './App.css';
+import './App.css';
 import { NavLink, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Contato from './pages/Contato';
