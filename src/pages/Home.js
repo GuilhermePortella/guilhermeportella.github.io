@@ -62,13 +62,13 @@ const Home = () => {
       {/* Hero Section */}
       <section aria-labelledby="hero-title" className="bg-white text-center py-20 px-6">
         <h1 id="hero-title" className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">Guilherme Portella</h1>
-        <p className="mt-6 text-lg leading-8 text-gray-600">Full-Stack Developer | Tech Enthusiast | Lifelong Learner</p>
+        <p className="mt-6 text-lg leading-8 text-gray-600">BackEnd Developer | Tech Enthusiast | Lifelong Learner</p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link to="/projects" className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
             View My Work
           </Link>
-          <a href="#contact" className="text-sm font-semibold leading-6 text-gray-900">
-            Get in Touch <span aria-hidden="true">&rarr;</span>
+          <a href="#contato" className="text-sm font-semibold leading-6 text-gray-900">
+            Entre em contato <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </section>
@@ -79,7 +79,9 @@ const Home = () => {
           <div className="container mx-auto text-center max-w-3xl">
             <h2 id="about-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">About Me</h2>
             <p className="mt-6 text-lg text-gray-600">
-              Welcome to my personal space on the web! I'm a passionate developer with a love for building elegant and efficient solutions. Here you'll find a collection of my projects, thoughts on technology, and a little bit about my journey in the world of software development.
+              Bem-vindo(a) ao meu espaço pessoal na web! Sou um desenvolvedor apaixonado por tecnologia.
+              Aqui você encontrará uma coleção dos meus projetos,
+              reflexões sobre tecnologia e um pouco da minha trajetória no mundo do desenvolvimento de software.
             </p>
           </div>
         </section>
@@ -88,9 +90,9 @@ const Home = () => {
         <section id="projects" aria-labelledby="projects-title" className="bg-white py-20 px-6">
           <div className="container mx-auto">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 id="projects-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Featured Projects</h2>
+              <h2 id="projects-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Projetos em destaque</h2>
               <p className="mt-4 text-lg text-gray-600">
-                A selection of my recent work.
+                Uma seleção dos meus trabalhos recentes.
               </p>
             </div>
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -129,7 +131,8 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Latest Blog Posts Section */}
+        {/* Latest Blog Posts Section (temporarily hidden) */}
+        {/* 
         <section id="blog" aria-labelledby="blog-title" className="bg-gray-50 py-20 px-6">
           <div className="container mx-auto">
             <div className="max-w-2xl mx-auto text-center">
@@ -159,13 +162,24 @@ const Home = () => {
             </div>
           </div>
         </section>
+        */}
+        <section id="blog" aria-labelledby="blog-title" className="bg-gray-50 py-20 px-6">
+          <div className="container mx-auto">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 id="blog-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">From the Blog</h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Em construcao. Em breve, novos posts e atualizacoes por aqui.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Contact Section */}
         <section id="contact" aria-labelledby="contact-title" className="bg-white py-20 px-6">
           <div className="container mx-auto text-center max-w-2xl">
-            <h2 id="contact-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Let's Connect</h2>
+            <h2 id="contact-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Vamos nos conectar</h2>
             <p className="mt-6 text-lg text-gray-600">
-              I'm always open to discussing new projects, creative ideas, or opportunities to be part of an amazing team.
+              Estou sempre aberto a discutir novos projetos ou sobre tecnologia ou alguma coisa que achar interessante aqui, se quiser conversar pode entrar em contato comigo.
             </p>
             <div className="mt-10">
               <a href="mailto:guilhermeportella.dev@gmail.com" className="text-xl text-blue-600 font-semibold hover:underline">
