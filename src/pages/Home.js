@@ -52,10 +52,12 @@ const Home = () => {
     return () => controller.abort();
   }, []);
 
+  /*
   const latestPosts = [
     { id: 1, title: 'My Journey into React', excerpt: 'A short summary of the blog post about learning and mastering React...', category: 'Web Development', link: '/blog/react-journey' },
     { id: 2, title: 'Understanding Async/Await in JavaScript', excerpt: 'A deep dive into asynchronous programming in JS...', category: 'Programming', link: '/blog/async-await' },
   ];
+  */
 
   return (
     <>
