@@ -2,6 +2,8 @@
 import { NavLink, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Contato from './pages/Contato';
+import Projects from './pages/Projects';
+import Hobbies from './pages/Hobbies';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
@@ -18,10 +20,15 @@ function App() {
             <NavLink to="/" className={getNavLinkClass}>
               Home
             </NavLink>
+            <NavLink to="/projects" className={getNavLinkClass}>
+              Projetos
+            </NavLink>
+            <NavLink to="/hobbies" className={getNavLinkClass}>
+              Curiosidades
+            </NavLink>
             <NavLink to="/contato" className={getNavLinkClass}>
               Contato
             </NavLink>
-            {/* Add other links for Blog, Projects etc. here */}
           </div>
         </nav>
       </header>
@@ -29,6 +36,8 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/hobbies" element={<Hobbies />} />
           <Route path="/contato" element={<Contato />} />
         </Routes>
       </main>
