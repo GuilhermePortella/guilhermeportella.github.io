@@ -1,70 +1,138 @@
-# Getting Started with Create React App
+# Guilherme Portella - Portfolio (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Portfolio pessoal construido com React e React Router. O foco e apresentar projetos, hobbies e canais de contato em uma SPA simples, responsiva e com integracoes externas (GitHub e Spotify).
 
-## Available Scripts
+## Visao geral
+- SPA com rotas: Home, Projetos, Hobbies e Contato.
+- Projetos carregados diretamente da API do GitHub.
+- Hobbies com embeds do Spotify (faixas e playlists).
+- Deploy automatico para GitHub Pages via GitHub Actions.
 
-In the project directory, you can run:
+## Funcionalidades
+- **Home**
+  - Hero, sobre mim, projetos em destaque (3 repositorios mais recentes do GitHub), blog em construcao e contato rapido.
+- **Projetos**
+  - Lista dinamica de repositorios do GitHub (ate 100).
+  - Ordenacao por recencia, estrelas, nome e data de criacao.
+  - Filtro por linguagem.
+  - Paginacao.
+- **Hobbies**
+  - Cards com faixas do Spotify embutidas.
+  - Playlists embutidas ao final da secao.
+- **Contato**
+  - Email e redes sociais principais.
 
-### `npm start`
+## Stack e dependencias
+- React 19
+- React Router DOM 7
+- Create React App (`react-scripts`)
+- Testing Library (dom, react, user-event)
+- PostCSS + configuracao de Tailwind (ver `postcss.config.js` e `tailwind.config.js`)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Estrutura do projeto
+```
+.
+├─ .github/
+│  └─ workflows/
+│     ├─ pages.yml
+│     ├─ codeql.yml
+│     └─ stale.yml
+├─ public/
+│  └─ index.html
+├─ src/
+│  ├─ pages/
+│  │  ├─ Home.js
+│  │  ├─ Projects.js
+│  │  ├─ Hobbies.js
+│  │  └─ Contato.js
+│  ├─ App.js
+│  ├─ App.css
+│  └─ index.js
+├─ package.json
+├─ package-lock.json
+├─ postcss.config.js
+└─ tailwind.config.js
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Rotas (React Router)
+- `/` -> `src/pages/Home.js`
+- `/projects` -> `src/pages/Projects.js`
+- `/hobbies` -> `src/pages/Hobbies.js`
+- `/contato` -> `src/pages/Contato.js`
 
-### `npm test`
+Definidas em `src/App.js` com `Routes`/`Route`.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Integracoes externas
 
-### `npm run build`
+### GitHub API
+Usada para carregar os repositorios do usuario:
+- Home (3 mais recentes):
+  - `https://api.github.com/users/guilhermeportella/repos?sort=pushed&per_page=3`
+- Projetos (ate 100):
+  - `https://api.github.com/users/guilhermeportella/repos?sort=pushed&per_page=100`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Observacoes:
+- As requicoes sao **publicas** (sem token) e sujeitas ao limite de taxa da API do GitHub.
+- Em caso de falha, a UI mostra mensagens de erro no lugar dos cards.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Spotify Embed
+Os embeds sao iframes do Spotify, usados em:
+- `src/pages/Hobbies.js` (faixas e playlists).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Fluxo de dados (Home/Projetos)
+1. `useEffect` dispara o fetch para a API do GitHub.
+2. O JSON e mapeado para o modelo usado pelos cards.
+3. O estado controla loading/error/sucesso.
+4. Em `Projects.js`, `useMemo` aplica filtros, ordenacao e paginacao.
 
-### `npm run eject`
+## Execucao local
+Requisitos: Node.js 18+ (recomendado 20).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+A aplicacao sobe em `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Scripts
+- `npm start`: dev server
+- `npm run build`: build de producao
+- `npm test`: testes
+- `npm run eject`: expor configuracoes do CRA (irreversivel)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Build e deploy (GitHub Pages)
+Workflow: `.github/workflows/pages.yml`
 
-## Learn More
+Resumo do fluxo:
+1. Checkout
+2. Setup do Node
+3. `npm install`
+4. `npm run build` (gera `./build`)
+5. Upload do artefato `./build`
+6. Deploy no GitHub Pages
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> Importante: o Pages deve estar configurado com Source = "GitHub Actions".
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Lint/CI
+O CRA trata warnings como erro quando `CI=true`. Isso pode falhar o build caso:
+- exista BOM (Byte Order Mark) nos arquivos JS
+- haja variaveis nao usadas
 
-### Code Splitting
+## Customizacao rapida
+- Alterar usuario do GitHub:
+  - `src/pages/Home.js` (`FEATURED_PROJECTS_URL`)
+  - `src/pages/Projects.js` (`GITHUB_REPOS_URL`)
+- Ajustar page size:
+  - `src/pages/Projects.js` (`PAGE_SIZE`)
+- Substituir embeds do Spotify:
+  - `src/pages/Hobbies.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Troubleshooting
+- **Home exibindo README no Pages**
+  - Garanta que o workflow esta gerando `./build` e publicando esse artefato.
+- **Erro "Cannot find any run with github.run_id"**
+  - Confirme que o Pages esta habilitado e o deploy usa GitHub Actions.
+- **Rate limit da API do GitHub**
+  - Evite refresh constante; se necessario, use um token e proxy/back-end.
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
