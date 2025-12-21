@@ -42,14 +42,13 @@ const Hobbies = () => {
                   Um pouquinho de quem sou fora do trabalho e estudos
                 </p>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Ultimamente tenho gostado e investido bastante tempo em leituras, atualmente estou na fase de romancistas russo e claro nas obras de Kafka</li>
-                  <li>Gosto bastante de cozinhar e testar algumas teorias culinárias, atualmente tenho lido o livro Le Cordon Bleu Técnicas culinárias essenciais
-                    , não estou testando tudo mas quem sabe um dia haha</li>
-                  <li>Uma das minhas paixões são carros, principalmente engenharia alemã e le mans</li>
-                  <li>Gosto de fazer experimentos de segurança e projetos de hardware hacking</li>
+                  <li>Ultimamente, tenho investido bastante tempo na leitura; estou em uma fase focada em romancistas russos e, claro, nas obras de Kafka.</li>
+                  <li>Adoro cozinhar e testar algumas 'teorias culinárias'. Atualmente, estou lendo Le Cordon Bleu: Técnicas Culinárias Essenciais — não estou testando tudo ainda, mas quem sabe um dia, né? haha</li>
+                  <li>Sou apaixonado por carros, especialmente pela engenharia alemã e pela história de Le Mans.</li>
+                  <li>No tempo livre, também faço experimentos de segurança e projetos de hardware hacking.</li>
                 </ul>
                 <p>
-                  De forma geral gosto mais de programas que envolva ficar em casa e fazer algo mais tranquilo, longe de barulhos ou muita aglomeração, então se me chamar pra algum lugar muito provavelmente ou inventar alguma desculpa pra nao ir, mas se vir na minha casa será muito bem vindo haha
+                  No geral, prefiro programas mais tranquilos em casa, longe de barulho ou aglomerações. Se me convidar para algo muito agitado, é bem provável que eu invente uma desculpa para não ir haha.
                 </p>
               </div>
             </div>
