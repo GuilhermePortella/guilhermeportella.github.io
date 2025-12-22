@@ -43,7 +43,7 @@ const Hobbies = () => {
                 </p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Ultimamente, tenho investido bastante tempo na leitura; estou em uma fase focada em romancistas russos e, claro, nas obras de Kafka.</li>
-                  <li>Adoro cozinhar e testar algumas 'teorias culinárias'. Atualmente, estou lendo Le Cordon Bleu: Técnicas Culinárias Essenciais — não estou testando tudo ainda, mas quem sabe um dia, né? haha</li>
+                  <li>Adoro cozinhar e testar algumas 'teorias culinárias'. Atualmente, estou lendo Le Cordon Bleu: Técnicas Culinárias Essenciais, não estou testando tudo ainda, mas quem sabe um dia, né? haha</li>
                   <li>Sou apaixonado por carros, especialmente pela engenharia alemã e pela história de Le Mans.</li>
                   <li>No tempo livre, também faço experimentos de segurança e projetos de hardware hacking.</li>
                 </ul>
