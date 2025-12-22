@@ -12,7 +12,7 @@ const favoriteMusic = [
     artist: 'Guns N´Roses - November Rain',
     album: 'Use Your Illusion I',
     spotifyEmbedUrl: 'https://open.spotify.com/embed/track/3YRCqOhFifThpSRFJ1VWFM?utm_source=generator&theme=0',
-    description: 'Além de ter um dos solos de guitarra mais bonitos e icônicos da história do rock, essa música fala sobre amor, perda, dor emocional e a luta para ter e manter a esperança em meio a tantas dificuldades, a dor de qualquer emoção por aí haha.'
+    description: 'Além de ter um dos solos de guitarra mais bonitos e icônicos da história do rock, essa música fala sobre amor, perda, dor emocional e a luta para ter e manter a esperança em meio a tantas dificuldades, a dor de qualquer emocionado por aí haha.'
   },
   {
     artist: 'Heart - Alone',
@@ -60,10 +60,10 @@ const Hobbies = () => {
               <h2 id="music-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Música que eu gosto
               </h2>
               <p className="mt-4 text-lg text-gray-600">
-                A música é uma parte importante da minha vida (da de quem não é ?). Aqui estão alguns artistas e álbuns que tenho ouvido ultimamente.
+                A música é uma parte importante da minha vida (da de quem não é ?).
                 <br />
                 Essas são algumas das músicas que tenho ouvido bastante ultimamente, não são necessariamente as músicas da minha vida mas tem significados
-                profundos e com relação ao meu momento, e são muito boas, tão curte essas pedradas triste aí comigo.
+                profundos e com relação ao meu momento, e são muito boas, então curte essas pedradas triste aí comigo.
 
               </p>
             </div>
