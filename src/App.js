@@ -3,6 +3,8 @@ import { NavLink, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Contato from './pages/Contato';
 import Projects from './pages/Projects';
+import Blog from './pages/Blog';
+import Articles from './pages/Articles';
 import Hobbies from './pages/Hobbies';
 
 function App() {
@@ -23,6 +25,9 @@ function App() {
             <NavLink to="/projects" className={getNavLinkClass}>
               Projetos
             </NavLink>
+            <NavLink to="/blog" className={getNavLinkClass}>
+              Blog
+            </NavLink>
             <NavLink to="/hobbies" className={getNavLinkClass}>
               Curiosidades
             </NavLink>
@@ -37,6 +42,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/artigos" element={<Articles />} />
           <Route path="/hobbies" element={<Hobbies />} />
           <Route path="/contato" element={<Contato />} />
         </Routes>

@@ -52,12 +52,29 @@ const Home = () => {
     return () => controller.abort();
   }, []);
 
-  /*
   const latestPosts = [
-    { id: 1, title: 'My Journey into React', excerpt: 'A short summary of the blog post about learning and mastering React...', category: 'Web Development', link: '/blog/react-journey' },
-    { id: 2, title: 'Understanding Async/Await in JavaScript', excerpt: 'A deep dive into asynchronous programming in JS...', category: 'Programming', link: '/blog/async-await' },
+    {
+      id: 1,
+      title: 'Checklist de release para APIs',
+      excerpt: 'Rascunho sobre validacao, logs e monitoramento para releases mais seguros.',
+      category: 'Back-end',
+      link: '/blog'
+    },
+    {
+      id: 2,
+      title: 'Minha rotina de estudos em 2025',
+      excerpt: 'Como organizo leitura tecnica, pratica de codigo e projetos pessoais.',
+      category: 'Estudos',
+      link: '/blog'
+    },
+    {
+      id: 3,
+      title: 'Observabilidade simples com Node',
+      excerpt: 'Notas sobre metricas essenciais, traces e alertas sem exageros.',
+      category: 'Infra',
+      link: '/blog'
+    }
   ];
-  */
 
   return (
     <>
@@ -133,14 +150,12 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Latest Blog Posts Section (temporarily hidden) */}
-        {/* 
         <section id="blog" aria-labelledby="blog-title" className="bg-gray-50 py-20 px-6">
           <div className="container mx-auto">
             <div className="max-w-2xl mx-auto text-center">
               <h2 id="blog-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">From the Blog</h2>
               <p className="mt-4 text-lg text-gray-600">
-                My latest thoughts and articles on development and technology.
+                Alguns temas que estou estruturando agora.
               </p>
             </div>
             <div className="mt-16 space-y-8 max-w-3xl mx-auto">
@@ -161,17 +176,6 @@ const Home = () => {
               <Link to="/blog" className="text-lg font-semibold text-blue-600 hover:underline">
                 Visit Blog
               </Link>
-            </div>
-          </div>
-        </section>
-        */}
-        <section id="blog" aria-labelledby="blog-title" className="bg-gray-50 py-20 px-6">
-          <div className="container mx-auto">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2 id="blog-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">From the Blog</h2>
-              <p className="mt-4 text-lg text-gray-600">
-                Em construcao. Em breve, novos posts e atualizacoes por aqui.
-              </p>
             </div>
           </div>
         </section>
