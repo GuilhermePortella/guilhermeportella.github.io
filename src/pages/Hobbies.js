@@ -97,13 +97,13 @@ const Hobbies = () => {
               <p className="text-gray-600">
                 Agora algumas das minhas playlists do Spotify:
               </p>
-              <div className="mt-6 space-y-4 max-w-3xl mx-auto">
+              <div className="mt-6 space-y-7 max-w-3xl mx-auto">
                 <iframe
                   title="Spotify playlist 1"
                   src="https://open.spotify.com/embed/playlist/3xVvS12mAHUqkEjkZFGXrr?utm_source=generator&theme=0"
                   className="w-full"
                   style={{ borderRadius: '12px' }}
-                  height="152"
+                  height="352"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   allowFullScreen
@@ -114,7 +114,7 @@ const Hobbies = () => {
                   src="https://open.spotify.com/embed/playlist/3LuwLZF9DuqtT5n92wCmcU?utm_source=generator&theme=0"
                   className="w-full"
                   style={{ borderRadius: '12px' }}
-                  height="152"
+                  height="352"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   allowFullScreen
@@ -125,7 +125,7 @@ const Hobbies = () => {
                   src="https://open.spotify.com/embed/playlist/25cIH9UZsoIYdLxLu3F2jw?utm_source=generator&theme=0"
                   className="w-full"
                   style={{ borderRadius: '12px' }}
-                  height="152"
+                  height="352"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   allowFullScreen
