@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ARTICLES from '../data/articles';
+import { formatShortDate } from '../utils/articleUtils';
 
 const posts = ARTICLES.slice(0, 3);
 
@@ -44,19 +45,30 @@ const Blog = () => {
               </p>
             </div>
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => (
-                <article key={post.id} className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden flex flex-col">
-                  <div className="p-6 flex-grow">
-                    <p className="text-sm text-gray-500 mb-2">{post.category}</p>
-                    <h3 className="text-xl font-semibold text-gray-900">{post.title}</h3>
-                    <p className="mt-4 text-gray-600">{post.excerpt}</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-                    <span>{post.date}</span>
-                    <span>{post.readTime}</span>
-                  </div>
-                </article>
-              ))}
+              {posts.map((post) => {
+                const dateLabel = formatShortDate(post.publishedAt) || 'Sem data';
+
+                return (
+                  <Link
+                    key={post.id}
+                    to={`/blog/artigos/${post.slug}`}
+                    className="group block"
+                    aria-label={`Ler artigo ${post.title}`}
+                  >
+                    <article className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden flex flex-col h-full transition-shadow duration-300 group-hover:shadow-xl">
+                      <div className="p-6 flex-grow">
+                        <p className="text-sm text-gray-500 mb-2">{post.category}</p>
+                        <h3 className="text-xl font-semibold text-gray-900">{post.title}</h3>
+                        <p className="mt-4 text-gray-600">{post.excerpt}</p>
+                      </div>
+                      <div className="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
+                        <span>{dateLabel}</span>
+                        <span>{post.readTime} min</span>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
             </div>
             <div className="text-center mt-12">
               <Link to="/blog/artigos" className="text-lg font-semibold text-blue-600 hover:underline">
