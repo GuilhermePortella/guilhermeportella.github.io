@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ARTICLES from '../data/articles';
 import { formatLongDate } from '../utils/articleUtils';
 import { parseMarkdown } from '../utils/markdown';
 
@@ -10,10 +9,6 @@ const Article = () => {
   const [articleHtml, setArticleHtml] = useState('');
   const [frontmatter, setFrontmatter] = useState({});
   const [readingTime, setReadingTime] = useState(null);
-
-  const articleMeta = useMemo(() => {
-    return ARTICLES.find((item) => item.slug === slug) || null;
-  }, [slug]);
 
   const baseUrl = useMemo(() => {
     return (process.env.PUBLIC_URL || '').replace(/\/$/, '');
@@ -37,7 +32,9 @@ const Article = () => {
           throw new Error('Article not found.');
         }
 
-        const markdown = await response.text();
+        const markdown = typeof TextDecoder !== 'undefined'
+          ? new TextDecoder('utf-8').decode(await response.arrayBuffer())
+          : await response.text();
         const parsed = parseMarkdown(markdown);
 
         setArticleHtml(parsed.html);
@@ -57,38 +54,46 @@ const Article = () => {
     return () => controller.abort();
   }, [baseUrl, slug]);
 
-  const title = frontmatter.title || articleMeta?.title || (status === 'error' ? 'Artigo nao encontrado' : 'Carregando artigo');
-  const summary = frontmatter.summary || articleMeta?.excerpt;
+  const title = frontmatter.title || (status === 'error' ? 'Artigo nao encontrado' : 'Carregando artigo');
+  const summary = frontmatter.summary || '';
   const author = frontmatter.author || 'Guilherme Portella';
-  const publishedAt = frontmatter.publishedAt || frontmatter.publishedDate || articleMeta?.publishedAt;
+  const publishedAt = frontmatter.publishedAt || frontmatter.publishedDate || '';
   const tags = Array.isArray(frontmatter.tags)
     ? frontmatter.tags
     : typeof frontmatter.tags === 'string'
       ? [frontmatter.tags]
-      : Array.isArray(articleMeta?.tags)
-        ? articleMeta.tags
-        : [];
+      : [];
   const keywords = Array.isArray(frontmatter.keywords)
     ? frontmatter.keywords
     : typeof frontmatter.keywords === 'string'
       ? [frontmatter.keywords]
       : tags;
 
-  const seoTitle = frontmatter.seoTitle || title;
-  const seoDescription = frontmatter.seoDescription || summary || '';
-  const seoLocale = frontmatter.locale || 'pt-BR';
-  const seoImage = frontmatter.ogImage || frontmatter.image || '';
+  const seoBlock = frontmatter.seo && typeof frontmatter.seo === 'object' && !Array.isArray(frontmatter.seo)
+    ? frontmatter.seo
+    : {};
+  const jsonLdOverride = frontmatter.jsonLd && typeof frontmatter.jsonLd === 'object' && !Array.isArray(frontmatter.jsonLd)
+    ? frontmatter.jsonLd
+    : null;
+
+  const seoTitle = frontmatter.seoTitle || seoBlock.title || title;
+  const seoDescription = frontmatter.seoDescription || seoBlock.description || summary || '';
+  const seoLocale = frontmatter.locale || seoBlock.locale || 'pt-BR';
+  const seoImage = frontmatter.ogImage || frontmatter.image || seoBlock.image || '';
   const canonicalUrl = useMemo(() => {
     if (frontmatter.canonicalUrl) {
       return frontmatter.canonicalUrl;
+    }
+    if (seoBlock.canonicalUrl) {
+      return seoBlock.canonicalUrl;
     }
     if (typeof window === 'undefined' || !slug) {
       return '';
     }
     return `${window.location.origin}${baseUrl}/blog/artigos/${slug}`;
-  }, [baseUrl, frontmatter.canonicalUrl, slug]);
+  }, [baseUrl, frontmatter.canonicalUrl, seoBlock.canonicalUrl, slug]);
 
-  const minutes = readingTime || articleMeta?.readTime;
+  const minutes = readingTime;
   const dateLabel = formatLongDate(publishedAt);
 
   useEffect(() => {
@@ -184,7 +189,7 @@ const Article = () => {
     }
     setLinkTag('canonical', absoluteCanonicalUrl);
 
-    const jsonLd = {
+    const baseJsonLd = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: title,
@@ -196,6 +201,10 @@ const Article = () => {
       inLanguage: seoLocale,
       keywords: keywordList.join(', ')
     };
+
+    const jsonLd = jsonLdOverride
+      ? { ...baseJsonLd, ...jsonLdOverride }
+      : baseJsonLd;
 
     if (absoluteCanonicalUrl) {
       jsonLd.mainEntityOfPage = absoluteCanonicalUrl;
@@ -247,6 +256,7 @@ const Article = () => {
     author,
     baseUrl,
     canonicalUrl,
+    jsonLdOverride,
     keywords,
     publishedAt,
     seoDescription,

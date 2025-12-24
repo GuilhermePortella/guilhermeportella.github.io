@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ARTICLES from '../data/articles';
 import { formatShortDate, parseArticleDate } from '../utils/articleUtils';
+import useArticles from '../hooks/useArticles';
 
 const Articles = () => {
+  const { articles, status, error } = useArticles();
+
   const articlesWithDates = useMemo(() => {
-    return ARTICLES.map((article) => {
+    return articles.map((article) => {
       const parsed = parseArticleDate(article.publishedAt);
       return {
         ...article,
@@ -13,7 +15,7 @@ const Articles = () => {
         isDateOnly: parsed ? parsed.isDateOnly : false
       };
     });
-  }, []);
+  }, [articles]);
 
   const years = useMemo(() => {
     const yearSet = new Set();
@@ -112,94 +114,108 @@ const Articles = () => {
                 Estou organizando estes temas agora. Em breve entram os textos completos.
               </p>
             </div>
-            {years.length > 0 && (
-              <div className="mt-12 bg-white p-6 rounded-lg border border-gray-200 shadow-lg">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <label htmlFor="articles-year" className="text-sm font-semibold text-gray-700">
-                      Ano
-                    </label>
-                    <select
-                      id="articles-year"
-                      value={selectedYear ?? ''}
-                      onChange={(event) => {
-                        const value = Number(event.target.value);
-                        setSelectedYear(Number.isNaN(value) ? null : value);
-                      }}
-                      className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {months.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedMonth(null)}
-                        className={`rounded-md border px-3 py-1 text-sm font-semibold transition ${
-                          selectedMonth === null
-                            ? 'border-blue-600 bg-blue-600 text-white'
-                            : 'border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600'
-                        }`}
-                        aria-pressed={selectedMonth === null}
-                      >
-                        Todos
-                      </button>
-                      {months.map((month) => (
-                        <button
-                          key={month.value}
-                          type="button"
-                          onClick={() => setSelectedMonth(month.value)}
-                          className={`rounded-md border px-3 py-1 text-sm font-semibold transition ${
-                            selectedMonth === month.value
-                              ? 'border-blue-600 bg-blue-600 text-white'
-                              : 'border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600'
-                          }`}
-                          aria-pressed={selectedMonth === month.value}
-                        >
-                          {month.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            {status === 'loading' && (
+              <div className="mt-12 text-center text-gray-600">
+                Carregando artigos...
               </div>
             )}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredArticles.length === 0 && (
-                <div className="col-span-full text-center text-gray-600">
-                  Nenhum artigo encontrado para este filtro.
-                </div>
-              )}
-              {filteredArticles.map((article) => {
-                const dateLabel = formatShortDate(article.publishedAt) || 'Sem data';
+            {status === 'error' && (
+              <div className="mt-12 text-center text-red-600">
+                {error || 'Nao foi possivel carregar os artigos agora.'}
+              </div>
+            )}
+            {status === 'success' && (
+              <>
+                {years.length > 0 && (
+                  <div className="mt-12 bg-white p-6 rounded-lg border border-gray-200 shadow-lg">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3">
+                        <label htmlFor="articles-year" className="text-sm font-semibold text-gray-700">
+                          Ano
+                        </label>
+                        <select
+                          id="articles-year"
+                          value={selectedYear ?? ''}
+                          onChange={(event) => {
+                            const value = Number(event.target.value);
+                            setSelectedYear(Number.isNaN(value) ? null : value);
+                          }}
+                          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          {years.map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {months.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMonth(null)}
+                            className={`rounded-md border px-3 py-1 text-sm font-semibold transition ${
+                              selectedMonth === null
+                                ? 'border-blue-600 bg-blue-600 text-white'
+                                : 'border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600'
+                            }`}
+                            aria-pressed={selectedMonth === null}
+                          >
+                            Todos
+                          </button>
+                          {months.map((month) => (
+                            <button
+                              key={month.value}
+                              type="button"
+                              onClick={() => setSelectedMonth(month.value)}
+                              className={`rounded-md border px-3 py-1 text-sm font-semibold transition ${
+                                selectedMonth === month.value
+                                  ? 'border-blue-600 bg-blue-600 text-white'
+                                  : 'border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600'
+                              }`}
+                              aria-pressed={selectedMonth === month.value}
+                            >
+                              {month.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredArticles.length === 0 && (
+                    <div className="col-span-full text-center text-gray-600">
+                      Nenhum artigo encontrado para este filtro.
+                    </div>
+                  )}
+                  {filteredArticles.map((article) => {
+                    const dateLabel = formatShortDate(article.publishedAt) || 'Sem data';
 
-                return (
-                  <Link
-                    key={article.id}
-                    to={`/blog/artigos/${article.slug}`}
-                    className="group block"
-                    aria-label={`Ler artigo ${article.title}`}
-                  >
-                    <article className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden flex flex-col h-full transition-shadow duration-300 group-hover:shadow-xl">
-                      <div className="p-6 flex-grow">
-                        <p className="text-sm text-gray-500 mb-2">{article.category}</p>
-                        <h3 className="text-xl font-semibold text-gray-900">{article.title}</h3>
-                        <p className="mt-4 text-gray-600">{article.excerpt}</p>
-                      </div>
-                      <div className="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-                        <span>{dateLabel}</span>
-                        <span>{article.readTime} min</span>
-                      </div>
-                    </article>
-                  </Link>
-                );
-              })}
-            </div>
+                    return (
+                      <Link
+                        key={article.id}
+                        to={`/blog/artigos/${article.slug}`}
+                        className="group block"
+                        aria-label={`Ler artigo ${article.title}`}
+                      >
+                        <article className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden flex flex-col h-full transition-shadow duration-300 group-hover:shadow-xl">
+                          <div className="p-6 flex-grow">
+                            <p className="text-sm text-gray-500 mb-2">{article.category}</p>
+                            <h3 className="text-xl font-semibold text-gray-900">{article.title}</h3>
+                            <p className="mt-4 text-gray-600">{article.excerpt}</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
+                            <span>{dateLabel}</span>
+                            <span>{article.readTime} min</span>
+                          </div>
+                        </article>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </section>
 
           <section aria-labelledby="articles-cta-title" className="mt-20">

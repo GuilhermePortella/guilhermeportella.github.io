@@ -31,11 +31,12 @@ Vantagens principais:
 Dentro do projeto, o fluxo de artigos depende destas pastas:
 
 - `public/articles/` -> guarda os arquivos `.md` com o conteudo.
-- `src/data/articles.js` -> index simples com metadata e ordenacao.
+- `public/articles/index.json` -> index gerado automaticamente.
 - `src/pages/Articles.js` -> lista completa com filtro por ano/mes.
 - `src/pages/Article.js` -> pagina de artigo individual.
 - `src/utils/markdown.js` -> parser de Markdown + front matter.
 - `src/utils/articleUtils.js` -> helpers de data e formato.
+- `scripts/generate-articles-index.js` -> gera o index automaticamente.
 
 ## Estrutura do arquivo Markdown
 Cada artigo precisa ter:
@@ -66,7 +67,7 @@ Campos do front matter:
 - `keywords` (opcional): termos para SEO e busca.
 
 ## Campos extras para SEO
-Para indexacao basica, este projeto usa campos **planos** (sem objetos aninhados):
+Para indexacao basica, este projeto aceita campos **planos** e tambem o bloco `seo:`.
 
 - `seoTitle`: titulo pensado para buscadores.
 - `seoDescription`: descricao curta para meta description.
@@ -93,7 +94,32 @@ tags: ["Docs"]
 ---
 ```
 
-> Obs: usamos campos planos para manter o parser simples e leve.
+Ou, se preferir, use o bloco `seo:` com os mesmos campos:
+```md
+---
+title: "Titulo do artigo"
+summary: "Resumo curto."
+seo:
+  title: "Titulo para SEO | Guilherme Portella"
+  description: "Descricao otimizada para buscadores."
+  canonicalUrl: "https://www.guilhermeportella.com.br/blog/artigos/meu-artigo"
+  image: "/images/meu-artigo.jpg"
+  locale: "pt-BR"
+---
+```
+
+Opcionalmente, voce pode informar um bloco `jsonLd:` para sobrescrever o schema:
+```md
+---
+title: "Titulo do artigo"
+jsonLd:
+  "@context": "https://schema.org"
+  "@type": "Article"
+  "headline": "Titulo do artigo"
+---
+```
+
+> Obs: o parser e leve e aceita apenas objetos simples (sem logicas YAML avancadas).
 
 ## Onde salvar o arquivo
 O arquivo deve ficar em `public/articles/`.
@@ -108,34 +134,24 @@ Exemplo:
 public/articles/guia-publicacao-artigos.md
 ```
 
-## Como registrar o artigo no index
-Depois de criar o `.md`, adicione o metadata em `src/data/articles.js`.
+## Como o index e gerado automaticamente
+Nao e mais necessario editar `src/data/articles.js`. O index de artigos
+e criado automaticamente a partir dos arquivos em `public/articles/`.
 
-Exemplo:
-```js
-{
-  id: 8,
-  slug: 'meu-novo-artigo',
-  title: 'Meu novo artigo',
-  excerpt: 'Resumo curto para os cards.',
-  category: 'Docs',
-  publishedAt: '2026-02-10',
-  readTime: 7,
-  tags: ['Docs', 'Markdown']
-}
-```
+O script `scripts/generate-articles-index.js` gera `public/articles/index.json`
+com os campos usados nos cards e nos filtros.
 
 Regras importantes:
 - `slug` deve bater com o nome do arquivo `.md`.
-- `publishedAt` deve estar no formato `YYYY-MM-DD`.
-- `readTime` e usado nos cards (nao e calculado no index).
+- `publishedAt` ou `publishedDate` deve estar no formato `YYYY-MM-DD`.
+- Se `readTime` nao existir, ele e calculado automaticamente.
 
 ## Passo a passo para publicar
 1. Crie o arquivo `.md` em `public/articles/`.
 2. Escreva o front matter completo.
 3. Escreva o conteudo em Markdown (titulos, listas, blocos de codigo).
-4. Adicione o registro correspondente em `src/data/articles.js`.
-5. Rode o projeto e acesse `/blog/artigos/<slug>`.
+4. Rode `npm start` ou `npm run build` (o index e gerado automaticamente).
+5. Acesse `/blog/artigos/<slug>`.
 
 ## Como a pagina de artigo funciona
 Quando o usuario acessa `/blog/artigos/:slug`:
@@ -153,7 +169,7 @@ Quando o usuario acessa `/blog/artigos/:slug`:
 
 ## Checklist final
 - [ ] Arquivo em `public/articles/`
-- [ ] `slug` correto em `src/data/articles.js`
+- [ ] `slug` correto no nome do arquivo
 - [ ] `publishedAt` no formato certo
 - [ ] Conteudo validado no navegador
 

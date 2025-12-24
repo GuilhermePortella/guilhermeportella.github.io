@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ARTICLES from '../data/articles';
+import useArticles from '../hooks/useArticles';
 
 const FEATURED_PROJECTS_URL = 'https://api.github.com/users/guilhermeportella/repos?sort=pushed&per_page=3';
 
@@ -53,7 +53,7 @@ const Home = () => {
     return () => controller.abort();
   }, []);
 
-  const latestPosts = ARTICLES.slice(0, 3);
+  const { articles: latestPosts, status: articlesStatus } = useArticles(3);
 
   return (
     <>
@@ -138,7 +138,22 @@ const Home = () => {
               </p>
             </div>
             <div className="mt-16 space-y-8 max-w-3xl mx-auto">
-              {latestPosts.map(post => (
+              {articlesStatus === 'loading' && (
+                <div className="text-center text-gray-600">
+                  Carregando artigos...
+                </div>
+              )}
+              {articlesStatus === 'error' && (
+                <div className="text-center text-red-600">
+                  Nao foi possivel carregar os artigos agora.
+                </div>
+              )}
+              {articlesStatus === 'success' && latestPosts.length === 0 && (
+                <div className="text-center text-gray-600">
+                  Nenhum artigo publicado ainda.
+                </div>
+              )}
+              {articlesStatus === 'success' && latestPosts.map(post => (
                 <div key={post.id} className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <p className="text-sm text-gray-500 mb-1">{post.category}</p>
                   <h3 className="text-2xl font-semibold mb-2">
