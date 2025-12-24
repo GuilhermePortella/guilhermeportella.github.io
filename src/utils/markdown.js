@@ -155,12 +155,83 @@ const estimateReadingTime = (markdown) => {
   return Math.max(1, Math.round(words / 200));
 };
 
+const splitTableRow = (line) => {
+  const trimmed = line.trim();
+  const stripped = trimmed.replace(/^\|/, '').replace(/\|$/, '');
+  return stripped.split('|').map((cell) => cell.trim());
+};
+
+const isTableSeparator = (line) => {
+  const trimmed = line.trim();
+  if (!trimmed.includes('|')) {
+    return false;
+  }
+  const cells = splitTableRow(trimmed);
+  if (!cells.length) {
+    return false;
+  }
+  return cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+};
+
+const parseTableAlignments = (line) => {
+  return splitTableRow(line).map((cell) => {
+    if (cell.startsWith(':') && cell.endsWith(':')) {
+      return 'center';
+    }
+    if (cell.startsWith(':')) {
+      return 'left';
+    }
+    if (cell.endsWith(':')) {
+      return 'right';
+    }
+    return null;
+  });
+};
+
+const normalizeTableCells = (cells, count) => {
+  const normalized = cells.slice(0, count);
+  while (normalized.length < count) {
+    normalized.push('');
+  }
+  return normalized;
+};
+
+const normalizeAlignments = (alignments, count) => {
+  const normalized = alignments.slice(0, count);
+  while (normalized.length < count) {
+    normalized.push(null);
+  }
+  return normalized;
+};
+
+const buildTableRow = (cells, tag, alignments) => {
+  return cells
+    .map((cell, index) => {
+      const alignment = alignments[index];
+      const alignAttr = alignment ? ` style="text-align:${alignment};"` : '';
+      return `<${tag}${alignAttr}>${parseInline(cell)}</${tag}>`;
+    })
+    .join('');
+};
+
+const normalizeCodeLanguage = (value) => {
+  if (!value) {
+    return '';
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+  return trimmed.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+};
+
 const markdownToHtml = (markdown) => {
   const lines = markdown.split(/\r?\n/);
   const htmlParts = [];
   let paragraph = [];
   let inCodeBlock = false;
   let codeLines = [];
+  let codeLanguage = '';
   let inUl = false;
   let inOl = false;
   let inBlockquote = false;
@@ -191,33 +262,88 @@ const markdownToHtml = (markdown) => {
     }
   };
 
-  lines.forEach((line) => {
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
     const trimmed = line.trim();
 
     if (trimmed.startsWith('```')) {
       if (inCodeBlock) {
-        htmlParts.push(`<pre><code>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+        const normalizedLanguage = normalizeCodeLanguage(codeLanguage);
+        const classAttr = normalizedLanguage ? ` class="language-${normalizedLanguage}"` : '';
+        htmlParts.push(`<pre><code${classAttr}>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
         inCodeBlock = false;
         codeLines = [];
+        codeLanguage = '';
       } else {
         flushParagraph();
         closeLists();
         closeBlockquote();
         inCodeBlock = true;
+        codeLanguage = trimmed.slice(3).trim();
       }
-      return;
+      continue;
     }
 
     if (inCodeBlock) {
       codeLines.push(line);
-      return;
+      continue;
     }
 
     if (!trimmed) {
       flushParagraph();
       closeLists();
       closeBlockquote();
-      return;
+      continue;
+    }
+
+    const nextLine = lines[i + 1];
+    if (trimmed.includes('|') && nextLine && isTableSeparator(nextLine)) {
+      flushParagraph();
+      closeLists();
+      closeBlockquote();
+
+      const headerCells = splitTableRow(trimmed);
+      const alignments = parseTableAlignments(nextLine);
+      const rows = [];
+      let rowIndex = i + 2;
+
+      for (; rowIndex < lines.length; rowIndex += 1) {
+        const rowLine = lines[rowIndex];
+        const rowTrimmed = rowLine.trim();
+        if (!rowTrimmed) {
+          break;
+        }
+        if (!rowTrimmed.includes('|')) {
+          break;
+        }
+        rows.push(splitTableRow(rowLine));
+      }
+
+      const columnCount = Math.max(
+        headerCells.length,
+        alignments.length,
+        ...rows.map((row) => row.length)
+      );
+      const normalizedHeader = normalizeTableCells(headerCells, columnCount);
+      const normalizedAlignments = normalizeAlignments(alignments, columnCount);
+
+      htmlParts.push('<table>');
+      htmlParts.push('<thead>');
+      htmlParts.push(`<tr>${buildTableRow(normalizedHeader, 'th', normalizedAlignments)}</tr>`);
+      htmlParts.push('</thead>');
+
+      if (rows.length) {
+        htmlParts.push('<tbody>');
+        rows.forEach((row) => {
+          const normalizedRow = normalizeTableCells(row, columnCount);
+          htmlParts.push(`<tr>${buildTableRow(normalizedRow, 'td', normalizedAlignments)}</tr>`);
+        });
+        htmlParts.push('</tbody>');
+      }
+
+      htmlParts.push('</table>');
+      i = rowIndex - 1;
+      continue;
     }
 
     if (trimmed === '---' || trimmed === '***') {
@@ -225,7 +351,7 @@ const markdownToHtml = (markdown) => {
       closeLists();
       closeBlockquote();
       htmlParts.push('<hr />');
-      return;
+      continue;
     }
 
     const headingMatch = /^(#{1,4})\s+(.*)$/.exec(trimmed);
@@ -235,7 +361,7 @@ const markdownToHtml = (markdown) => {
       closeBlockquote();
       const level = headingMatch[1].length;
       htmlParts.push(`<h${level}>${parseInline(headingMatch[2])}</h${level}>`);
-      return;
+      continue;
     }
 
     const blockquoteMatch = /^>\s?(.*)$/.exec(trimmed);
@@ -247,7 +373,7 @@ const markdownToHtml = (markdown) => {
         inBlockquote = true;
       }
       htmlParts.push(`<p>${parseInline(blockquoteMatch[1])}</p>`);
-      return;
+      continue;
     }
 
     const olMatch = /^\d+\.\s+(.*)$/.exec(trimmed);
@@ -260,7 +386,7 @@ const markdownToHtml = (markdown) => {
         inOl = true;
       }
       htmlParts.push(`<li>${parseInline(olMatch[1])}</li>`);
-      return;
+      continue;
     }
 
     const ulMatch = /^[-*+]\s+(.*)$/.exec(trimmed);
@@ -273,7 +399,7 @@ const markdownToHtml = (markdown) => {
         inUl = true;
       }
       htmlParts.push(`<li>${parseInline(ulMatch[1])}</li>`);
-      return;
+      continue;
     }
 
     if (inUl || inOl) {
@@ -284,10 +410,12 @@ const markdownToHtml = (markdown) => {
     }
 
     paragraph.push(trimmed);
-  });
+  }
 
   if (inCodeBlock) {
-    htmlParts.push(`<pre><code>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+    const normalizedLanguage = normalizeCodeLanguage(codeLanguage);
+    const classAttr = normalizedLanguage ? ` class="language-${normalizedLanguage}"` : '';
+    htmlParts.push(`<pre><code${classAttr}>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
   }
 
   flushParagraph();
