@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { getArticleBySlug } from '../lib/articles';
 import { formatLongDate } from '../utils/articleUtils';
-import { parseMarkdown } from '../utils/markdown';
 
 const Article = () => {
   const { slug } = useParams();
@@ -20,29 +20,27 @@ const Article = () => {
       return;
     }
 
-    const controller = new AbortController();
-    const articleUrl = `${baseUrl}/articles/${slug}.md`;
+    let active = true;
 
     const fetchArticle = async () => {
       setStatus('loading');
 
       try {
-        const response = await fetch(articleUrl, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error('Article not found.');
+        const article = await getArticleBySlug(slug);
+        if (!active) {
+          return;
+        }
+        if (!article) {
+          setStatus('error');
+          return;
         }
 
-        const markdown = typeof TextDecoder !== 'undefined'
-          ? new TextDecoder('utf-8').decode(await response.arrayBuffer())
-          : await response.text();
-        const parsed = parseMarkdown(markdown);
-
-        setArticleHtml(parsed.html);
-        setFrontmatter(parsed.frontmatter || {});
-        setReadingTime(parsed.readingTime || null);
+        setArticleHtml(article.html || '');
+        setFrontmatter(article.frontmatter || {});
+        setReadingTime(article.readTime || article.readingTime || null);
         setStatus('success');
       } catch (error) {
-        if (error.name === 'AbortError') {
+        if (!active) {
           return;
         }
         setStatus('error');
@@ -51,8 +49,10 @@ const Article = () => {
 
     fetchArticle();
 
-    return () => controller.abort();
-  }, [baseUrl, slug]);
+    return () => {
+      active = false;
+    };
+  }, [slug]);
 
   const title = frontmatter.title || (status === 'error' ? 'Artigo nao encontrado' : 'Carregando artigo');
   const summary = frontmatter.summary || '';
