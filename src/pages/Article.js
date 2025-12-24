@@ -1,7 +1,76 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getArticleBySlug } from '../lib/articles';
 import { formatLongDate } from '../utils/articleUtils';
+
+const KATEX_VERSION = '0.16.9';
+const KATEX_CSS_ID = 'katex-css';
+const KATEX_JS_ID = 'katex-js';
+const KATEX_AUTORENDER_ID = 'katex-auto-render';
+const KATEX_CSS_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist/katex.min.css`;
+const KATEX_JS_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist/katex.min.js`;
+const KATEX_AUTORENDER_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist/contrib/auto-render.min.js`;
+
+let mathRendererPromise = null;
+
+const ensureMathRenderer = () => {
+  if (mathRendererPromise) {
+    return mathRendererPromise;
+  }
+  if (typeof document === 'undefined') {
+    return Promise.resolve();
+  }
+
+  const ensureStylesheet = () => {
+    if (document.getElementById(KATEX_CSS_ID)) {
+      return;
+    }
+    const link = document.createElement('link');
+    link.id = KATEX_CSS_ID;
+    link.rel = 'stylesheet';
+    link.href = KATEX_CSS_URL;
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  };
+
+  const ensureScript = (id, src) => {
+    return new Promise((resolve, reject) => {
+      const existing = document.getElementById(id);
+      if (existing) {
+        if (existing.getAttribute('data-loaded') === 'true') {
+          resolve();
+          return;
+        }
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = id;
+      script.src = src;
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = 'anonymous';
+      script.onload = () => {
+        script.setAttribute('data-loaded', 'true');
+        resolve();
+      };
+      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
+    });
+  };
+
+  mathRendererPromise = new Promise((resolve, reject) => {
+    ensureStylesheet();
+    ensureScript(KATEX_JS_ID, KATEX_JS_URL)
+      .then(() => ensureScript(KATEX_AUTORENDER_ID, KATEX_AUTORENDER_URL))
+      .then(resolve)
+      .catch(reject);
+  });
+
+  return mathRendererPromise;
+};
+
 
 const Article = () => {
   const { slug } = useParams();
@@ -9,6 +78,7 @@ const Article = () => {
   const [articleHtml, setArticleHtml] = useState('');
   const [frontmatter, setFrontmatter] = useState({});
   const [readingTime, setReadingTime] = useState(null);
+  const contentRef = useRef(null);
 
   const baseUrl = useMemo(() => {
     return (process.env.PUBLIC_URL || '').replace(/\/$/, '');
@@ -277,6 +347,46 @@ const Article = () => {
     title
   ]);
 
+
+  useEffect(() => {
+    if (status !== 'success' || !articleHtml) {
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const renderMath = async () => {
+      try {
+        await ensureMathRenderer();
+        if (cancelled) {
+          return;
+        }
+        if (typeof window === 'undefined' || typeof window.renderMathInElement !== 'function') {
+          return;
+        }
+        if (!contentRef.current) {
+          return;
+        }
+        window.renderMathInElement(contentRef.current, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ],
+          throwOnError: false,
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        });
+      } catch (error) {
+        return;
+      }
+    };
+
+    renderMath();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [articleHtml, status]);
+
   return (
     <>
       <section aria-labelledby="article-title" className="bg-white py-16 px-6">
@@ -343,7 +453,7 @@ const Article = () => {
             </div>
           )}
           {status === 'success' && (
-            <div className="article-content">
+            <div className="article-content" ref={contentRef}>
               <div dangerouslySetInnerHTML={{ __html: articleHtml }} />
             </div>
           )}

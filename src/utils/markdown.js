@@ -266,6 +266,8 @@ const markdownToHtml = (markdown) => {
   let inCodeBlock = false;
   let codeLines = [];
   let codeLanguage = '';
+  let inMathBlock = false;
+  let mathLines = [];
   let inHtmlBlock = false;
   let htmlBlockTag = '';
   let htmlBlockDepth = 0;
@@ -298,6 +300,19 @@ const markdownToHtml = (markdown) => {
       htmlParts.push('</blockquote>');
       inBlockquote = false;
     }
+  };
+
+  const flushMathBlock = () => {
+    if (!mathLines.length) {
+      inMathBlock = false;
+      return;
+    }
+    const content = mathLines.join('\n').trim();
+    if (content) {
+      htmlParts.push(`<div class="math-block">$$${escapeHtml(content)}$$</div>`);
+    }
+    mathLines = [];
+    inMathBlock = false;
   };
 
   for (let i = 0; i < lines.length; i += 1) {
@@ -343,6 +358,35 @@ const markdownToHtml = (markdown) => {
 
     if (inCodeBlock) {
       codeLines.push(line);
+      continue;
+    }
+
+    if (inMathBlock) {
+      if (trimmed === '$$') {
+        flushMathBlock();
+      } else {
+        mathLines.push(line);
+      }
+      continue;
+    }
+
+    if (trimmed === '$$') {
+      flushParagraph();
+      closeLists();
+      closeBlockquote();
+      inMathBlock = true;
+      mathLines = [];
+      continue;
+    }
+
+    if (trimmed.startsWith('$$') && trimmed.endsWith('$$') && trimmed.length > 4) {
+      flushParagraph();
+      closeLists();
+      closeBlockquote();
+      const content = trimmed.slice(2, -2).trim();
+      if (content) {
+        htmlParts.push(`<div class="math-block">$$${escapeHtml(content)}$$</div>`);
+      }
       continue;
     }
 
@@ -505,6 +549,10 @@ const markdownToHtml = (markdown) => {
     const normalizedLanguage = normalizeCodeLanguage(codeLanguage);
     const classAttr = normalizedLanguage ? ` class="language-${normalizedLanguage}"` : '';
     htmlParts.push(`<pre><code${classAttr}>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+  }
+
+  if (inMathBlock) {
+    flushMathBlock();
   }
 
   flushParagraph();

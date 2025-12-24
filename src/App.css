@@ -137,3 +137,13 @@
   margin: 2rem 0;
   border-color: #e5e7eb;
 }
+
+.article-content .math-block {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.article-content .math-block .katex-display {
+  margin: 0;
+}
