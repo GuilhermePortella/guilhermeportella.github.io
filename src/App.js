@@ -19,7 +19,7 @@ function App() {
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
       <header className="bg-gray-800 shadow-lg">
         <nav className="container mx-auto px-6 py-3">
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
             <NavLink to="/" className={getNavLinkClass}>
               Home
             </NavLink>
