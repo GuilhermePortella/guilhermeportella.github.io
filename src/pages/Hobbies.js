@@ -19,6 +19,13 @@ const favoriteMusic = [
     album: 'Bad Animals',
     spotifyEmbedUrl: 'https://open.spotify.com/embed/track/54b8qPFqYqIndfdxiLApea?utm_source=generator&theme=0',
     description: 'Essa música fala sobre um amor não correspondido, desejo intenso de se aproximar de alguém que é especial mas sem saber como, por medo de rejeição ou pela certeza que nunca daria certo, mas o amor é real e existe no eu lírico da canção.'
+  },
+  {
+    artist: 'Pear Jam - Black',
+    album: 'Ten',
+    spotifyEmbedUrl: 'https://open.spotify.com/embed/track/5Xak5fmy089t0FYmh3VJiY?utm_source=generator&theme=0',
+    description: 'Nessa o Pearl Jam judiou, considera uma das mais tristes do rock, essa música fala sobre dor profunda, perda e luto, é um desabafo do Eddie Vedder sobre o relacionamento que chegou ao fim, deixando uma cicatriz eterna e a saudade da pessoa que ele amava.'
+      + 'Um primeiro amor intenso que chegou ao fim e a dor de aceitar o fim. Mas as vezes penso que o que nunca aconteceu pode machucar mais do que algo que aconteceu mas acabou, mas enfim só uma ideia, curte o som aí.'
   }
 ];
 
