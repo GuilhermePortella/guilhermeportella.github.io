@@ -154,12 +154,15 @@ Regras importantes:
 5. Acesse `/blog/artigos/<slug>`.
 
 ## Como a pagina de artigo funciona
+A listagem em `src/pages/Articles.js` nao renderiza HTML do artigo. Ela so usa o front matter.
+
 Quando o usuario acessa `/blog/artigos/:slug`:
-1) `src/lib/articles.js` localiza o artigo pelo slug.
-2) O parser em `src/utils/markdown.js` separa front matter e corpo.
-3) O Markdown vira HTML simples e e renderizado.
-4) As datas sao formatadas por `src/utils/articleUtils.js`.
-5) Meta tags e JSON-LD sao montados a partir do front matter.
+1) `src/lib/articles.js` localiza o arquivo `.md` (inclui subpastas).
+2) `src/utils/markdown.js` separa front matter e corpo e converte Markdown para HTML (titulos, listas, tabelas, codigo).
+3) O HTML pronto e injetado em `src/pages/Article.js` via `dangerouslySetInnerHTML`.
+4) O visual do conteudo vem de `src/App.css` (ex.: `.article-content table`, `.article-content pre`).
+5) As datas sao formatadas por `src/utils/articleUtils.js`.
+6) Meta tags e JSON-LD sao montados a partir do front matter.
 
 ## Dicas e cuidados
 - Evite caracteres especiais no nome do arquivo (use apenas letras, numeros e `-`).
