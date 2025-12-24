@@ -70,7 +70,7 @@ const parseFrontMatter = (markdown) => {
         continue;
       }
 
-      if (key === 'tags' && rawValue.includes(',')) {
+      if ((key === 'tags' || key === 'keywords') && rawValue.includes(',')) {
         frontmatter[key] = rawValue
           .split(',')
           .map((item) => stripQuotes(item))
