@@ -32,7 +32,9 @@ const Article = () => {
           throw new Error('Article not found.');
         }
 
-        const markdown = await response.text();
+        const markdown = typeof TextDecoder !== 'undefined'
+          ? new TextDecoder('utf-8').decode(await response.arrayBuffer())
+          : await response.text();
         const parsed = parseMarkdown(markdown);
 
         setArticleHtml(parsed.html);
