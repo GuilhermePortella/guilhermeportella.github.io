@@ -11,7 +11,7 @@ keywords:
   - Publicacao
 seoTitle: "Guia completo de publicacao de artigos | Guilherme Portella"
 seoDescription: "Guia detalhado sobre como publicar artigos em Markdown, organizar metadata e manter SEO basico no site."
-canonicalUrl: "https://www.guilhermeportella.com.br/blog/artigos/guia-publicacao-artigos"
+canonicalUrl: "https://www.guilhermeportella.com.br/#/blog/artigos/guia-publicacao-artigos"
 locale: "pt-BR"
 tags: ["Docs", "Blog", "Markdown"]
 ---
