@@ -155,6 +155,40 @@ const estimateReadingTime = (markdown) => {
   return Math.max(1, Math.round(words / 200));
 };
 
+const VOID_HTML_TAGS = new Set([
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr'
+]);
+
+const getHtmlTagName = (value) => {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith('<') || trimmed.startsWith('</') || trimmed.startsWith('<!') || trimmed.startsWith('<?')) {
+    return null;
+  }
+  const match = /^<([A-Za-z][A-Za-z0-9-]*)\b/.exec(trimmed);
+  return match ? match[1].toLowerCase() : null;
+};
+
+const countHtmlTag = (line, tagName) => {
+  const open = new RegExp(`<${tagName}(\\s|>|/|$)`, 'gi');
+  const close = new RegExp(`</${tagName}\\s*>`, 'gi');
+  const openCount = line.match(open)?.length ?? 0;
+  const closeCount = line.match(close)?.length ?? 0;
+  return openCount - closeCount;
+};
+
 const splitTableRow = (line) => {
   const trimmed = line.trim();
   const stripped = trimmed.replace(/^\|/, '').replace(/\|$/, '');
@@ -232,6 +266,10 @@ const markdownToHtml = (markdown) => {
   let inCodeBlock = false;
   let codeLines = [];
   let codeLanguage = '';
+  let inHtmlBlock = false;
+  let htmlBlockTag = '';
+  let htmlBlockDepth = 0;
+  let inHtmlVoidTag = false;
   let inUl = false;
   let inOl = false;
   let inBlockquote = false;
@@ -266,6 +304,25 @@ const markdownToHtml = (markdown) => {
     const line = lines[i];
     const trimmed = line.trim();
 
+    if (inHtmlBlock) {
+      htmlParts.push(line);
+      htmlBlockDepth += countHtmlTag(line, htmlBlockTag);
+      if (htmlBlockDepth <= 0) {
+        inHtmlBlock = false;
+        htmlBlockTag = '';
+        htmlBlockDepth = 0;
+      }
+      continue;
+    }
+
+    if (inHtmlVoidTag) {
+      htmlParts.push(line);
+      if (line.includes('>')) {
+        inHtmlVoidTag = false;
+      }
+      continue;
+    }
+
     if (trimmed.startsWith('```')) {
       if (inCodeBlock) {
         const normalizedLanguage = normalizeCodeLanguage(codeLanguage);
@@ -293,6 +350,38 @@ const markdownToHtml = (markdown) => {
       flushParagraph();
       closeLists();
       closeBlockquote();
+      continue;
+    }
+
+    if (trimmed.startsWith('<')) {
+      const tagName = getHtmlTagName(trimmed);
+      flushParagraph();
+      closeLists();
+      closeBlockquote();
+
+      if (!tagName) {
+        htmlParts.push(line);
+        continue;
+      }
+
+      if (VOID_HTML_TAGS.has(tagName)) {
+        htmlParts.push(line);
+        if (!trimmed.includes('>')) {
+          inHtmlVoidTag = true;
+        }
+        continue;
+      }
+
+      inHtmlBlock = true;
+      htmlBlockTag = tagName;
+      htmlBlockDepth = 0;
+      htmlParts.push(line);
+      htmlBlockDepth += countHtmlTag(line, htmlBlockTag);
+      if (htmlBlockDepth <= 0) {
+        inHtmlBlock = false;
+        htmlBlockTag = '';
+        htmlBlockDepth = 0;
+      }
       continue;
     }
 
