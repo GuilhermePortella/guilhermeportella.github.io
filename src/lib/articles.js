@@ -1,6 +1,6 @@
 import { parseMarkdown } from '../utils/markdown';
 
-const articlesContext = require.context('../articles', false, /\.md$/);
+const articlesContext = require.context('../articles', true, /\.md$/);
 
 const normalizeSlug = (value) => {
   if (!value) {
@@ -58,7 +58,13 @@ const loadMarkdownFile = async (key) => {
 const createArticleFromMarkdown = (markdown, key, index) => {
   const parsed = parseMarkdown(markdown);
   const frontmatter = parsed.frontmatter || {};
-  const fileSlug = normalizeSlug(key.replace(/^\.\//, '').replace(/\.md$/, ''));
+  const fileSlug = normalizeSlug(
+    key
+      .replace(/^\.\//, '')
+      .replace(/\.md$/, '')
+      .split(/[\\/]/)
+      .pop()
+  );
   const slug = normalizeSlug(frontmatter.slug || fileSlug);
   const title = frontmatter.title || slug.replace(/-/g, ' ');
   const summary = frontmatter.summary || frontmatter.excerpt || '';
@@ -125,4 +131,3 @@ export const getArticleBySlug = async (slug) => {
   const articles = await loadAllArticles();
   return articles.find((item) => item.slug === normalized) || null;
 };
-
