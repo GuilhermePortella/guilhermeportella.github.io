@@ -17,7 +17,7 @@ keywords:
 seo:
   title: "Monólito Modular vs Microsserviços — Agilidade, Escalabilidade e Trade-offs Arquiteturais"
   description: "Análise técnica aprofundada sobre Monólito Modular, comparando-o com Microsserviços em termos de desempenho, complexidade operacional, escalabilidade e estratégia de evolução arquitetural."
-  canonicalUrl: "https://www.zonarestrita.com.br/articles/monolito-modular/"
+  canonicalUrl: "https://www.guilhermeportella.com.br/#/blog/artigos/monolito-modular"
   image: "/images/monolito-modular-architecture.png"
   locale: "pt-BR"
 jsonLd:
@@ -27,11 +27,11 @@ jsonLd:
   "description": "Um artigo técnico que explora o Monólito Modular como abordagem arquitetural intermediária, equilibrando simplicidade operacional e modularidade estrutural frente aos desafios dos microsserviços."
   "author":
     "@type": "Person"
-    "name": "Guilherme Portell"
+    "name": "Guilherme Portella"
   "publisher":
     "@type": "Organization"
     "name": "Guilherme Portella"
-    "url": "https://www.zonarestrita.com.br/"
+    "url": "www.guilhermeportella.com.br"
   "inLanguage": "pt-BR"
   "keywords": "Arquitetura de Software, Monólito Modular, Microsserviços, Escalabilidade, Agilidade, Engenharia de Software"
 ---
