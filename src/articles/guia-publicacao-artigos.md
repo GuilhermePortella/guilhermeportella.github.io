@@ -18,25 +18,25 @@ tags: ["Docs", "Blog", "Markdown"]
 
 ## Por que esta arquitetura?
 O objetivo aqui e simples: publicar conteudo com o menor custo de manutencao possivel.
-Para isso, o site usa arquivos `.md` dentro de `public/articles` e um parser leve no
-frontend para transformar o Markdown em HTML no momento do acesso.
+Para isso, o site usa arquivos `.md` dentro de `src/articles` e um loader leve
+em `src/lib/articles.js` que mapeia os arquivos automaticamente no build.
 
 Vantagens principais:
 - Conteudo editavel sem mexer em componentes React.
-- Publicacao rapida: so adicionar o arquivo e registrar o metadata.
+- Publicacao rapida: so adicionar o arquivo.
 - Sem dependencia de banco ou CMS externo.
-- Baixo custo de processamento e memoria.
+- Sem scripts ou index manual para atualizar.
 
 ## Estrutura geral do projeto (somente o que importa para o blog)
 Dentro do projeto, o fluxo de artigos depende destas pastas:
 
-- `public/articles/` -> guarda os arquivos `.md` com o conteudo.
-- `public/articles/index.json` -> index gerado automaticamente.
+- `src/articles/` -> guarda os arquivos `.md` com o conteudo.
+- `src/lib/articles.js` -> carrega os arquivos e monta a lista automaticamente.
+- `src/hooks/useArticles.js` -> hook que entrega status, erro e lista.
 - `src/pages/Articles.js` -> lista completa com filtro por ano/mes.
 - `src/pages/Article.js` -> pagina de artigo individual.
 - `src/utils/markdown.js` -> parser de Markdown + front matter.
 - `src/utils/articleUtils.js` -> helpers de data e formato.
-- `scripts/generate-articles-index.js` -> gera o index automaticamente.
 
 ## Estrutura do arquivo Markdown
 Cada artigo precisa ter:
@@ -65,6 +65,7 @@ Campos do front matter:
 - `publishedDate` (alternativo): mesmo formato de `publishedAt`.
 - `tags` (opcional): lista de tags.
 - `keywords` (opcional): termos para SEO e busca.
+- `slug` (opcional): slug customizado para a URL.
 
 ## Campos extras para SEO
 Para indexacao basica, este projeto aceita campos **planos** e tambem o bloco `seo:`.
@@ -122,40 +123,39 @@ jsonLd:
 > Obs: o parser e leve e aceita apenas objetos simples (sem logicas YAML avancadas).
 
 ## Onde salvar o arquivo
-O arquivo deve ficar em `public/articles/`.
-O nome do arquivo precisa ser o **slug** do artigo:
+O arquivo deve ficar em `src/articles/`.
+O nome do arquivo vira o **slug** (normalizado) do artigo:
 
 ```
-public/articles/<slug>.md
+src/articles/<slug>.md
 ```
 
 Exemplo:
 ```
-public/articles/guia-publicacao-artigos.md
+src/articles/guia-publicacao-artigos.md
 ```
 
-## Como o index e gerado automaticamente
-Nao e mais necessario editar `src/data/articles.js`. O index de artigos
-e criado automaticamente a partir dos arquivos em `public/articles/`.
+Se precisar de um slug diferente, use `slug:` no front matter.
 
-O script `scripts/generate-articles-index.js` gera `public/articles/index.json`
-com os campos usados nos cards e nos filtros.
+## Como os artigos sao mapeados automaticamente
+Nao existe index manual. O arquivo `src/lib/articles.js` usa um mapeamento direto
+dos `.md` dentro de `src/articles/`, carrega o conteudo e monta a lista em runtime.
 
 Regras importantes:
-- `slug` deve bater com o nome do arquivo `.md`.
 - `publishedAt` ou `publishedDate` deve estar no formato `YYYY-MM-DD`.
 - Se `readTime` nao existir, ele e calculado automaticamente.
+- Slugs sao normalizados (acentos e espacos viram `-`).
 
 ## Passo a passo para publicar
-1. Crie o arquivo `.md` em `public/articles/`.
+1. Crie o arquivo `.md` em `src/articles/`.
 2. Escreva o front matter completo.
 3. Escreva o conteudo em Markdown (titulos, listas, blocos de codigo).
-4. Rode `npm start` ou `npm run build` (o index e gerado automaticamente).
+4. Rode o projeto normalmente.
 5. Acesse `/blog/artigos/<slug>`.
 
 ## Como a pagina de artigo funciona
 Quando o usuario acessa `/blog/artigos/:slug`:
-1) A pagina `Article.js` busca o arquivo `.md`.
+1) `src/lib/articles.js` localiza o artigo pelo slug.
 2) O parser em `src/utils/markdown.js` separa front matter e corpo.
 3) O Markdown vira HTML simples e e renderizado.
 4) As datas sao formatadas por `src/utils/articleUtils.js`.
@@ -168,8 +168,8 @@ Quando o usuario acessa `/blog/artigos/:slug`:
 - Se o artigo nao aparecer, verifique se o `slug` bate com o nome do arquivo.
 
 ## Checklist final
-- [ ] Arquivo em `public/articles/`
-- [ ] `slug` correto no nome do arquivo
+- [ ] Arquivo em `src/articles/`
+- [ ] `slug` correto no nome do arquivo (ou no front matter)
 - [ ] `publishedAt` no formato certo
 - [ ] Conteudo validado no navegador
 
