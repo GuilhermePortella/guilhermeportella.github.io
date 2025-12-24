@@ -58,16 +58,25 @@ const Article = () => {
   const summary = frontmatter.summary || '';
   const author = frontmatter.author || 'Guilherme Portella';
   const publishedAt = frontmatter.publishedAt || frontmatter.publishedDate || '';
-  const tags = Array.isArray(frontmatter.tags)
-    ? frontmatter.tags
-    : typeof frontmatter.tags === 'string'
-      ? [frontmatter.tags]
-      : [];
-  const keywords = Array.isArray(frontmatter.keywords)
-    ? frontmatter.keywords
-    : typeof frontmatter.keywords === 'string'
-      ? [frontmatter.keywords]
-      : tags;
+  const tags = useMemo(() => {
+    if (Array.isArray(frontmatter.tags)) {
+      return frontmatter.tags;
+    }
+    if (typeof frontmatter.tags === 'string') {
+      return [frontmatter.tags];
+    }
+    return [];
+  }, [frontmatter.tags]);
+
+  const keywords = useMemo(() => {
+    if (Array.isArray(frontmatter.keywords)) {
+      return frontmatter.keywords;
+    }
+    if (typeof frontmatter.keywords === 'string') {
+      return [frontmatter.keywords];
+    }
+    return tags;
+  }, [frontmatter.keywords, tags]);
 
   const seoBlock = frontmatter.seo && typeof frontmatter.seo === 'object' && !Array.isArray(frontmatter.seo)
     ? frontmatter.seo
