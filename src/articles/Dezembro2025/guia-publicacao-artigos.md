@@ -2,7 +2,7 @@
 title: "Guia completo: decisoes tecnicas e como publicar artigos aqui"
 summary: "Explicacao detalhada da arquitetura dos artigos, estrutura do Markdown e passo a passo de publicacao."
 author: "Guilherme Portella"
-publishedAt: "2026-02-01"
+publishedAt: "2025-12-24"
 keywords:
   - Docs
   - Blog

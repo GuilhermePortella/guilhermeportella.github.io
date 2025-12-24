@@ -28,7 +28,8 @@ const Articles = () => {
     return Array.from(yearSet).sort((a, b) => b - a);
   }, [articlesWithDates]);
 
-  const [selectedYear, setSelectedYear] = useState(() => years[0] ?? null);
+  const ALL_YEARS = 'all';
+  const [selectedYear, setSelectedYear] = useState(() => ALL_YEARS);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const Articles = () => {
   }, [selectedYear]);
 
   const months = useMemo(() => {
-    if (!selectedYear) {
+    if (!selectedYear || selectedYear === ALL_YEARS) {
       return [];
     }
     const monthSet = new Map();
@@ -68,17 +69,18 @@ const Articles = () => {
   }, [articlesWithDates, selectedYear]);
 
   const filteredArticles = useMemo(() => {
+    const isAllYears = selectedYear === ALL_YEARS;
     const list = articlesWithDates.filter((article) => {
       if (!article.parsedDate) {
-        return !selectedYear;
+        return isAllYears || !selectedYear;
       }
-      if (selectedYear) {
+      if (selectedYear && !isAllYears) {
         const year = article.isDateOnly ? article.parsedDate.getUTCFullYear() : article.parsedDate.getFullYear();
         if (year !== selectedYear) {
           return false;
         }
       }
-      if (selectedMonth !== null) {
+      if (selectedMonth !== null && !isAllYears) {
         const month = article.isDateOnly ? article.parsedDate.getUTCMonth() : article.parsedDate.getMonth();
         if (month !== selectedMonth) {
           return false;
@@ -137,11 +139,17 @@ const Articles = () => {
                           id="articles-year"
                           value={selectedYear ?? ''}
                           onChange={(event) => {
-                            const value = Number(event.target.value);
-                            setSelectedYear(Number.isNaN(value) ? null : value);
+                            const { value } = event.target;
+                            if (value === ALL_YEARS) {
+                              setSelectedYear(ALL_YEARS);
+                              return;
+                            }
+                            const parsed = Number(value);
+                            setSelectedYear(Number.isNaN(parsed) ? null : parsed);
                           }}
                           className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
+                          <option value={ALL_YEARS}>Todos</option>
                           {years.map((year) => (
                             <option key={year} value={year}>
                               {year}

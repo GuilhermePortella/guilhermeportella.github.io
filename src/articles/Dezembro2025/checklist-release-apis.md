@@ -2,7 +2,7 @@
 title: "Checklist de release para APIs"
 summary: "Rascunho sobre validacao, logs e monitoramento para releases mais seguros."
 author: "Guilherme Portella"
-publishedAt: "2026-01-12"
+publishedAt: "2025-12-24"
 tags: ["Back-end", "Release"]
 ---
 
