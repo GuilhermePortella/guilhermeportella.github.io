@@ -15,6 +15,10 @@ const Article = () => {
     return ARTICLES.find((item) => item.slug === slug) || null;
   }, [slug]);
 
+  const baseUrl = useMemo(() => {
+    return (process.env.PUBLIC_URL || '').replace(/\/$/, '');
+  }, []);
+
   useEffect(() => {
     if (!slug) {
       setStatus('error');
@@ -22,7 +26,6 @@ const Article = () => {
     }
 
     const controller = new AbortController();
-    const baseUrl = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
     const articleUrl = `${baseUrl}/articles/${slug}.md`;
 
     const fetchArticle = async () => {
@@ -52,12 +55,12 @@ const Article = () => {
     fetchArticle();
 
     return () => controller.abort();
-  }, [slug]);
+  }, [baseUrl, slug]);
 
   const title = frontmatter.title || articleMeta?.title || (status === 'error' ? 'Artigo nao encontrado' : 'Carregando artigo');
   const summary = frontmatter.summary || articleMeta?.excerpt;
   const author = frontmatter.author || 'Guilherme Portella';
-  const publishedAt = frontmatter.publishedAt || articleMeta?.publishedAt;
+  const publishedAt = frontmatter.publishedAt || frontmatter.publishedDate || articleMeta?.publishedAt;
   const tags = Array.isArray(frontmatter.tags)
     ? frontmatter.tags
     : typeof frontmatter.tags === 'string'
@@ -65,9 +68,195 @@ const Article = () => {
       : Array.isArray(articleMeta?.tags)
         ? articleMeta.tags
         : [];
+  const keywords = Array.isArray(frontmatter.keywords)
+    ? frontmatter.keywords
+    : typeof frontmatter.keywords === 'string'
+      ? [frontmatter.keywords]
+      : tags;
+
+  const seoTitle = frontmatter.seoTitle || title;
+  const seoDescription = frontmatter.seoDescription || summary || '';
+  const seoLocale = frontmatter.locale || 'pt-BR';
+  const seoImage = frontmatter.ogImage || frontmatter.image || '';
+  const canonicalUrl = useMemo(() => {
+    if (frontmatter.canonicalUrl) {
+      return frontmatter.canonicalUrl;
+    }
+    if (typeof window === 'undefined' || !slug) {
+      return '';
+    }
+    return `${window.location.origin}${baseUrl}/blog/artigos/${slug}`;
+  }, [baseUrl, frontmatter.canonicalUrl, slug]);
 
   const minutes = readingTime || articleMeta?.readTime;
   const dateLabel = formatLongDate(publishedAt);
+
+  useEffect(() => {
+    if (typeof document === 'undefined' || !seoTitle) {
+      return undefined;
+    }
+
+    const managed = [];
+
+    const setMetaTag = (attr, key, content) => {
+      if (!content) {
+        return;
+      }
+      const selector = `meta[${attr}="${key}"]`;
+      const existing = document.head.querySelector(selector);
+      if (existing) {
+        managed.push({
+          node: existing,
+          prev: existing.getAttribute('content'),
+          attr: 'content',
+          created: false
+        });
+        existing.setAttribute('content', content);
+        return;
+      }
+      const meta = document.createElement('meta');
+      meta.setAttribute(attr, key);
+      meta.setAttribute('content', content);
+      meta.setAttribute('data-article-meta', 'true');
+      document.head.appendChild(meta);
+      managed.push({ node: meta, created: true });
+    };
+
+    const setLinkTag = (rel, href) => {
+      if (!href) {
+        return;
+      }
+      const existing = document.head.querySelector(`link[rel="${rel}"]`);
+      if (existing) {
+        managed.push({
+          node: existing,
+          prev: existing.getAttribute('href'),
+          attr: 'href',
+          created: false
+        });
+        existing.setAttribute('href', href);
+        return;
+      }
+      const link = document.createElement('link');
+      link.setAttribute('rel', rel);
+      link.setAttribute('href', href);
+      link.setAttribute('data-article-meta', 'true');
+      document.head.appendChild(link);
+      managed.push({ node: link, created: true });
+    };
+
+    const toAbsoluteUrl = (value) => {
+      if (!value || typeof window === 'undefined') {
+        return '';
+      }
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        return value;
+      }
+      return `${window.location.origin}${value.startsWith('/') ? value : `/${value}`}`;
+    };
+
+    const absoluteImage = toAbsoluteUrl(seoImage);
+    const absoluteCanonicalUrl = toAbsoluteUrl(canonicalUrl) || canonicalUrl;
+    const keywordList = Array.isArray(keywords) ? keywords.filter(Boolean) : [];
+
+    const previousTitle = document.title;
+    document.title = seoTitle;
+
+    setMetaTag('name', 'description', seoDescription);
+    setMetaTag('name', 'keywords', keywordList.join(', '));
+    setMetaTag('name', 'author', author);
+    setMetaTag('property', 'og:title', seoTitle);
+    setMetaTag('property', 'og:description', seoDescription);
+    setMetaTag('property', 'og:type', 'article');
+    setMetaTag('property', 'og:url', absoluteCanonicalUrl);
+    setMetaTag('property', 'og:locale', seoLocale);
+    if (publishedAt) {
+      setMetaTag('property', 'article:published_time', publishedAt);
+    }
+    if (absoluteImage) {
+      setMetaTag('property', 'og:image', absoluteImage);
+    }
+    setMetaTag('name', 'twitter:card', absoluteImage ? 'summary_large_image' : 'summary');
+    setMetaTag('name', 'twitter:title', seoTitle);
+    setMetaTag('name', 'twitter:description', seoDescription);
+    if (absoluteImage) {
+      setMetaTag('name', 'twitter:image', absoluteImage);
+    }
+    setLinkTag('canonical', absoluteCanonicalUrl);
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description: seoDescription || summary || '',
+      author: {
+        '@type': 'Person',
+        name: author
+      },
+      inLanguage: seoLocale,
+      keywords: keywordList.join(', ')
+    };
+
+    if (absoluteCanonicalUrl) {
+      jsonLd.mainEntityOfPage = absoluteCanonicalUrl;
+    }
+    if (publishedAt) {
+      jsonLd.datePublished = publishedAt;
+    }
+    if (absoluteImage) {
+      jsonLd.image = absoluteImage;
+    }
+
+    const jsonLdId = 'article-json-ld';
+    const existingScript = document.getElementById(jsonLdId);
+    if (existingScript) {
+      managed.push({
+        node: existingScript,
+        prev: existingScript.textContent,
+        isScript: true,
+        created: false
+      });
+      existingScript.textContent = JSON.stringify(jsonLd);
+    } else {
+      const script = document.createElement('script');
+      script.id = jsonLdId;
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(jsonLd);
+      script.setAttribute('data-article-meta', 'true');
+      document.head.appendChild(script);
+      managed.push({ node: script, created: true });
+    }
+
+    return () => {
+      document.title = previousTitle;
+      managed.forEach(({ node, prev, attr, created, isScript }) => {
+        if (created) {
+          node.remove();
+        } else if (node && isScript) {
+          node.textContent = prev || '';
+        } else if (node && attr) {
+          if (prev == null) {
+            node.removeAttribute(attr);
+          } else {
+            node.setAttribute(attr, prev);
+          }
+        }
+      });
+    };
+  }, [
+    author,
+    baseUrl,
+    canonicalUrl,
+    keywords,
+    publishedAt,
+    seoDescription,
+    seoImage,
+    seoLocale,
+    seoTitle,
+    slug,
+    summary,
+    title
+  ]);
 
   return (
     <>
