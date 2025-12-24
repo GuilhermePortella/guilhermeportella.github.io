@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ARTICLES from '../data/articles';
 
 const FEATURED_PROJECTS_URL = 'https://api.github.com/users/guilhermeportella/repos?sort=pushed&per_page=3';
 
@@ -52,29 +53,7 @@ const Home = () => {
     return () => controller.abort();
   }, []);
 
-  const latestPosts = [
-    {
-      id: 1,
-      title: 'Checklist de release para APIs',
-      excerpt: 'Rascunho sobre validacao, logs e monitoramento para releases mais seguros.',
-      category: 'Back-end',
-      link: '/blog'
-    },
-    {
-      id: 2,
-      title: 'Minha rotina de estudos em 2025',
-      excerpt: 'Como organizo leitura tecnica, pratica de codigo e projetos pessoais.',
-      category: 'Estudos',
-      link: '/blog'
-    },
-    {
-      id: 3,
-      title: 'Observabilidade simples com Node',
-      excerpt: 'Notas sobre metricas essenciais, traces e alertas sem exageros.',
-      category: 'Infra',
-      link: '/blog'
-    }
-  ];
+  const latestPosts = ARTICLES.slice(0, 3);
 
   return (
     <>
@@ -163,10 +142,10 @@ const Home = () => {
                 <div key={post.id} className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <p className="text-sm text-gray-500 mb-1">{post.category}</p>
                   <h3 className="text-2xl font-semibold mb-2">
-                    <Link to={post.link} className="hover:text-blue-600">{post.title}</Link>
+                    <Link to={`/blog/artigos/${post.slug}`} className="hover:text-blue-600">{post.title}</Link>
                   </h3>
                   <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                  <Link to={post.link} className="font-semibold text-blue-600 hover:underline">
+                  <Link to={`/blog/artigos/${post.slug}`} className="font-semibold text-blue-600 hover:underline">
                     Read More &rarr;
                   </Link>
                 </div>
