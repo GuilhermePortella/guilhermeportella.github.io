@@ -1,7 +1,7 @@
 ---
 title: "Monólito Modular: Uma Arquitetura de Equilíbrio entre Agilidade e Escalabilidade"
 summary: "Um artigo técnico que analisa o Monólito Modular como alternativa pragmática entre o Monólito Tradicional e a Arquitetura de Microsserviços, destacando seus benefícios em agilidade, desempenho e simplicidade operacional."
-author: "Guilherme Portell"
+author: "Guilherme Portella"
 publishedDate: "2025-12-18"
 keywords:
   - Arquitetura de Software
