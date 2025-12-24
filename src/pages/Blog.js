@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ARTICLES from '../data/articles';
 import { formatShortDate } from '../utils/articleUtils';
-
-const posts = ARTICLES.slice(0, 3);
+import useArticles from '../hooks/useArticles';
 
 const highlights = [
   {
@@ -24,6 +22,8 @@ const highlights = [
 ];
 
 const Blog = () => {
+  const { articles: posts, status: postsStatus } = useArticles(3);
+
   return (
     <>
       <section aria-labelledby="blog-title" className="bg-white text-center py-16 px-6">
@@ -45,7 +45,22 @@ const Blog = () => {
               </p>
             </div>
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => {
+              {postsStatus === 'loading' && (
+                <div className="col-span-full text-center text-gray-600">
+                  Carregando artigos...
+                </div>
+              )}
+              {postsStatus === 'error' && (
+                <div className="col-span-full text-center text-red-600">
+                  Nao foi possivel carregar os artigos agora.
+                </div>
+              )}
+              {postsStatus === 'success' && posts.length === 0 && (
+                <div className="col-span-full text-center text-gray-600">
+                  Nenhum artigo publicado ainda.
+                </div>
+              )}
+              {postsStatus === 'success' && posts.map((post) => {
                 const dateLabel = formatShortDate(post.publishedAt) || 'Sem data';
 
                 return (

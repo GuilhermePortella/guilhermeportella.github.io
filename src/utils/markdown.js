@@ -29,6 +29,36 @@ const parseInline = (value) => {
   return rendered;
 };
 
+const parseKeyValue = (line) => {
+  const quotedDouble = /^"([^"]+)"\s*:\s*(.*)$/.exec(line);
+  if (quotedDouble) {
+    return { key: quotedDouble[1], rawValue: quotedDouble[2] };
+  }
+  const quotedSingle = /^'([^']+)'\s*:\s*(.*)$/.exec(line);
+  if (quotedSingle) {
+    return { key: quotedSingle[1], rawValue: quotedSingle[2] };
+  }
+  const plain = /^([A-Za-z0-9_@.-]+)\s*:\s*(.*)$/.exec(line);
+  if (plain) {
+    return { key: plain[1], rawValue: plain[2] };
+  }
+  return null;
+};
+
+const findNextContentLine = (lines, startIndex) => {
+  for (let i = startIndex; i < lines.length; i += 1) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) {
+      continue;
+    }
+    if (trimmed === '---') {
+      return null;
+    }
+    return { line: lines[i], indent: lines[i].match(/^(\s*)/)[1].length };
+  }
+  return null;
+};
+
 const parseFrontMatter = (markdown) => {
   const normalized = markdown.replace(/^\uFEFF/, '');
   if (!normalized.startsWith('---')) {
@@ -41,52 +71,67 @@ const parseFrontMatter = (markdown) => {
   }
 
   const frontmatter = {};
-  let currentKey = null;
+  const stack = [{ indent: -1, value: frontmatter }];
   let i = 1;
 
   for (; i < lines.length; i += 1) {
     const line = lines[i];
-    if (line.trim() === '---') {
+    const trimmed = line.trim();
+    if (trimmed === '---') {
       i += 1;
       break;
     }
-
-    const keyMatch = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (keyMatch) {
-      const key = keyMatch[1];
-      const rawValue = keyMatch[2].trim();
-      currentKey = key;
-
-      if (!rawValue) {
-        frontmatter[key] = [];
-        continue;
-      }
-
-      if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
-        const inner = rawValue.slice(1, -1).trim();
-        frontmatter[key] = inner
-          ? inner.split(',').map((item) => stripQuotes(item.trim())).filter(Boolean)
-          : [];
-        continue;
-      }
-
-      if ((key === 'tags' || key === 'keywords') && rawValue.includes(',')) {
-        frontmatter[key] = rawValue
-          .split(',')
-          .map((item) => stripQuotes(item))
-          .map((item) => item.trim())
-          .filter(Boolean);
-        continue;
-      }
-
-      frontmatter[key] = stripQuotes(rawValue);
+    if (!trimmed) {
       continue;
     }
 
-    const listMatch = /^\s*-\s+(.*)$/.exec(line);
-    if (listMatch && currentKey && Array.isArray(frontmatter[currentKey])) {
-      frontmatter[currentKey].push(stripQuotes(listMatch[1]));
+    const indent = line.match(/^(\s*)/)[1].length;
+    while (stack.length > 1 && indent <= stack[stack.length - 1].indent) {
+      stack.pop();
     }
+    const current = stack[stack.length - 1].value;
+
+    if (trimmed.startsWith('- ')) {
+      if (!Array.isArray(current)) {
+        continue;
+      }
+      current.push(stripQuotes(trimmed.slice(2)));
+      continue;
+    }
+
+    const parsedKey = parseKeyValue(trimmed);
+    if (!parsedKey) {
+      continue;
+    }
+
+    const { key, rawValue } = parsedKey;
+    if (!rawValue) {
+      const nextLine = findNextContentLine(lines, i + 1);
+      const shouldBeArray = nextLine && nextLine.indent > indent && nextLine.line.trim().startsWith('- ');
+      const nestedValue = shouldBeArray ? [] : {};
+      current[key] = nestedValue;
+      stack.push({ indent, value: nestedValue });
+      continue;
+    }
+
+    if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
+      const inner = rawValue.slice(1, -1).trim();
+      current[key] = inner
+        ? inner.split(',').map((item) => stripQuotes(item.trim())).filter(Boolean)
+        : [];
+      continue;
+    }
+
+    if ((key === 'tags' || key === 'keywords') && rawValue.includes(',')) {
+      current[key] = rawValue
+        .split(',')
+        .map((item) => stripQuotes(item))
+        .map((item) => item.trim())
+        .filter(Boolean);
+      continue;
+    }
+
+    current[key] = stripQuotes(rawValue);
   }
 
   if (i >= lines.length) {
