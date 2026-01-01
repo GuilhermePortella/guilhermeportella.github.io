@@ -6,6 +6,7 @@ import Projects from './pages/Projects';
 import Blog from './pages/Blog';
 import Articles from './pages/Articles';
 import Article from './pages/Article';
+import Games from './pages/Games';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
@@ -25,6 +26,9 @@ function App() {
             <NavLink to="/projects" className={getNavLinkClass}>
               Projetos
             </NavLink>
+            <NavLink to="/jogos" className={getNavLinkClass}>
+              Jogos
+            </NavLink>
             <NavLink to="/blog" className={getNavLinkClass}>
               Blog
             </NavLink>
@@ -39,6 +43,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/jogos" element={<Games />} />
+          <Route path="/games" element={<Games />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/artigos" element={<Articles />} />
           <Route path="/blog/artigos/:slug" element={<Article />} />

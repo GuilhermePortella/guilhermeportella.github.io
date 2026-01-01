@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game - Guilherme Portella</title>
+    <link rel="stylesheet" href="./../../assets/styles/styleSnake.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Classic Snake Game</h1>
+    </div>
+
+    <div class="conteudoPrincipal">
+        <div class="game-area">
+            <div id="game-container">
+                <div id="lives-container"></div>
+                <div id="score-board">Score: <span id="score">0</span></div>
+                <div id="canvas-wrapper">
+                    <div id="name-modal" class="modal">
+                        <div class="modal-content">
+                            <h2>Snake Game</h2>
+                            <p>Digite seu nome para jogar</p>
+                            <input type="text" id="playerNameInput" placeholder="Seu Nome" maxlength="12">
+                            <button id="start-game-button">Iniciar Jogo</button>
+                            <div class="game-instructions">
+                                <p>❤️ Ganhe uma vida ao atingir 50, 100 e 150 pontos.</p>
+                                <p>⚡ A velocidade aumenta 4% a cada 20 pontos.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="gameCanvas" width="500" height="500"></canvas>
+                </div>
+                <button id="restart-button" style="display:none;">Jogar Novamente</button>
+            </div>
+            <div id="leaderboard">
+                <h3>🏆 Top 10 Jogadores 🏆</h3>
+                <ol id="leaderboard-list"></ol>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; Guilherme Portella</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
