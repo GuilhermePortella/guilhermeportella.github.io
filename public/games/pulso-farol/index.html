@@ -238,6 +238,60 @@
       justify-content: center;
     }
 
+    .difficulty {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .difficulty-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .diff-btn {
+      border: 1px solid rgba(11, 31, 44, 0.2);
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--ink-soft);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 8px 14px rgba(11, 31, 44, 0.08);
+    }
+
+    .diff-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(11, 31, 44, 0.35);
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--ink);
+    }
+
+    .diff-btn.is-active {
+      background: var(--sea);
+      color: #f8f1e7;
+      border-color: rgba(11, 31, 44, 0.6);
+    }
+
+    .diff-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
+    }
+
     .chip {
       background: rgba(255, 255, 255, 0.75);
       border: 1px solid rgba(11, 31, 44, 0.15);
@@ -346,9 +400,17 @@
           </div>
         </div>
       </div>
+      <div class="difficulty" role="group" aria-label="Dificuldade">
+        <span class="difficulty-label">Dificuldade</span>
+        <div class="difficulty-buttons">
+          <button type="button" class="diff-btn" data-diff="easy" aria-pressed="false">Facil</button>
+          <button type="button" class="diff-btn" data-diff="medium" aria-pressed="false">Medio</button>
+          <button type="button" class="diff-btn" data-diff="hard" aria-pressed="false">Dificil</button>
+        </div>
+      </div>
       <div class="legend">
         <span class="chip">Clique/Toque: marcar pulso</span>
-        <span class="chip">Duracao: 30s</span>
+        <span class="chip" id="duration-chip">Duracao: 30s</span>
         <span class="chip">Combo aumenta o bonus</span>
       </div>
     </section>
@@ -382,9 +444,12 @@
     const timeEl = document.getElementById('time');
     const bestEl = document.getElementById('best');
     const accuracyEl = document.getElementById('accuracy');
+    const durationChip = document.getElementById('duration-chip');
+    const diffButtons = Array.from(document.querySelectorAll('[data-diff]'));
 
     const state = {
       mode: 'idle',
+      difficulty: 'easy',
       score: 0,
       combo: 0,
       hits: 0,
@@ -395,6 +460,7 @@
       speed: 1.2,
       baseSpeed: 1.2,
       maxSpeed: 3.4,
+      bandScale: 1,
       pulseRadius: 0,
       minR: 0,
       maxR: 0,
@@ -408,7 +474,64 @@
       best: Number(localStorage.getItem('pulse_best') || 0)
     };
 
+    const difficulties = {
+      easy: {
+        label: 'Facil',
+        baseSpeed: 0.8,
+        maxSpeed: 2.2,
+        bandScale: 1.35,
+        duration: 40
+      },
+      medium: {
+        label: 'Medio',
+        baseSpeed: 1.05,
+        maxSpeed: 3.0,
+        bandScale: 1,
+        duration: 30
+      },
+      hard: {
+        label: 'Dificil',
+        baseSpeed: 1.55,
+        maxSpeed: 4.3,
+        bandScale: 0.78,
+        duration: 25
+      }
+    };
+
     bestEl.textContent = state.best;
+
+    function applyDifficulty(level) {
+      const setting = difficulties[level] || difficulties.medium;
+      state.difficulty = level;
+      state.baseSpeed = setting.baseSpeed;
+      state.maxSpeed = setting.maxSpeed;
+      state.bandScale = setting.bandScale;
+      state.duration = setting.duration;
+      if (state.mode !== 'playing') {
+        state.elapsed = 0;
+        state.speed = state.baseSpeed;
+      }
+      diffButtons.forEach((button) => {
+        const isActive = button.dataset.diff === level;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+      if (durationChip) {
+        durationChip.textContent = `Duracao: ${setting.duration}s`;
+      }
+      if (state.mode === 'idle') {
+        overlayText.textContent = `Acerte a faixa dourada e faca combos. Dificuldade: ${setting.label}.`;
+      }
+      updateHud();
+      resize();
+      localStorage.setItem('pulse_diff', level);
+    }
+
+    function setDifficultyButtonsEnabled(enabled) {
+      diffButtons.forEach((button) => {
+        button.disabled = !enabled;
+      });
+    }
 
     function setOverlay(title, text) {
       overlayTitle.textContent = title;
@@ -451,6 +574,7 @@
       state.speed = state.baseSpeed;
       state.ripple = 0;
       state.messageTimer = 0;
+      setDifficultyButtonsEnabled(false);
       hideOverlay();
       updateHud();
     }
@@ -467,6 +591,7 @@
         'Tempo esgotado',
         `Pontos ${finalScore} - Precisao ${calcAccuracy()}% - Clique para jogar de novo`
       );
+      setDifficultyButtonsEnabled(true);
     }
 
     function registerHit() {
@@ -525,7 +650,7 @@
       state.minR = base * 0.35;
       state.maxR = base * 0.85;
       state.targetR = base * 0.6;
-      state.band = base * 0.18;
+      state.band = base * 0.18 * state.bandScale;
       generateStars(cssSize);
     }
 
@@ -704,7 +829,19 @@
       }
     });
 
+    diffButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (state.mode === 'playing') {
+          showFeedback('Termine a rodada para mudar');
+          return;
+        }
+        applyDifficulty(button.dataset.diff);
+      });
+    });
+
     window.addEventListener('resize', resize, { passive: true });
+    applyDifficulty(localStorage.getItem('pulse_diff') || 'easy');
+    setDifficultyButtonsEnabled(true);
     resize();
     updateHud();
     requestAnimationFrame(tick);
