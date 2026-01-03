@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 
 const games = [
   {
+    id: 'pulso-farol',
+    title: 'Pulso do Farol',
+    status: 'Novo',
+    description: 'Jogo de clique ritmico para sincronizar o pulso da luz e marcar pontos em 30 segundos.',
+    details: ['Formato: Timing 1-toque', 'Entrada: Clique/Toque', 'Foco: Ritmo e precisao'],
+    tags: ['One-click', 'Timing', 'Score'],
+    href: '/games/pulso-farol/index.html'
+  },
+  {
     id: 'snake',
     title: 'Snake Classic',
     status: 'Arquivo',
