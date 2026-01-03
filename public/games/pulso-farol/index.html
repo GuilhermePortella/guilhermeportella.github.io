@@ -461,6 +461,8 @@
       baseSpeed: 1.2,
       maxSpeed: 3.4,
       bandScale: 1,
+      timeFactor: 0.05,
+      comboFactor: 0.03,
       pulseRadius: 0,
       minR: 0,
       maxR: 0,
@@ -477,24 +479,30 @@
     const difficulties = {
       easy: {
         label: 'Facil',
-        baseSpeed: 0.8,
-        maxSpeed: 2.2,
+        baseSpeed: 0.6,
+        maxSpeed: 1.7,
         bandScale: 1.35,
-        duration: 40
+        duration: 40,
+        timeFactor: 0.02,
+        comboFactor: 0.01
       },
       medium: {
         label: 'Medio',
-        baseSpeed: 1.05,
-        maxSpeed: 3.0,
+        baseSpeed: 0.9,
+        maxSpeed: 2.8,
         bandScale: 1,
-        duration: 30
+        duration: 30,
+        timeFactor: 0.04,
+        comboFactor: 0.02
       },
       hard: {
         label: 'Dificil',
         baseSpeed: 1.55,
         maxSpeed: 4.3,
         bandScale: 0.78,
-        duration: 25
+        duration: 25,
+        timeFactor: 0.05,
+        comboFactor: 0.03
       }
     };
 
@@ -507,6 +515,8 @@
       state.maxSpeed = setting.maxSpeed;
       state.bandScale = setting.bandScale;
       state.duration = setting.duration;
+      state.timeFactor = setting.timeFactor;
+      state.comboFactor = setting.comboFactor;
       if (state.mode !== 'playing') {
         state.elapsed = 0;
         state.speed = state.baseSpeed;
@@ -783,7 +793,7 @@
 
       if (state.mode === 'playing') {
         state.elapsed += dt;
-        const difficulty = state.elapsed * 0.05 + state.combo * 0.03;
+        const difficulty = state.elapsed * state.timeFactor + state.combo * state.comboFactor;
         state.speed = Math.min(state.maxSpeed, state.baseSpeed + difficulty);
         if (state.elapsed >= state.duration) {
           state.elapsed = state.duration;
