@@ -238,6 +238,44 @@
       justify-content: center;
     }
 
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .action-btn {
+      border: 1px solid rgba(11, 31, 44, 0.2);
+      background: var(--sea);
+      color: #f8f1e7;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, filter 0.2s ease, background 0.2s ease;
+      box-shadow: 0 12px 18px rgba(11, 31, 44, 0.12);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .action-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      transform: none;
+      filter: none;
+    }
+
+    .control-note {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+
     .leaderboard {
       display: grid;
       place-items: center;
@@ -474,8 +512,8 @@
         <div id="feedback" class="feedback" aria-live="polite"></div>
         <div id="overlay" class="overlay is-visible" aria-hidden="false">
           <div class="overlay-card">
-            <h2 id="overlay-title">Clique para comecar</h2>
-            <p id="overlay-text">Acerte a faixa dourada e faca combos.</p>
+            <h2 id="overlay-title">Clique em Novo jogo</h2>
+            <p id="overlay-text">Clique em Novo jogo para comecar.</p>
           </div>
         </div>
       </div>
@@ -487,9 +525,14 @@
           <button type="button" class="diff-btn" data-diff="hard" aria-pressed="false">Dificil</button>
         </div>
       </div>
+      <div class="controls">
+        <button type="button" id="start-button" class="action-btn">Novo jogo</button>
+        <span class="control-note">Evita reinicio acidental.</span>
+      </div>
       <div class="legend">
         <span class="chip">Clique/Toque: marcar pulso</span>
         <span class="chip" id="duration-chip">Duracao: 30s</span>
+        <span class="chip">Novo jogo: botao abaixo</span>
         <span class="chip">Combo aumenta o bonus</span>
       </div>
       <section class="leaderboard" aria-labelledby="leaderboard-title">
@@ -534,6 +577,7 @@
     const accuracyEl = document.getElementById('accuracy');
     const durationChip = document.getElementById('duration-chip');
     const diffButtons = Array.from(document.querySelectorAll('[data-diff]'));
+    const startButton = document.getElementById('start-button');
     const leaderboardList = document.getElementById('leaderboard-list');
     const leaderboardDate = document.getElementById('leaderboard-date');
 
@@ -737,7 +781,7 @@
         durationChip.textContent = `Duracao: ${setting.duration}s`;
       }
       if (state.mode === 'idle') {
-        overlayText.textContent = `Acerte a faixa dourada e faca combos. Dificuldade: ${setting.label}.`;
+        overlayText.textContent = `Clique em Novo jogo para comecar. Dificuldade: ${setting.label}.`;
       }
       updateHud();
       resize();
@@ -780,6 +824,22 @@
       state.messageTimer = 0.6;
     }
 
+    function updateStartButton() {
+      if (!startButton) {
+        return;
+      }
+      if (state.mode === 'playing') {
+        startButton.disabled = true;
+        startButton.textContent = 'Em jogo';
+      } else if (state.mode === 'ended') {
+        startButton.disabled = false;
+        startButton.textContent = 'Jogar de novo';
+      } else {
+        startButton.disabled = false;
+        startButton.textContent = 'Novo jogo';
+      }
+    }
+
     function startGame() {
       state.mode = 'playing';
       state.score = 0;
@@ -792,6 +852,7 @@
       state.ripple = 0;
       state.messageTimer = 0;
       setDifficultyButtonsEnabled(false);
+      updateStartButton();
       hideOverlay();
       updateHud();
     }
@@ -807,9 +868,10 @@
       addScoreToLeaderboard(finalScore);
       setOverlay(
         'Tempo esgotado',
-        `Pontos ${finalScore} - Precisao ${calcAccuracy()}% - Clique para jogar de novo`
+        `Pontos ${finalScore} - Precisao ${calcAccuracy()}% - Clique em Novo jogo`
       );
       setDifficultyButtonsEnabled(true);
+      updateStartButton();
     }
 
     function registerHit() {
@@ -837,7 +899,7 @@
 
     function handleInput() {
       if (state.mode === 'idle' || state.mode === 'ended') {
-        startGame();
+        showFeedback('Use o botao Novo jogo');
         return;
       }
       registerHit();
@@ -1047,6 +1109,14 @@
       }
     });
 
+    if (startButton) {
+      startButton.addEventListener('click', () => {
+        if (state.mode !== 'playing') {
+          startGame();
+        }
+      });
+    }
+
     diffButtons.forEach((button) => {
       button.addEventListener('click', () => {
         if (state.mode === 'playing') {
@@ -1063,6 +1133,7 @@
     renderLeaderboard(loadLeaderboard());
     resize();
     updateHud();
+    updateStartButton();
     requestAnimationFrame(tick);
   </script>
 </body>
