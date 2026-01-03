@@ -238,6 +238,85 @@
       justify-content: center;
     }
 
+    .leaderboard {
+      display: grid;
+      place-items: center;
+    }
+
+    .leaderboard-card {
+      width: min(90vw, 560px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      border: 1px solid rgba(11, 31, 44, 0.12);
+      padding: 16px 18px;
+      box-shadow: 0 12px 24px rgba(11, 31, 44, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .leaderboard-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .leaderboard-header h3 {
+      margin: 0;
+      font-family: "Fraunces", "Georgia", serif;
+      font-size: 1.2rem;
+    }
+
+    .leaderboard-date {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .leaderboard-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(11, 31, 44, 0.08);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+
+    .leaderboard-rank {
+      font-weight: 700;
+      color: var(--sea);
+    }
+
+    .leaderboard-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .leaderboard-score {
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+
+    .leaderboard-empty {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      text-align: center;
+      padding: 10px 0;
+    }
+
     .difficulty {
       display: flex;
       flex-wrap: wrap;
@@ -413,6 +492,15 @@
         <span class="chip" id="duration-chip">Duracao: 30s</span>
         <span class="chip">Combo aumenta o bonus</span>
       </div>
+      <section class="leaderboard" aria-labelledby="leaderboard-title">
+        <div class="leaderboard-card">
+          <div class="leaderboard-header">
+            <h3 id="leaderboard-title">Ranking do dia</h3>
+            <span id="leaderboard-date" class="leaderboard-date">Data: ----</span>
+          </div>
+          <ol id="leaderboard-list" class="leaderboard-list"></ol>
+        </div>
+      </section>
     </section>
 
     <section class="tips">
@@ -446,6 +534,39 @@
     const accuracyEl = document.getElementById('accuracy');
     const durationChip = document.getElementById('duration-chip');
     const diffButtons = Array.from(document.querySelectorAll('[data-diff]'));
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const leaderboardDate = document.getElementById('leaderboard-date');
+
+    const LEADERBOARD_KEY = 'pulse_daily_leaderboard';
+    const MAX_ENTRIES = 7;
+    const NAME_PARTS = {
+      first: [
+        'Quantum',
+        'Pixel',
+        'Neo',
+        'Turbo',
+        'Binary',
+        'Cosmic',
+        'Retro',
+        'Circuit',
+        'Astro',
+        'Glitch',
+        'Logic'
+      ],
+      second: [
+        'Nerd',
+        'Wizard',
+        'Coder',
+        'Hacker',
+        'Signal',
+        'Beacon',
+        'Rocket',
+        'Matrix',
+        'Byte',
+        'Pilot',
+        'Gizmo'
+      ]
+    };
 
     const state = {
       mode: 'idle',
@@ -505,6 +626,92 @@
         comboFactor: 0.03
       }
     };
+
+    function getTodayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function randomNerdName() {
+      const pick = (list) => list[Math.floor(Math.random() * list.length)];
+      return `${pick(NAME_PARTS.first)} ${pick(NAME_PARTS.second)}`;
+    }
+
+    function loadLeaderboard() {
+      const today = getTodayKey();
+      let board = { date: today, entries: [] };
+      const raw = localStorage.getItem(LEADERBOARD_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.date === today && Array.isArray(parsed.entries)) {
+            board = parsed;
+          }
+        } catch (error) {
+          board = { date: today, entries: [] };
+        }
+      }
+      if (board.date !== today) {
+        board = { date: today, entries: [] };
+      }
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
+      return board;
+    }
+
+    function saveLeaderboard(board) {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
+    }
+
+    function renderLeaderboard(board) {
+      leaderboardDate.textContent = `Data: ${formatDate(board.date)}`;
+      leaderboardList.innerHTML = '';
+      if (!board.entries.length) {
+        const empty = document.createElement('li');
+        empty.className = 'leaderboard-empty';
+        empty.textContent = 'Sem pontuacoes hoje.';
+        leaderboardList.appendChild(empty);
+        return;
+      }
+      board.entries.forEach((entry, index) => {
+        const item = document.createElement('li');
+        item.className = 'leaderboard-item';
+        const rank = document.createElement('span');
+        rank.className = 'leaderboard-rank';
+        rank.textContent = `#${index + 1}`;
+        const name = document.createElement('span');
+        name.className = 'leaderboard-name';
+        name.textContent = `${entry.name} - ${formatDate(entry.date)}`;
+        const score = document.createElement('span');
+        score.className = 'leaderboard-score';
+        score.textContent = `${entry.score} pts`;
+        item.append(rank, name, score);
+        leaderboardList.appendChild(item);
+      });
+    }
+
+    function formatDate(dateKey) {
+      const parts = String(dateKey || '').split('-');
+      if (parts.length !== 3) {
+        return String(dateKey || '');
+      }
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    function addScoreToLeaderboard(score) {
+      const board = loadLeaderboard();
+      if (score <= 0) {
+        renderLeaderboard(board);
+        return;
+      }
+      board.entries.push({
+        name: randomNerdName(),
+        score: score,
+        date: board.date
+      });
+      board.entries.sort((a, b) => b.score - a.score);
+      board.entries = board.entries.slice(0, MAX_ENTRIES);
+      saveLeaderboard(board);
+      renderLeaderboard(board);
+    }
 
     bestEl.textContent = state.best;
 
@@ -597,6 +804,7 @@
         localStorage.setItem('pulse_best', String(finalScore));
       }
       updateHud();
+      addScoreToLeaderboard(finalScore);
       setOverlay(
         'Tempo esgotado',
         `Pontos ${finalScore} - Precisao ${calcAccuracy()}% - Clique para jogar de novo`
@@ -852,6 +1060,7 @@
     window.addEventListener('resize', resize, { passive: true });
     applyDifficulty(localStorage.getItem('pulse_diff') || 'easy');
     setDifficultyButtonsEnabled(true);
+    renderLeaderboard(loadLeaderboard());
     resize();
     updateHud();
     requestAnimationFrame(tick);
