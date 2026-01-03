@@ -211,8 +211,6 @@ button:hover {
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     min-width: 260px;
-    max-height: 400px;
-    overflow-y: auto;
     backdrop-filter: blur(10px);
 }
 
