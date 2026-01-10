@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+jest.mock('./pages/Home', () => () => <div>Home page</div>);
+
+test('renders navigation and home route', () => {
+  render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>
+  );
+
+  expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
+  expect(screen.getByText(/home page/i)).toBeInTheDocument();
 });
