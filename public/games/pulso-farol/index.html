@@ -139,6 +139,14 @@
       touch-action: manipulation;
     }
 
+    .scene,
+    .scene * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
     .scene:focus-visible {
       outline: 2px solid var(--sun);
       outline-offset: 4px;
