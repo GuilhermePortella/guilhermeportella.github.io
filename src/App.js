@@ -8,6 +8,10 @@ import Articles from './pages/Articles';
 import Article from './pages/Article';
 import Games from './pages/Games';
 import Swapi from './pages/Swapi';
+import RickMorty from './pages/RickMorty';
+import RickMortyCharacter from './pages/RickMortyCharacter';
+import RickMortyLocation from './pages/RickMortyLocation';
+import RickMortyEpisode from './pages/RickMortyEpisode';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
@@ -48,6 +52,14 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/jogos/swapi" element={<Swapi />} />
           <Route path="/games/swapi" element={<Swapi />} />
+          <Route path="/jogos/rick-morty" element={<RickMorty />} />
+          <Route path="/games/rick-morty" element={<RickMorty />} />
+          <Route path="/jogos/rick-morty/personagem/:id" element={<RickMortyCharacter />} />
+          <Route path="/games/rick-morty/personagem/:id" element={<RickMortyCharacter />} />
+          <Route path="/jogos/rick-morty/local/:id" element={<RickMortyLocation />} />
+          <Route path="/games/rick-morty/local/:id" element={<RickMortyLocation />} />
+          <Route path="/jogos/rick-morty/episodio/:id" element={<RickMortyEpisode />} />
+          <Route path="/games/rick-morty/episodio/:id" element={<RickMortyEpisode />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/artigos" element={<Articles />} />
           <Route path="/blog/artigos/:slug" element={<Article />} />
