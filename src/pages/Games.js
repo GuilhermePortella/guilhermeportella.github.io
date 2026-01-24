@@ -68,7 +68,7 @@ const Games = () => {
   return (
     <>
       <section aria-labelledby="games-hero-title" className="bg-white text-center py-16 px-6">
-        <h1 id="games-hero-title" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Jogos</h1>
+        <h1 id="games-hero-title" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Diversao</h1>
         <p className="mt-6 text-lg leading-8 text-gray-600">
           Um espaco para prototipos e experiencias simples, mantendo o mesmo tom profissional do site.
         </p>
@@ -122,6 +122,36 @@ const Games = () => {
                   </div>
                 </article>
               ))}
+            </div>
+          </section>
+
+          <section aria-labelledby="games-experiments-title" className="mb-20">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 id="games-experiments-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                Exploracoes e APIs
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Um espaco para testes rapidos com APIs publicas e ideias de front-end.
+              </p>
+            </div>
+            <div className="mt-12 max-w-3xl mx-auto">
+              <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+                <div className="p-6">
+                  <p className="text-sm font-semibold text-blue-600">SWAPI</p>
+                  <h3 className="mt-2 text-2xl font-semibold text-gray-900">Explorador da API Star Wars</h3>
+                  <p className="mt-3 text-gray-600">
+                    Pagina dedicada para explorar Pessoas, Filmes, Planetas, Naves, Especies e Veiculos com busca e paginacao.
+                  </p>
+                  <div className="mt-6">
+                    <Link
+                      to="/jogos/swapi"
+                      className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    >
+                      Abrir exploracao
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
