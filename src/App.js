@@ -7,6 +7,7 @@ import Blog from './pages/Blog';
 import Articles from './pages/Articles';
 import Article from './pages/Article';
 import Games from './pages/Games';
+import Swapi from './pages/Swapi';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
@@ -45,6 +46,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/jogos" element={<Games />} />
           <Route path="/games" element={<Games />} />
+          <Route path="/jogos/swapi" element={<Swapi />} />
+          <Route path="/games/swapi" element={<Swapi />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/artigos" element={<Articles />} />
           <Route path="/blog/artigos/:slug" element={<Article />} />
