@@ -68,7 +68,7 @@ const Games = () => {
   return (
     <>
       <section aria-labelledby="games-hero-title" className="bg-white text-center py-16 px-6">
-        <h1 id="games-hero-title" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Jogos</h1>
+        <h1 id="games-hero-title" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Diversao</h1>
         <p className="mt-6 text-lg leading-8 text-gray-600">
           Um espaco para prototipos e experiencias simples, mantendo o mesmo tom profissional do site.
         </p>

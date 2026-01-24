@@ -27,7 +27,7 @@ function App() {
               Projetos
             </NavLink>
             <NavLink to="/jogos" className={getNavLinkClass}>
-              Jogos
+              Diversao
             </NavLink>
             <NavLink to="/blog" className={getNavLinkClass}>
               Blog
