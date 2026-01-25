@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const BASE_URL = 'https://swapi.dev/api';
 const PAGE_SIZE = 12;
@@ -9,8 +10,8 @@ const RESOURCE_CONFIG = {
     label: 'Pessoas',
     description: 'Personagens e pilotos do universo Star Wars.',
     fields: [
-      { key: 'birth_year', label: 'Ano de nascimento' },
-      { key: 'gender', label: 'Genero' },
+      { key: 'birth_year', label: 'Ano de nascimento', format: 'birth_year' },
+      { key: 'gender', label: 'Genero', format: 'gender' },
       { key: 'height', label: 'Altura' },
       { key: 'mass', label: 'Peso' },
       { key: 'homeworldName', label: 'Planeta natal' },
@@ -25,7 +26,7 @@ const RESOURCE_CONFIG = {
       { key: 'episode_id', label: 'Episodio' },
       { key: 'director', label: 'Direcao' },
       { key: 'producer', label: 'Producao' },
-      { key: 'release_date', label: 'Lancamento' }
+      { key: 'release_date', label: 'Lancamento', format: 'date' }
     ]
   },
   planets: {
@@ -159,7 +160,87 @@ const formatValue = (value) => {
   return value;
 };
 
+const formatDate = (value) => {
+  if (!value) {
+    return 'Nao informado';
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+  return parsed.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
+const formatBirthYear = (value) => {
+  if (!value) {
+    return 'Nao informado';
+  }
+  const normalized = String(value).trim();
+  const lowered = normalized.toLowerCase();
+  if (lowered === 'unknown' || lowered === 'n/a') {
+    return 'Nao informado';
+  }
+  const match = /^(\d+(?:\.\d+)?)(bby|aby)$/i.exec(normalized);
+  if (match) {
+    return `${match[1]} ${match[2].toUpperCase()}`;
+  }
+  return value;
+};
+
+const formatGender = (value) => {
+  if (!value) {
+    return 'Nao informado';
+  }
+  const normalized = String(value).toLowerCase();
+  if (normalized === 'male') {
+    return 'Masculino';
+  }
+  if (normalized === 'female') {
+    return 'Feminino';
+  }
+  if (normalized === 'hermaphrodite') {
+    return 'Hermafrodita';
+  }
+  if (normalized === 'none') {
+    return 'Nenhum';
+  }
+  if (normalized === 'unknown' || normalized === 'n/a') {
+    return 'Nao informado';
+  }
+  return value;
+};
+
+const formatFieldValue = (value, field) => {
+  if (!field?.format) {
+    return formatValue(value);
+  }
+  if (field.format === 'date') {
+    return formatDate(value);
+  }
+  if (field.format === 'birth_year') {
+    return formatBirthYear(value);
+  }
+  if (field.format === 'gender') {
+    return formatGender(value);
+  }
+  return formatValue(value);
+};
+
+const getIdFromUrl = (url) => {
+  if (!url) {
+    return '';
+  }
+  const parts = url.split('/').filter(Boolean);
+  return parts[parts.length - 1] || '';
+};
+
 const Swapi = () => {
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/games') ? '/games/swapi' : '/jogos/swapi';
   const [resource, setResource] = useState('people');
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -194,6 +275,10 @@ const Swapi = () => {
             signal: controller.signal
           });
 
+          if (response.status === 404) {
+            return { count: 0, results: [] };
+          }
+
           if (!response.ok) {
             throw new Error('SWAPI request failed.');
           }
@@ -208,7 +293,7 @@ const Swapi = () => {
         const firstPayload = await fetchPage(swapiStart);
         let combinedResults = firstPayload.results;
 
-        if (swapiEnd !== swapiStart) {
+        if (swapiEnd !== swapiStart && endIndex < firstPayload.count) {
           const secondPayload = await fetchPage(swapiEnd);
           combinedResults = combinedResults.concat(secondPayload.results);
         }
@@ -390,12 +475,19 @@ const Swapi = () => {
               <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.results.map((item) => (
                   <article key={item.url} className="bg-white rounded-lg border border-gray-200 shadow-lg p-5">
-                    <h4 className="text-xl font-semibold text-gray-900">{item.name || item.title || 'Sem titulo'}</h4>
+                    <h4 className="text-xl font-semibold text-gray-900">
+                      <Link
+                        to={`${basePath}/${resource}/${getIdFromUrl(item.url)}`}
+                        className="hover:text-blue-600"
+                      >
+                        {item.name || item.title || 'Sem titulo'}
+                      </Link>
+                    </h4>
                     <dl className="mt-4 space-y-2 text-sm text-gray-600">
                       {config.fields.map((field) => (
                         <div key={`${item.url}-${field.key}`} className="flex items-start justify-between gap-3">
                           <dt className="font-semibold text-gray-700">{field.label}</dt>
-                          <dd className="text-right">{formatValue(item[field.key])}</dd>
+                          <dd className="text-right">{formatFieldValue(item[field.key], field)}</dd>
                         </div>
                       ))}
                     </dl>

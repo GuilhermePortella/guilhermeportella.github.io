@@ -154,7 +154,7 @@ const Games = () => {
               </div>
               <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
                 <div className="p-6">
-                  <p className="text-sm font-semibold text-green-600">Rick and Morty</p>
+                  <p className="text-sm font-semibold text-blue-600">Rick and Morty</p>
                   <h3 className="mt-2 text-2xl font-semibold text-gray-900">Explorador da API Rick and Morty</h3>
                   <p className="mt-3 text-gray-600">
                     Explore Personagens, Locais e Episodios com busca e paginacao em uma interface simples.
@@ -162,7 +162,7 @@ const Games = () => {
                   <div className="mt-6">
                     <Link
                       to="/jogos/rick-morty"
-                      className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                      className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Abrir exploracao
                     </Link>

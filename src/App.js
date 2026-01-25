@@ -8,6 +8,7 @@ import Articles from './pages/Articles';
 import Article from './pages/Article';
 import Games from './pages/Games';
 import Swapi from './pages/Swapi';
+import SwapiDetail from './pages/SwapiDetail';
 import RickMorty from './pages/RickMorty';
 import RickMortyCharacter from './pages/RickMortyCharacter';
 import RickMortyLocation from './pages/RickMortyLocation';
@@ -52,6 +53,8 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/jogos/swapi" element={<Swapi />} />
           <Route path="/games/swapi" element={<Swapi />} />
+          <Route path="/jogos/swapi/:resource/:id" element={<SwapiDetail />} />
+          <Route path="/games/swapi/:resource/:id" element={<SwapiDetail />} />
           <Route path="/jogos/rick-morty" element={<RickMorty />} />
           <Route path="/games/rick-morty" element={<RickMorty />} />
           <Route path="/jogos/rick-morty/personagem/:id" element={<RickMortyCharacter />} />
