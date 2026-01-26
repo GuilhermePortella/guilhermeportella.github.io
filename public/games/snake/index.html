@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Snake Classic - Guilherme Portella</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,6 +35,20 @@
                         </div>
                     </div>
                     <canvas id="gameCanvas" width="500" height="500"></canvas>
+                </div>
+                <p id="touch-hint">Deslize no tabuleiro ou use os botoes abaixo.</p>
+                <div id="mobile-controls" aria-label="Controles por toque">
+                    <div class="dir-pad">
+                        <span class="pad-spacer" aria-hidden="true"></span>
+                        <button type="button" class="dir-btn" data-dir="up" aria-label="Cima">&uarr;</button>
+                        <span class="pad-spacer" aria-hidden="true"></span>
+                        <button type="button" class="dir-btn" data-dir="left" aria-label="Esquerda">&larr;</button>
+                        <span class="pad-spacer" aria-hidden="true"></span>
+                        <button type="button" class="dir-btn" data-dir="right" aria-label="Direita">&rarr;</button>
+                        <span class="pad-spacer" aria-hidden="true"></span>
+                        <button type="button" class="dir-btn" data-dir="down" aria-label="Baixo">&darr;</button>
+                        <span class="pad-spacer" aria-hidden="true"></span>
+                    </div>
                 </div>
                 <button id="restart-button" style="display:none;">Jogar Novamente</button>
             </div>
