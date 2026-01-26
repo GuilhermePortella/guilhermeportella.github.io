@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
    const startGameButton = document.getElementById('start-game-button');
    const leaderboardList = document.getElementById('leaderboard-list');
    const livesContainer = document.getElementById('lives-container');
+   const canvasWrapper = document.getElementById('canvas-wrapper');
+   const directionButtons = Array.from(document.querySelectorAll('[data-dir]'));
 
    const gridSize = 20;
    let snake = [];
@@ -59,6 +61,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
       update();
       draw();
+   }
+
+   function getStartPosition() {
+      const cols = Math.floor(canvas.width / gridSize);
+      const rows = Math.floor(canvas.height / gridSize);
+      return {
+         x: Math.max(1, Math.floor(cols / 2)),
+         y: Math.max(1, Math.floor(rows / 2))
+      };
+   }
+
+   function resizeCanvas(force = false) {
+      if (gameStarted && !gameOver && !force) {
+         return;
+      }
+      let wrapperWidth = canvasWrapper ? canvasWrapper.clientWidth : canvas.clientWidth;
+      if (canvasWrapper) {
+         const styles = getComputedStyle(canvasWrapper);
+         const paddingX = parseFloat(styles.paddingLeft || 0) + parseFloat(styles.paddingRight || 0);
+         wrapperWidth = Math.max(0, wrapperWidth - paddingX);
+      }
+      const maxSize = 520;
+      const rawSize = Math.min(wrapperWidth || maxSize, maxSize);
+      const size = Math.max(gridSize * 10, rawSize - (rawSize % gridSize));
+      canvas.width = size;
+      canvas.height = size;
    }
 
    function update() {
@@ -147,8 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
          updateHeartsDisplay();
          const currentLength = snake.length;
          snake = [];
-         const startX = 10;
-         const startY = 10;
+         const { x: startX, y: startY } = getStartPosition();
          for (let i = 0; i < currentLength; i++) {
             snake.push({ x: startX - i, y: startY });
          }
@@ -179,9 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    }
 
-   function handleKeyPress(event) {
-      const keyPressed = event.key;
-
+   function setDirection(newDirection) {
       if (nameModal.style.display !== 'none') {
          return;
       }
@@ -194,16 +219,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const goingLeft = direction === 'left';
       const goingRight = direction === 'right';
 
-      if ((keyPressed === 'ArrowUp' || keyPressed.toLowerCase() === 'w') && !goingDown) { nextDirection = 'up'; }
-      if ((keyPressed === 'ArrowDown' || keyPressed.toLowerCase() === 's') && !goingUp) { nextDirection = 'down'; }
-      if ((keyPressed === 'ArrowLeft' || keyPressed.toLowerCase() === 'a') && !goingRight) { nextDirection = 'left'; }
-      if ((keyPressed === 'ArrowRight' || keyPressed.toLowerCase() === 'd') && !goingLeft) { nextDirection = 'right'; }
+      if (newDirection === 'up' && !goingDown) { nextDirection = 'up'; }
+      if (newDirection === 'down' && !goingUp) { nextDirection = 'down'; }
+      if (newDirection === 'left' && !goingRight) { nextDirection = 'left'; }
+      if (newDirection === 'right' && !goingLeft) { nextDirection = 'right'; }
+   }
+
+   function handleKeyPress(event) {
+      const keyPressed = event.key;
+      if (keyPressed === 'ArrowUp' || keyPressed.toLowerCase() === 'w') { setDirection('up'); }
+      if (keyPressed === 'ArrowDown' || keyPressed.toLowerCase() === 's') { setDirection('down'); }
+      if (keyPressed === 'ArrowLeft' || keyPressed.toLowerCase() === 'a') { setDirection('left'); }
+      if (keyPressed === 'ArrowRight' || keyPressed.toLowerCase() === 'd') { setDirection('right'); }
    }
 
    function startGame() {
       nameModal.style.display = 'none';
       gameStarted = true;
-      snake = [{ x: 10, y: 10 }];
+      resizeCanvas(true);
+      const { x: startX, y: startY } = getStartPosition();
+      snake = [{ x: startX, y: startY }];
       direction = 'right';
       nextDirection = 'right';
       score = 0;
@@ -246,6 +281,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
    document.addEventListener('keydown', handleKeyPress);
 
+   directionButtons.forEach((button) => {
+      button.addEventListener('pointerdown', (event) => {
+         event.preventDefault();
+         setDirection(button.dataset.dir);
+      });
+   });
+
+   let touchStartX = 0;
+   let touchStartY = 0;
+
+   canvas.addEventListener('touchstart', (event) => {
+      if (!event.changedTouches.length) {
+         return;
+      }
+      const touch = event.changedTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+   }, { passive: true });
+
+   canvas.addEventListener('touchmove', (event) => {
+      if (gameStarted && !gameOver) {
+         event.preventDefault();
+      }
+   }, { passive: false });
+
+   canvas.addEventListener('touchend', (event) => {
+      if (!event.changedTouches.length) {
+         return;
+      }
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+      const distance = Math.hypot(dx, dy);
+      if (distance < 24) {
+         return;
+      }
+      if (Math.abs(dx) > Math.abs(dy)) {
+         setDirection(dx > 0 ? 'right' : 'left');
+      } else {
+         setDirection(dy > 0 ? 'down' : 'up');
+      }
+   }, { passive: true });
+
    restartButton.addEventListener('click', () => {
       restartButton.style.display = 'none';
       nameModal.style.display = 'flex';
@@ -266,5 +344,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    });
 
+   window.addEventListener('resize', () => {
+      resizeCanvas(false);
+      if (!gameStarted || gameOver) {
+         draw();
+      }
+   });
+
+   ['gesturestart', 'gesturechange', 'gestureend'].forEach((eventName) => {
+      document.addEventListener(eventName, (event) => {
+         event.preventDefault();
+      }, { passive: false });
+   });
+
+   resizeCanvas(true);
    loadLeaderboard();
 });

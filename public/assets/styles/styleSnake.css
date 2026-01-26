@@ -34,6 +34,8 @@ body {
     font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
     text-align: center;
     position: relative;
+    overscroll-behavior: contain;
+    touch-action: manipulation;
 }
 
 body::before {
@@ -95,16 +97,21 @@ footer {
     padding: 24px;
     box-shadow: var(--shadow);
     backdrop-filter: blur(12px);
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #canvas-wrapper {
     position: relative;
     line-height: 0;
+    width: min(92vw, 520px);
     background: linear-gradient(160deg, #0b2638 0%, #0a1c2b 60%, #102c3c 100%);
     border: 1px solid rgba(11, 31, 44, 0.6);
     border-radius: 18px;
     padding: 14px;
     box-shadow: inset 0 0 32px rgba(255, 255, 255, 0.08);
+    touch-action: none;
+    -webkit-touch-callout: none;
 }
 
 #gameCanvas {
@@ -112,6 +119,11 @@ footer {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     box-shadow: inset 0 0 22px rgba(11, 31, 44, 0.45);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    touch-action: none;
+    display: block;
 }
 
 #lives-container {
@@ -159,6 +171,69 @@ footer {
 
 #restart-button:hover {
     background-color: var(--accent-strong);
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:focus-visible {
+    outline: 2px solid rgba(31, 79, 99, 0.55);
+    outline-offset: 2px;
+}
+
+#touch-hint {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: none;
+}
+
+#mobile-controls {
+    margin-top: 12px;
+    display: none;
+    justify-content: center;
+    width: 100%;
+    touch-action: none;
+}
+
+#mobile-controls .dir-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(3, 56px);
+    gap: 8px;
+}
+
+#mobile-controls .pad-spacer {
+    width: 56px;
+    height: 56px;
+}
+
+#mobile-controls .dir-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid rgba(11, 31, 44, 0.2);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--accent-strong);
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 16px rgba(11, 31, 44, 0.12);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#mobile-controls .dir-btn:active {
+    transform: translateY(1px) scale(0.98);
+    background: rgba(255, 255, 255, 1);
 }
 
 .modal {
@@ -294,5 +369,33 @@ footer {
         width: 90%;
         max-width: 504px;
         margin-top: 20px;
+    }
+
+    #touch-hint,
+    #mobile-controls {
+        display: flex;
+    }
+
+    #touch-hint {
+        justify-content: center;
+    }
+
+    #canvas-wrapper {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 520px) {
+    #mobile-controls .dir-pad {
+        grid-template-columns: repeat(3, 50px);
+        grid-template-rows: repeat(3, 50px);
+        gap: 6px;
+    }
+
+    #mobile-controls .pad-spacer,
+    #mobile-controls .dir-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
     }
 }
