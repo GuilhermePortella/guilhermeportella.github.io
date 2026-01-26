@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 
 const games = [
   {
+    id: 'paciencia-klondike',
+    title: 'Paciencia Klondike',
+    status: 'Novo',
+    description: 'Versao classica inspirada no Windows 7, com compras por clique, dicas e fundacoes.',
+    details: ['Formato: Klondike 1 carta', 'Entrada: Clique/Toque', 'Foco: Estrategia e organizacao'],
+    tags: ['Cartas', 'Classico', 'Klondike'],
+    href: '/games/solitaire/index.html'
+  },
+  {
     id: 'pulso-farol',
     title: 'Pulso do Farol',
     status: 'Novo',
