@@ -12,9 +12,9 @@
   <style>
     :root {
       color-scheme: light;
-      --felt-dark: #0d2c21;
-      --felt: #1f5c43;
-      --felt-light: #2f7b5a;
+      --felt-dark: #0a1e3d;
+      --felt: #0f3a6d;
+      --felt-light: #1f5fa1;
       --gold: #e2c07a;
       --gold-strong: #ffcf79;
       --cream: #f7f1e6;
@@ -40,9 +40,9 @@
       font-family: "Manrope", "Trebuchet MS", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(120% 120% at 10% 0%, rgba(255, 214, 132, 0.12), transparent 65%),
-        radial-gradient(140% 120% at 90% 10%, rgba(70, 212, 172, 0.12), transparent 60%),
-        linear-gradient(160deg, #0c2219 0%, #1a4c38 45%, #0f2f23 100%);
+        radial-gradient(120% 120% at 10% 0%, rgba(120, 175, 255, 0.18), transparent 65%),
+        radial-gradient(140% 120% at 90% 10%, rgba(80, 140, 230, 0.16), transparent 60%),
+        linear-gradient(160deg, #08162d 0%, #0f2f5a 45%, #081c33 100%);
       overflow-x: hidden;
     }
 
@@ -163,7 +163,7 @@
     }
 
     .board {
-      background: linear-gradient(160deg, rgba(11, 36, 26, 0.75), rgba(23, 74, 54, 0.85));
+      background: linear-gradient(160deg, rgba(9, 28, 60, 0.8), rgba(19, 56, 104, 0.9));
       border-radius: 26px;
       padding: 22px;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -281,7 +281,7 @@
     }
 
     .card.face-down {
-      background: linear-gradient(135deg, #275640, #1a3a2b);
+      background: linear-gradient(135deg, #173a6b, #0c2444);
       border-color: rgba(255, 255, 255, 0.2);
       cursor: pointer;
     }
@@ -338,6 +338,26 @@
     .card.is-selected {
       transform: translateY(-6px);
       box-shadow: 0 0 0 2px rgba(255, 207, 121, 0.7), 0 16px 28px rgba(5, 13, 9, 0.4);
+    }
+
+    .card.is-drag-hidden {
+      opacity: 0.15;
+    }
+
+    .drag-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .drag-stack {
+      position: absolute;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .drag-stack .card {
+      cursor: grabbing;
     }
 
     .message {
@@ -567,6 +587,22 @@
       startTime: null,
       elapsed: 0,
       wins: Number(localStorage.getItem('klondike_wins') || 0)
+    };
+
+    const dragState = {
+      active: false,
+      pending: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      offsetX: 0,
+      offsetY: 0,
+      sourceInfo: null,
+      sourceEl: null,
+      dragLayer: null,
+      dragStack: null,
+      sourceCardEls: [],
+      justDragged: false
     };
 
     function createDeck() {
@@ -1125,7 +1161,268 @@
 
       setMessage('Sem movimentos evidentes.');
     }
+
+    function getCardInfoFromElement(cardEl) {
+      const source = cardEl.dataset.source;
+      if (!source) {
+        return null;
+      }
+      if (source === 'tableau') {
+        const pileIndex = Number(cardEl.dataset.pile);
+        const cardIndex = Number(cardEl.dataset.index);
+        const card = state.tableau[pileIndex] && state.tableau[pileIndex][cardIndex];
+        return card ? { source, pileIndex, cardIndex, card } : null;
+      }
+      if (source === 'waste') {
+        const card = state.waste[state.waste.length - 1];
+        return card ? { source, card } : null;
+      }
+      if (source === 'foundation') {
+        const suit = cardEl.dataset.suit;
+        const pile = state.foundations[suit];
+        const card = pile && pile[pile.length - 1];
+        return card ? { source, suit, card } : null;
+      }
+      return null;
+    }
+
+    function buildSelectionFromInfo(info) {
+      if (!info) {
+        return null;
+      }
+      if (info.source === 'tableau') {
+        return { source: 'tableau', pileIndex: info.pileIndex, cardIndex: info.cardIndex };
+      }
+      if (info.source === 'waste') {
+        return { source: 'waste' };
+      }
+      if (info.source === 'foundation') {
+        return { source: 'foundation', suit: info.suit };
+      }
+      return null;
+    }
+
+    function getDragCards(info) {
+      if (!info) {
+        return [];
+      }
+      if (info.source === 'tableau') {
+        return state.tableau[info.pileIndex].slice(info.cardIndex);
+      }
+      if (info.source === 'waste') {
+        return state.waste.length ? [state.waste[state.waste.length - 1]] : [];
+      }
+      if (info.source === 'foundation') {
+        const pile = state.foundations[info.suit];
+        return pile.length ? [pile[pile.length - 1]] : [];
+      }
+      return [];
+    }
+
+    function ensureDragLayer() {
+      if (!dragState.dragLayer) {
+        dragState.dragLayer = document.createElement('div');
+        dragState.dragLayer.className = 'drag-layer';
+      }
+      if (!dragState.dragLayer.parentNode) {
+        document.body.appendChild(dragState.dragLayer);
+      }
+    }
+
+    function buildDragCard(card) {
+      const cardEl = document.createElement('div');
+      cardEl.className = `card ${card.color}`;
+      cardEl.setAttribute('aria-hidden', 'true');
+      cardEl.innerHTML = `
+        <span class="corner top"><span class="rank">${card.label}</span><span class="suit">${card.suitSymbol}</span></span>
+        <span class="suit center">${card.suitSymbol}</span>
+        <span class="corner bottom"><span class="rank">${card.label}</span><span class="suit">${card.suitSymbol}</span></span>
+      `;
+      return cardEl;
+    }
+
+    function markSourceCardsHidden(info) {
+      dragState.sourceCardEls = [];
+      if (!info) {
+        return;
+      }
+      if (info.source === 'tableau') {
+        const pileEl = elements.tableau[info.pileIndex];
+        if (!pileEl) {
+          return;
+        }
+        dragState.sourceCardEls = Array.from(pileEl.querySelectorAll('.card')).filter(
+          (el) => Number(el.dataset.index) >= info.cardIndex
+        );
+      } else if (info.source === 'waste') {
+        const cardEl = elements.waste.querySelector('.card');
+        if (cardEl) {
+          dragState.sourceCardEls = [cardEl];
+        }
+      } else if (info.source === 'foundation') {
+        const foundationEl = elements.foundations.find((el) => el.dataset.suit === info.suit);
+        if (foundationEl) {
+          const cardEl = foundationEl.querySelector('.card');
+          if (cardEl) {
+            dragState.sourceCardEls = [cardEl];
+          }
+        }
+      }
+      dragState.sourceCardEls.forEach((el) => el.classList.add('is-drag-hidden'));
+    }
+
+    function clearDragArtifacts() {
+      dragState.sourceCardEls.forEach((el) => el.classList.remove('is-drag-hidden'));
+      dragState.sourceCardEls = [];
+      if (dragState.dragStack && dragState.dragLayer) {
+        dragState.dragLayer.removeChild(dragState.dragStack);
+      }
+      dragState.dragStack = null;
+    }
+
+    function beginDrag(event) {
+      const info = dragState.sourceInfo;
+      const cards = getDragCards(info);
+      if (!cards.length) {
+        dragState.pending = false;
+        return;
+      }
+      dragState.active = true;
+      dragState.pending = false;
+      ensureDragLayer();
+      dragState.dragStack = document.createElement('div');
+      dragState.dragStack.className = 'drag-stack';
+      const offset = getOffsetUp();
+      cards.forEach((card, index) => {
+        const cardEl = buildDragCard(card);
+        cardEl.style.top = `${index * offset}px`;
+        cardEl.style.left = '0px';
+        cardEl.style.zIndex = index + 1;
+        dragState.dragStack.appendChild(cardEl);
+      });
+      dragState.dragLayer.appendChild(dragState.dragStack);
+      const rect = dragState.sourceEl.getBoundingClientRect();
+      dragState.offsetX = event.clientX - rect.left;
+      dragState.offsetY = event.clientY - rect.top;
+      document.querySelectorAll('.card.is-selected').forEach((el) => el.classList.remove('is-selected'));
+      clearSelection();
+      markSourceCardsHidden(info);
+      updateDragPosition(event.clientX, event.clientY);
+    }
+
+    function updateDragPosition(x, y) {
+      if (!dragState.dragStack) {
+        return;
+      }
+      dragState.dragStack.style.left = `${x - dragState.offsetX}px`;
+      dragState.dragStack.style.top = `${y - dragState.offsetY}px`;
+    }
+
+    function attemptDrop(pileEl) {
+      if (!pileEl || !dragState.sourceInfo) {
+        return false;
+      }
+      const pileType = pileEl.dataset.pile;
+      const selection = buildSelectionFromInfo(dragState.sourceInfo);
+      if (!selection) {
+        return false;
+      }
+      state.selected = selection;
+      let moved = false;
+      if (pileType === 'tableau') {
+        moved = tryMoveToTableau(Number(pileEl.dataset.index));
+      } else if (pileType === 'foundation') {
+        moved = tryMoveToFoundation(pileEl.dataset.suit);
+      }
+      if (!moved) {
+        clearSelection();
+      }
+      return moved;
+    }
+
+    function endDrag() {
+      clearDragArtifacts();
+      dragState.active = false;
+      dragState.pending = false;
+      dragState.pointerId = null;
+      dragState.sourceInfo = null;
+      dragState.sourceEl = null;
+    }
+
+    document.addEventListener('pointerdown', (event) => {
+      const cardEl = event.target.closest('.card');
+      if (!cardEl || event.button !== 0) {
+        return;
+      }
+      const info = getCardInfoFromElement(cardEl);
+      if (!info || !info.card || !info.card.faceUp) {
+        return;
+      }
+      dragState.pending = true;
+      dragState.pointerId = event.pointerId;
+      dragState.startX = event.clientX;
+      dragState.startY = event.clientY;
+      dragState.sourceInfo = info;
+      dragState.sourceEl = cardEl;
+      dragState.justDragged = false;
+    });
+
+    document.addEventListener('pointermove', (event) => {
+      if ((!dragState.pending && !dragState.active) || event.pointerId !== dragState.pointerId) {
+        return;
+      }
+      const dx = event.clientX - dragState.startX;
+      const dy = event.clientY - dragState.startY;
+      const distance = Math.hypot(dx, dy);
+      if (dragState.pending && distance > 6) {
+        beginDrag(event);
+      }
+      if (dragState.active) {
+        event.preventDefault();
+        updateDragPosition(event.clientX, event.clientY);
+      }
+    }, { passive: false });
+
+    document.addEventListener('pointerup', (event) => {
+      if (event.pointerId !== dragState.pointerId) {
+        return;
+      }
+      if (dragState.pending) {
+        dragState.pending = false;
+        dragState.pointerId = null;
+        return;
+      }
+      if (!dragState.active) {
+        return;
+      }
+      event.preventDefault();
+      const target = document.elementFromPoint(event.clientX, event.clientY);
+      const pileEl = target ? target.closest('.pile') : null;
+      attemptDrop(pileEl);
+      endDrag();
+      render();
+      dragState.justDragged = true;
+      setTimeout(() => {
+        dragState.justDragged = false;
+      }, 0);
+    });
+
+    document.addEventListener('pointercancel', (event) => {
+      if (event.pointerId !== dragState.pointerId) {
+        return;
+      }
+      if (dragState.active) {
+        endDrag();
+        render();
+      }
+      dragState.pending = false;
+      dragState.pointerId = null;
+    });
     document.addEventListener('click', (event) => {
+      if (dragState.justDragged) {
+        dragState.justDragged = false;
+        return;
+      }
       const cardEl = event.target.closest('.card');
       const pileEl = event.target.closest('.pile');
 
@@ -1152,6 +1449,10 @@
     });
 
     document.addEventListener('dblclick', (event) => {
+      if (dragState.justDragged) {
+        dragState.justDragged = false;
+        return;
+      }
       const cardEl = event.target.closest('.card');
       if (!cardEl) {
         return;
