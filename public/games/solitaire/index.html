@@ -170,12 +170,15 @@
       box-shadow: var(--shadow);
       display: grid;
       gap: 18px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .row {
       display: grid;
       gap: 16px;
       align-items: start;
+      width: max-content;
     }
 
     .top-row {
@@ -447,6 +450,73 @@
 
       .foundations {
         justify-self: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main.solitaire {
+        padding: 22px 14px 48px;
+        gap: 22px;
+      }
+
+      .hero-text h1 {
+        font-size: clamp(2rem, 7vw, 2.8rem);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+
+      .board {
+        padding: 16px;
+        gap: 14px;
+      }
+
+      .top-row {
+        column-gap: 12px;
+      }
+
+      .tableau {
+        gap: 12px;
+      }
+
+      .controls {
+        gap: 10px;
+      }
+
+      .control-btn {
+        padding: 9px 14px;
+        font-size: 0.88rem;
+      }
+    }
+
+    @media (max-width: 540px) {
+      :root {
+        --card-width: clamp(56px, 18vw, 84px);
+        --card-offset-up: clamp(18px, 4.5vw, 26px);
+        --card-offset-down: clamp(10px, 3vw, 14px);
+      }
+
+      .top-row {
+        row-gap: 14px;
+      }
+
+      .foundations {
+        grid-template-columns: repeat(2, var(--card-width));
+        gap: 12px;
+      }
+
+      .tableau {
+        grid-template-columns: repeat(7, var(--card-width));
+      }
+
+      .card .corner,
+      .card .rank {
+        font-size: 1rem;
+      }
+
+      .card .center {
+        font-size: 2.1rem;
       }
     }
 
