@@ -27,7 +27,8 @@
       --card-width: clamp(70px, 8vw, 110px);
       --card-height: calc(var(--card-width) * 1.38);
       --card-offset-up: clamp(20px, 3vw, 32px);
-      --card-offset-down: clamp(12px, 2vw, 18px);
+      --card-offset-down: clamp(11px, 2vw, 18px);
+      --top-row-spacer: clamp(50px, 36vw, 520px);
     }
 
     * {
@@ -60,7 +61,7 @@
     }
 
     main.solitaire {
-      max-width: 1200px;
+      max-width: 1500px;
       margin: 0 auto;
       padding: 32px 20px 60px;
       display: grid;
@@ -170,19 +171,16 @@
       box-shadow: var(--shadow);
       display: grid;
       gap: 18px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
 
     .row {
       display: grid;
       gap: 16px;
       align-items: start;
-      width: max-content;
     }
 
     .top-row {
-      grid-template-columns: repeat(2, var(--card-width)) 1fr repeat(4, var(--card-width));
+      grid-template-columns: repeat(2, var(--card-width)) minmax(var(--top-row-spacer), 1fr) repeat(4, var(--card-width));
       column-gap: 18px;
     }
 
@@ -195,7 +193,7 @@
 
     .tableau {
       grid-template-columns: repeat(7, minmax(var(--card-width), 1fr));
-      gap: 14px;
+      gap: 10px;
       overflow-x: auto;
       padding-bottom: 6px;
     }
@@ -312,7 +310,7 @@
     .card .corner {
       display: grid;
       gap: 2px;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       line-height: 1;
     }
 
@@ -322,7 +320,7 @@
     }
 
     .card .rank {
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: 0.02em;
     }
@@ -333,7 +331,7 @@
     }
 
     .card .center {
-      font-size: 2.5rem;
+      font-size: 2.7rem;
       text-align: center;
       margin-top: -6px;
     }
@@ -450,73 +448,6 @@
 
       .foundations {
         justify-self: start;
-      }
-    }
-
-    @media (max-width: 720px) {
-      main.solitaire {
-        padding: 22px 14px 48px;
-        gap: 22px;
-      }
-
-      .hero-text h1 {
-        font-size: clamp(2rem, 7vw, 2.8rem);
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-      }
-
-      .board {
-        padding: 16px;
-        gap: 14px;
-      }
-
-      .top-row {
-        column-gap: 12px;
-      }
-
-      .tableau {
-        gap: 12px;
-      }
-
-      .controls {
-        gap: 10px;
-      }
-
-      .control-btn {
-        padding: 9px 14px;
-        font-size: 0.88rem;
-      }
-    }
-
-    @media (max-width: 540px) {
-      :root {
-        --card-width: clamp(56px, 18vw, 84px);
-        --card-offset-up: clamp(18px, 4.5vw, 26px);
-        --card-offset-down: clamp(10px, 3vw, 14px);
-      }
-
-      .top-row {
-        row-gap: 14px;
-      }
-
-      .foundations {
-        grid-template-columns: repeat(2, var(--card-width));
-        gap: 12px;
-      }
-
-      .tableau {
-        grid-template-columns: repeat(7, var(--card-width));
-      }
-
-      .card .corner,
-      .card .rank {
-        font-size: 1rem;
-      }
-
-      .card .center {
-        font-size: 2.1rem;
       }
     }
 
@@ -770,15 +701,44 @@
       setMessage('Novo jogo iniciado.');
     }
 
+    let layoutMetrics = null;
+
     function updateStats() {
       elements.moves.textContent = state.moves;
       elements.wins.textContent = state.wins;
     }
+
+    function computeLayoutMetrics() {
+      const probe = document.createElement('div');
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      probe.style.width = 'var(--card-width)';
+      probe.style.height = 'var(--card-height)';
+      probe.style.marginTop = 'var(--card-offset-up)';
+      probe.style.marginBottom = 'var(--card-offset-down)';
+      document.body.appendChild(probe);
+      const rect = probe.getBoundingClientRect();
+      const styles = getComputedStyle(probe);
+      const cardHeight = rect.height || 120;
+      const offsetUp = parseFloat(styles.marginTop) || 26;
+      const offsetDown = parseFloat(styles.marginBottom) || 14;
+      document.body.removeChild(probe);
+      return { cardHeight, offsetUp, offsetDown };
+    }
+
+    function getLayoutMetrics() {
+      if (!layoutMetrics) {
+        layoutMetrics = computeLayoutMetrics();
+      }
+      return layoutMetrics;
+    }
+
+    function refreshLayoutMetrics() {
+      layoutMetrics = computeLayoutMetrics();
+    }
+
     function getPileHeight(pile) {
-      const styles = getComputedStyle(document.documentElement);
-      const cardHeight = parseFloat(styles.getPropertyValue('--card-height')) || 120;
-      const offsetUp = parseFloat(styles.getPropertyValue('--card-offset-up')) || 26;
-      const offsetDown = parseFloat(styles.getPropertyValue('--card-offset-down')) || 14;
+      const { cardHeight, offsetUp, offsetDown } = getLayoutMetrics();
       let height = cardHeight;
       pile.forEach((card, index) => {
         if (index === 0) {
@@ -862,13 +822,11 @@
     }
 
     function getOffsetUp() {
-      const styles = getComputedStyle(document.documentElement);
-      return parseFloat(styles.getPropertyValue('--card-offset-up')) || 26;
+      return getLayoutMetrics().offsetUp;
     }
 
     function getOffsetDown() {
-      const styles = getComputedStyle(document.documentElement);
-      return parseFloat(styles.getPropertyValue('--card-offset-down')) || 14;
+      return getLayoutMetrics().offsetDown;
     }
 
     function render() {
@@ -1536,6 +1494,7 @@
     elements.playAgain.addEventListener('click', startNewGame);
 
     window.addEventListener('resize', () => {
+      refreshLayoutMetrics();
       render();
     });
 
@@ -1545,4 +1504,3 @@
 </body>
 
 </html>
-
