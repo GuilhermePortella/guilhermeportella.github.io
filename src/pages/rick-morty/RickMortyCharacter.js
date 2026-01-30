@@ -16,6 +16,16 @@ const WIKI_SECTION_CONFIG = [
     maxParagraphs: 2
   },
   {
+    label: 'Aparicoes nos episodios',
+    matches: ['episode appearances'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Poderes e habilidades',
+    matches: ['powers and abilities', 'powers', 'abilities'],
+    maxParagraphs: 1
+  },
+  {
     label: 'Personalidade',
     matches: ['personality'],
     maxParagraphs: 1
