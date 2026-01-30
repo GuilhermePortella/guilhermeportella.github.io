@@ -7,12 +7,12 @@ import Blog from './pages/Blog';
 import Articles from './pages/Articles';
 import Article from './pages/Article';
 import Games from './pages/Games';
-import Swapi from './pages/Swapi';
-import SwapiDetail from './pages/SwapiDetail';
-import RickMorty from './pages/RickMorty';
-import RickMortyCharacter from './pages/RickMortyCharacter';
-import RickMortyLocation from './pages/RickMortyLocation';
-import RickMortyEpisode from './pages/RickMortyEpisode';
+import Swapi from './pages/swapi/Swapi';
+import SwapiDetail from './pages/swapi/SwapiDetail';
+import RickMorty from './pages/rick-morty/RickMorty';
+import RickMortyCharacter from './pages/rick-morty/RickMortyCharacter';
+import RickMortyLocation from './pages/rick-morty/RickMortyLocation';
+import RickMortyEpisode from './pages/rick-morty/RickMortyEpisode';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
