@@ -9,11 +9,47 @@ const MYMEMORY_TRANSLATE_URL = 'https://api.mymemory.translated.net/get';
 const MAX_TRANSLATE_LENGTH = 2200;
 const MYMEMORY_MAX_CHUNK = 400;
 
-const WIKI_SECTION_TITLES = [
-  'biography',
-  'history',
-  'background',
-  'overview'
+const WIKI_SECTION_CONFIG = [
+  {
+    label: 'Biografia',
+    matches: ['biography', 'history', 'background', 'overview'],
+    maxParagraphs: 2
+  },
+  {
+    label: 'Aparicoes nos episodios',
+    matches: ['episode appearances'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Poderes e habilidades',
+    matches: ['powers and abilities', 'powers', 'abilities'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Personalidade',
+    matches: ['personality'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Aparencia',
+    matches: ['appearance'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Habilidades',
+    matches: ['abilities', 'powers'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Relacionamentos',
+    matches: ['relationships'],
+    maxParagraphs: 1
+  },
+  {
+    label: 'Curiosidades',
+    matches: ['trivia'],
+    maxParagraphs: 1
+  }
 ];
 
 const formatValue = (value) => {
@@ -118,13 +154,13 @@ const fetchWikiSectionHtml = async (title, section, signal) => {
   return response.json();
 };
 
-const findBiographySection = (sections) => {
+const findSectionMatch = (sections, matches) => {
   if (!Array.isArray(sections)) {
     return null;
   }
   return sections.find((section) => {
     const line = (section.line || '').toLowerCase();
-    return WIKI_SECTION_TITLES.some((title) => line.includes(title));
+    return matches.some((match) => line.includes(match));
   });
 };
 
@@ -298,26 +334,43 @@ const fetchWikiPageByTitle = async (title, signal) => {
   }
   const sections = sectionsPayload.parse?.sections ?? [];
   const pageTitle = sectionsPayload.parse?.title || title;
-  const biographySection = findBiographySection(sections);
-  const sectionIndex = biographySection?.index ?? '0';
+  const summarySections = [];
 
-  const sectionPayload = await fetchWikiSectionHtml(pageTitle, sectionIndex, signal);
-  if (!sectionPayload || sectionPayload.error || !sectionPayload.parse) {
-    return null;
+  for (const config of WIKI_SECTION_CONFIG) {
+    const match = findSectionMatch(sections, config.matches);
+    if (!match) {
+      continue;
+    }
+    const sectionPayload = await fetchWikiSectionHtml(pageTitle, match.index, signal);
+    if (!sectionPayload || sectionPayload.error || !sectionPayload.parse) {
+      continue;
+    }
+    const sectionHtml = sectionPayload.parse?.text?.['*'] || '';
+    const text = extractSummaryFromHtml(sectionHtml, config.maxParagraphs);
+    if (text) {
+      summarySections.push({
+        title: config.label,
+        text
+      });
+    }
   }
-  const sectionHtml = sectionPayload.parse?.text?.['*'] || '';
-  let summary = extractSummaryFromHtml(sectionHtml, 2);
 
-  if (!summary && sectionIndex !== '0') {
+  if (summarySections.length === 0) {
     const leadPayload = await fetchWikiSectionHtml(pageTitle, '0', signal);
     if (leadPayload?.parse) {
-      summary = extractSummaryFromHtml(leadPayload.parse?.text?.['*'] || '', 2);
+      const summary = extractSummaryFromHtml(leadPayload.parse?.text?.['*'] || '', 2);
+      if (summary) {
+        summarySections.push({
+          title: 'Resumo',
+          text: summary
+        });
+      }
     }
   }
 
   return {
     title: pageTitle,
-    summary,
+    sections: summarySections,
     url: buildWikiUrl(pageTitle)
   };
 };
@@ -441,26 +494,43 @@ const RickMortyCharacter = () => {
           return;
         }
 
-        let translatedSummary = result.summary;
         let translationStatus = 'original';
+        let translatedAny = false;
+        let translatedAll = true;
 
-        if (translatedSummary) {
+        const translatedSections = [];
+        for (const section of result.sections || []) {
+          if (!section?.text) {
+            translatedSections.push(section);
+            continue;
+          }
           try {
-            const translatedText = await translateTextToPortuguese(translatedSummary, controller.signal);
+            const translatedText = await translateTextToPortuguese(section.text, controller.signal);
             if (translatedText && translatedText.trim()) {
-              translatedSummary = translatedText;
-              translationStatus = 'translated';
+              translatedAny = true;
+              translatedSections.push({
+                ...section,
+                text: translatedText
+              });
             } else {
-              translationStatus = 'failed';
+              translatedAll = false;
+              translatedSections.push(section);
             }
           } catch (translateError) {
-            translationStatus = 'failed';
+            translatedAll = false;
+            translatedSections.push(section);
           }
+        }
+
+        if (translatedAny) {
+          translationStatus = translatedAll ? 'translated' : 'partial';
+        } else if ((result.sections || []).some((section) => section?.text)) {
+          translationStatus = 'failed';
         }
 
         setWikiData({
           ...result,
-          summary: translatedSummary,
+          sections: translatedSections,
           translationStatus
         });
         setWikiStatus('success');
@@ -639,14 +709,26 @@ const RickMortyCharacter = () => {
                       <p className="mt-4 text-sm text-gray-500">Nenhuma pagina encontrada.</p>
                     )}
                     {wikiStatus === 'success' && (
-                      <div className="mt-4 space-y-3 text-sm text-gray-600">
-                        <p className="whitespace-pre-line">
-                          {wikiData?.summary || 'Resumo nao informado.'}
-                        </p>
-                        {wikiData?.summary && (
+                      <div className="mt-4 space-y-6 text-sm text-gray-600">
+                        {(!wikiData?.sections || wikiData.sections.length === 0) && (
+                          <p className="whitespace-pre-line">Resumo nao informado.</p>
+                        )}
+                        {(wikiData?.sections || []).map((section) => (
+                          <div key={section.title || section.text?.slice(0, 20)}>
+                            {section.title && (
+                              <h4 className="text-base font-semibold text-gray-900">{section.title}</h4>
+                            )}
+                            <p className="mt-2 whitespace-pre-line">
+                              {section.text || 'Resumo nao informado.'}
+                            </p>
+                          </div>
+                        ))}
+                        {wikiData?.sections?.length > 0 && (
                           <p className="text-xs text-gray-500">
                             {wikiData?.translationStatus === 'translated' &&
                               'Resumo traduzido automaticamente para portugues.'}
+                            {wikiData?.translationStatus === 'partial' &&
+                              'Parte do resumo foi traduzida automaticamente.'}
                             {wikiData?.translationStatus === 'failed' &&
                               'Nao foi possivel traduzir agora. Exibindo o idioma original.'}
                             {(!wikiData?.translationStatus || wikiData?.translationStatus === 'original') &&
