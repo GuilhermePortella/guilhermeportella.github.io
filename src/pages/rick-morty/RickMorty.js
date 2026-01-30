@@ -316,12 +316,17 @@ const RickMorty = () => {
                 {data.results.map((item) => (
                   <article key={item.id} className="bg-white rounded-lg border border-gray-200 shadow-lg p-5">
                     {resource === 'character' && item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-44 object-cover rounded-md"
-                        loading="lazy"
-                      />
+                      <div
+                        className="w-full rounded-md bg-gray-100 overflow-hidden"
+                        style={{ aspectRatio: '1 / 1' }}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
+                      </div>
                     )}
                     <h4 className={`text-xl font-semibold text-gray-900 ${resource === 'character' && item.image ? 'mt-4' : ''}`}>
                       {resource === 'character' && (
