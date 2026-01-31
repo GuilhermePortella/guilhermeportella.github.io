@@ -13,6 +13,7 @@ import RickMorty from './pages/rick-morty/RickMorty';
 import RickMortyCharacter from './pages/rick-morty/RickMortyCharacter';
 import RickMortyLocation from './pages/rick-morty/RickMortyLocation';
 import RickMortyEpisode from './pages/rick-morty/RickMortyEpisode';
+import BackToTheFuture from './pages/back-to-the-future/BackToTheFuture';
 
 function App() {
   const getNavLinkClass = ({ isActive }) => {
@@ -63,6 +64,8 @@ function App() {
           <Route path="/games/rick-morty/local/:id" element={<RickMortyLocation />} />
           <Route path="/jogos/rick-morty/episodio/:id" element={<RickMortyEpisode />} />
           <Route path="/games/rick-morty/episodio/:id" element={<RickMortyEpisode />} />
+          <Route path="/jogos/back-to-the-future" element={<BackToTheFuture />} />
+          <Route path="/games/back-to-the-future" element={<BackToTheFuture />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/artigos" element={<Articles />} />
           <Route path="/blog/artigos/:slug" element={<Article />} />
