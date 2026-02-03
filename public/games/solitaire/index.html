@@ -134,6 +134,41 @@
       gap: 12px;
       align-items: center;
     }
+    .difficulty-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(10, 30, 53, 0.6);
+      box-shadow: 0 10px 18px rgba(3, 10, 7, 0.3);
+    }
+
+    .difficulty-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    .control-select {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(20, 69, 50, 0.75);
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .control-select:focus-visible {
+      outline: 2px solid rgba(255, 214, 145, 0.85);
+      outline-offset: 2px;
+    }
+
     .control-btn {
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 999px;
@@ -147,9 +182,16 @@
       box-shadow: 0 12px 22px rgba(4, 12, 8, 0.35);
     }
 
-    .control-btn:hover {
+    .control-btn:hover:not(:disabled) {
       transform: translateY(-1px);
       background: rgba(27, 92, 67, 0.85);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .control-btn.primary {
@@ -486,6 +528,14 @@
         </div>
       </div>
       <div class="controls" id="controls">
+        <div class="difficulty-control">
+          <label class="difficulty-label" for="difficulty">Dificuldade</label>
+          <select id="difficulty" class="control-select" aria-label="Selecionar dificuldade">
+            <option value="hard">Difícil</option>
+            <option value="easy">Fácil</option>
+          </select>
+        </div>
+        <button type="button" id="undo-move" class="control-btn" disabled>Desfazer</button>
         <button type="button" id="new-game" class="control-btn primary">Novo jogo</button>
         <button type="button" id="hint" class="control-btn">Dica</button>
       </div>
@@ -524,7 +574,7 @@
       </div>
       <div class="tip">
         <h3>Regras rápidas</h3>
-        <p>No tableau: desça alternando cores. Fundações sobem no mesmo naipe, começando no Ás.</p>
+        <p id="rules-text">No tableau (difícil): desça alternando cores. Fundações sobem no mesmo naipe, começando no Ás.</p>
       </div>
       <div class="tip">
         <h3>Atalho</h3>
@@ -556,6 +606,11 @@
       12: 'Q',
       13: 'K'
     };
+    const difficultyLabels = {
+      easy: 'Fácil',
+      hard: 'Difícil'
+    };
+    const MAX_HISTORY = 200;
 
     const elements = {
       stock: document.getElementById('stock'),
@@ -566,8 +621,11 @@
       moves: document.getElementById('moves'),
       wins: document.getElementById('wins'),
       message: document.getElementById('message'),
+      undo: document.getElementById('undo-move'),
       newGame: document.getElementById('new-game'),
       hint: document.getElementById('hint'),
+      difficulty: document.getElementById('difficulty'),
+      rulesText: document.getElementById('rules-text'),
       overlay: document.getElementById('win-overlay'),
       playAgain: document.getElementById('play-again')
     };
@@ -587,7 +645,9 @@
       timerId: null,
       startTime: null,
       elapsed: 0,
-      wins: Number(localStorage.getItem('klondike_wins') || 0)
+      wins: Number(localStorage.getItem('klondike_wins') || 0),
+      difficulty: localStorage.getItem('klondike_difficulty') === 'easy' ? 'easy' : 'hard',
+      history: []
     };
 
     const dragState = {
@@ -633,17 +693,19 @@
       return deck;
     }
 
-    function resetTimer() {
-      if (state.timerId) {
-        clearInterval(state.timerId);
-      }
-      state.startTime = Date.now();
-      state.elapsed = 0;
+    function runTimerFromElapsed(elapsed) {
+      stopTimer();
+      state.elapsed = elapsed;
+      state.startTime = Date.now() - state.elapsed;
       state.timerId = setInterval(() => {
         state.elapsed = Date.now() - state.startTime;
         updateTimer();
       }, 1000);
       updateTimer();
+    }
+
+    function resetTimer() {
+      runTimerFromElapsed(0);
     }
 
     function stopTimer() {
@@ -671,6 +733,112 @@
       }, 2200);
     }
 
+    function cloneCard(card) {
+      return { ...card };
+    }
+
+    function cloneBoardState() {
+      return {
+        stock: state.stock.map(cloneCard),
+        waste: state.waste.map(cloneCard),
+        foundations: {
+          hearts: state.foundations.hearts.map(cloneCard),
+          diamonds: state.foundations.diamonds.map(cloneCard),
+          clubs: state.foundations.clubs.map(cloneCard),
+          spades: state.foundations.spades.map(cloneCard)
+        },
+        tableau: state.tableau.map((pile) => pile.map(cloneCard)),
+        moves: state.moves,
+        elapsed: state.elapsed,
+        wins: state.wins,
+        timerRunning: Boolean(state.timerId),
+        overlayVisible: elements.overlay.classList.contains('is-visible')
+      };
+    }
+
+    function updateUndoButton() {
+      if (!elements.undo) {
+        return;
+      }
+      elements.undo.disabled = state.history.length === 0;
+    }
+
+    function pushHistory() {
+      state.history.push(cloneBoardState());
+      if (state.history.length > MAX_HISTORY) {
+        state.history.shift();
+      }
+      updateUndoButton();
+    }
+
+    function clearHistory() {
+      state.history = [];
+      updateUndoButton();
+    }
+
+    function restoreBoardState(snapshot) {
+      if (!snapshot) {
+        return;
+      }
+      state.stock = snapshot.stock.map(cloneCard);
+      state.waste = snapshot.waste.map(cloneCard);
+      state.foundations = {
+        hearts: snapshot.foundations.hearts.map(cloneCard),
+        diamonds: snapshot.foundations.diamonds.map(cloneCard),
+        clubs: snapshot.foundations.clubs.map(cloneCard),
+        spades: snapshot.foundations.spades.map(cloneCard)
+      };
+      state.tableau = snapshot.tableau.map((pile) => pile.map(cloneCard));
+      state.moves = snapshot.moves;
+      state.elapsed = snapshot.elapsed;
+      state.wins = snapshot.wins;
+      state.selected = null;
+
+      if (snapshot.timerRunning) {
+        runTimerFromElapsed(snapshot.elapsed);
+      } else {
+        stopTimer();
+        state.startTime = null;
+        updateTimer();
+      }
+
+      if (snapshot.overlayVisible) {
+        showOverlay();
+      } else {
+        hideOverlay();
+      }
+
+      localStorage.setItem('klondike_wins', String(state.wins));
+      render();
+    }
+
+    function undoMove() {
+      if (!state.history.length) {
+        setMessage('Não há jogadas para desfazer.');
+        return;
+      }
+      const previous = state.history.pop();
+      updateUndoButton();
+      restoreBoardState(previous);
+      setMessage('Jogada desfeita.');
+    }
+
+    function getDifficultyLabel() {
+      return difficultyLabels[state.difficulty] || difficultyLabels.hard;
+    }
+
+    function syncDifficultyUI() {
+      if (elements.difficulty) {
+        elements.difficulty.value = state.difficulty;
+      }
+      if (!elements.rulesText) {
+        return;
+      }
+      elements.rulesText.textContent = state.difficulty === 'easy'
+        ? 'No tableau (fácil): desça na mesma cor. Fundações sobem no mesmo naipe, começando no Ás.'
+        : 'No tableau (difícil): desça alternando cores. Fundações sobem no mesmo naipe, começando no Ás.';
+    }
+
     function startNewGame() {
       const deck = shuffle(createDeck());
       state.stock = [];
@@ -684,6 +852,7 @@
       state.tableau = Array.from({ length: 7 }, () => []);
       state.selected = null;
       state.moves = 0;
+      clearHistory();
 
       for (let col = 0; col < 7; col += 1) {
         for (let row = 0; row <= col; row += 1) {
@@ -698,7 +867,7 @@
       updateStats();
       render();
       hideOverlay();
-      setMessage('Novo jogo iniciado.');
+      setMessage(`Novo jogo iniciado (${getDifficultyLabel()}).`);
     }
 
     let layoutMetrics = null;
@@ -937,7 +1106,10 @@
       if (!top.faceUp) {
         return false;
       }
-      return top.rank === first.rank + 1 && top.color !== first.color;
+      const colorMatch = state.difficulty === 'easy'
+        ? top.color === first.color
+        : top.color !== first.color;
+      return top.rank === first.rank + 1 && colorMatch;
     }
 
     function canMoveToFoundation(card, suitId) {
@@ -961,6 +1133,7 @@
         setMessage('Movimento inválido.');
         return false;
       }
+      pushHistory();
       const moved = removeSelectedCards();
       state.tableau[destIndex].push(...moved);
       if (state.selected.source === 'tableau') {
@@ -983,6 +1156,7 @@
         setMessage('Movimento inválido.');
         return false;
       }
+      pushHistory();
       removeSelectedCards();
       state.foundations[suitId].push(card);
       if (state.selected.source === 'tableau') {
@@ -996,6 +1170,7 @@
 
     function drawFromStock() {
       if (state.stock.length) {
+        pushHistory();
         const card = state.stock.pop();
         card.faceUp = true;
         state.waste.push(card);
@@ -1007,6 +1182,7 @@
         setMessage('Sem cartas para comprar.');
         return;
       }
+      pushHistory();
       state.stock = state.waste.reverse().map((card) => ({
         ...card,
         faceUp: false
@@ -1024,6 +1200,7 @@
         const card = state.tableau[pileIndex][cardIndex];
 
         if (!card.faceUp && cardIndex === state.tableau[pileIndex].length - 1) {
+          pushHistory();
           card.faceUp = true;
           state.moves += 1;
           clearSelection();
@@ -1489,15 +1666,25 @@
       render();
     });
 
+    elements.undo.addEventListener('click', undoMove);
     elements.newGame.addEventListener('click', startNewGame);
     elements.hint.addEventListener('click', showHint);
     elements.playAgain.addEventListener('click', startNewGame);
+    elements.difficulty.addEventListener('change', (event) => {
+      state.difficulty = event.target.value === 'easy' ? 'easy' : 'hard';
+      localStorage.setItem('klondike_difficulty', state.difficulty);
+      syncDifficultyUI();
+      startNewGame();
+      setMessage(`Dificuldade ${getDifficultyLabel()} ativada.`);
+    });
 
     window.addEventListener('resize', () => {
       refreshLayoutMetrics();
       render();
     });
 
+    syncDifficultyUI();
+    updateUndoButton();
     updateStats();
     startNewGame();
   </script>
