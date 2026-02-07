@@ -1,6 +1,44 @@
-# Model Context Protocol (MCP): Unificando a Interação de Aplicações de IA com Sistemas Externos
+---
+title: "Model Context Protocol (MCP): Unificando a Interação de Aplicações de IA com Sistemas Externos"
+summary: "Um panorama técnico do Model Context Protocol (MCP): motivação, arquitetura cliente-servidor, transportes (STDIO/HTTP), primitivas (Resources/Prompts/Tools), ciclo de vida, sampling e práticas de segurança — com sugestões de estudo e referências."
+author: "Guilherme Portella"
+publishedDate: "2026-02-07"
+keywords:
+  - AI
+  - LLM
+  - Model Context Protocol
+  - MCP
+  - Agents
+  - Tooling
+  - JSON-RPC
+  - Integrations
+  - Security
+  - Architecture
+seo:
+  title: "Model Context Protocol (MCP) — arquitetura, primitivas e segurança"
+  description: "Artigo técnico sobre o MCP: Host/Client/Server, transportes, Resources/Prompts/Tools, lifecycle, sampling e considerações de segurança para integrações de IA."
+  canonicalUrl: "https://www.guilhermeportella.com.br/#/blog/artigos/model-context-protocol-mcp"
+  image: "/images/mcp_architecture.png"
+  locale: "pt-BR"
+jsonLd:
+  "@context": "https://schema.org"
+  "@type": "Article"
+  "headline": "Model Context Protocol (MCP): Unificando a Interação de Aplicações de IA com Sistemas Externos"
+  "description": "Artigo técnico sobre o Model Context Protocol (MCP), cobrindo arquitetura cliente-servidor, transportes, primitivas (Resources/Prompts/Tools), ciclo de vida, sampling e segurança."
+  "author":
+    "@type": "Person"
+    "name": "Guilherme Portella"
+  "publisher":
+    "@type": "Organization"
+    "name": "Guilherme Portella"
+    "url": "https://www.guilhermeportella.com.br/"
+  "inLanguage": "pt-BR"
+  "datePublished": "2026-02-07"
+  "keywords": "AI, LLM, Model Context Protocol, MCP, Agents, JSON-RPC, Integrations, Security, Architecture"
+---
 
-**Data:** 07 de Fevereiro de 2026
+
+# Model Context Protocol (MCP): Unificando a Interação de Aplicações de IA com Sistemas Externos
 
 ## Resumo
 
@@ -31,7 +69,19 @@ A comunicação no MCP é estruturada em camadas, utilizando o protocolo JSON-RP
 
 O diagrama a seguir ilustra a arquitetura fundamental do MCP, destacando a interação entre Host, Cliente e Servidor, bem como os mecanismos de transporte e a conexão com sistemas externos.
 
-![Diagrama da Arquitetura MCP](/public\images\mcp_architecture.png)
+<figure class="my-8">
+  <img
+    src="/images\mcp_architecture.png"
+    alt="Interação entre Host, Cliente e Servidor"
+    class="rounded-2xl shadow-md mx-auto"
+    width="800"
+    loading="lazy"
+    decoding="async"
+  />
+  <figcaption class="text-center text-sm italic text-neutral-600 mt-3">
+    Interação entre Host, Cliente e Servidor.
+  </figcaption>
+</figure>
 
 ## 3. Primitivas do MCP: Resources, Prompts e Tools
 
