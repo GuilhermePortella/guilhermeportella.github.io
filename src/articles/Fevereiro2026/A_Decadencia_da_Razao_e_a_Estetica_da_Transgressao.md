@@ -1,3 +1,43 @@
+---
+title: "A Decadência da Razão e a Estética da Transgressão: Uma Crítica Filosófica ao Carnaval"
+summary: "Um ensaio filosófico que critica o Carnaval contemporâneo como sintoma de erosão ética: estetização da transgressão, regressão instintiva e incompatibilidade com a dignidade kantiana — articulando Hobbes, Kant e a crítica à indústria cultural."
+author: "Guilherme Portella"
+publishedDate: "2026-02-10"
+keywords:
+  - Philosophy
+  - Ethics
+  - Kant
+  - Hobbes
+  - Critical Theory
+  - Carnival
+  - Moral Psychology
+  - Hedonism
+  - Human Dignity
+  - Cultural Critique
+seo:
+  title: "Carnaval, razão e dignidade — uma crítica filosófica à estética da transgressão"
+  description: "Ensaio sobre o Carnaval contemporâneo como rito de permissividade: transgressão como estética, hedonismo como tirania e a colisão com a ética kantiana da dignidade e autonomia."
+  canonicalUrl: "https://www.guilhermeportella.com.br/#/blog/artigos/A_Decadencia_da_Razao_e_a_Estetica_da_Transgressao"
+  image: "/images/carnival-critique.jpg"
+  locale: "pt-BR"
+jsonLd:
+  "@context": "https://schema.org"
+  "@type": "Article"
+  "headline": "A Decadência da Razão e a Estética da Transgressão: Uma Crítica Filosófica ao Carnaval"
+  "description": "Ensaio filosófico sobre o Carnaval contemporâneo como sintoma de erosão moral: estética da transgressão, hedonismo e a incompatibilidade com a dignidade kantiana."
+  "author":
+    "@type": "Person"
+    "name": "Guilherme Portella"
+  "publisher":
+    "@type": "Organization"
+    "name": "Guilherme Portella"
+    "url": "https://www.guilhermeportella.com.br/"
+  "inLanguage": "pt-BR"
+  "datePublished": "2026-02-10"
+  "keywords": "Philosophy, Ethics, Kant, Hobbes, Critical Theory, Carnival, Hedonism, Human Dignity"
+---
+
+
 # A Decadência da Razão e a Estética da Transgressão: Uma Crítica Filosófica ao Carnaval
 
 ## Introdução: O Fenômeno da Catarse Coletiva e a Crise da Moralidade
