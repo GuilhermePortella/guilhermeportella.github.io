@@ -75,12 +75,12 @@ Além disso, a atmosfera de desinibição e irresponsabilidade que permeia o Car
 
 A crítica kantiana ao Carnaval não é uma condenação puritana do prazer ou da celebração em si, mas uma defesa intransigente da **dignidade humana** e da **autonomia da razão**. Ela nos convida a questionar se a liberdade que o Carnaval promete não é, na verdade, uma forma de escravidão às paixões e aos impulsos, e se a alegria que ele oferece não é uma ilusão que mascara uma profunda degradação moral. A próxima seção integrará essas análises, oferecendo um fecho argumentativo que desmantela as defesas superficiais do fenômeno carnavalesco e reafirma a necessidade de uma ética rigorosa em todas as esferas da vida humana.
 
-Referências
+## Referências
 
 [1] Hobbes, Thomas. Leviatã. São Paulo: Martins Fontes, 2003.
 [2] Kant, Immanuel. Fundamentação da Metafísica dos Costumes. Lisboa: Edições 70, 2005.
 
-III. O Engano da "Liberdade" e a Tirania do Prazer: Um Fecho Argumentativo
+## III. O Engano da "Liberdade" e a Tirania do Prazer: Um Fecho Argumentativo
 
 Diante das análises precedentes, torna-se imperativo desmantelar os argumentos superficiais que buscam legitimar o Carnaval como uma expressão inofensiva de cultura ou uma válvula de escape necessária. A retórica de que "ela só quer curtir" ou que se trata de um "evento cultural" é uma falácia perigosa que obscurece a profunda degradação moral e a falência civilizatória que o fenômeno representa. Tais justificativas, ao invés de defenderem a liberdade, promovem uma forma de servidão voluntária às paixões e aos impulsos mais baixos, disfarçada sob o manto de uma suposta autonomia. A ilusão de liberdade, nesse contexto, é a mais perigosa das prisões, pois o indivíduo, acreditando-se livre, entrega-se de bom grado à tirania de seus próprios impulsos e à manipulação de uma indústria que lucra com a sua alienação.
 
@@ -92,7 +92,7 @@ A tentativa de normalizar o excesso, o abuso de drogas, o adultério e a degrada
 
 Em suma, o Carnaval, em sua manifestação contemporânea, não é um evento cultural inofensivo, mas uma bosta moral e civilizatória. É a celebração da degradação humana, da objetificação do corpo, do abuso de substâncias e da irresponsabilidade moral. É a antítese da dignidade kantiana, a negação da autonomia da razão e a falência dos valores que distinguem o ser humano do animal. Desmantelar seus argumentos é um dever moral, uma defesa intransigente da razão e da dignidade humana contra a tirania do prazer e a estética da transgressão que ameaçam corroer os alicerces de nossa civilização. A verdadeira liberdade reside na capacidade de autodomínio e na adesão a princípios éticos universais, e não na entrega irrefletida a um frenesi coletivo que, ao invés de libertar, aprisiona o indivíduo em um ciclo vicioso de hedonismo e degradação. A crítica ao Carnaval, portanto, não é um ataque à alegria ou à celebração, mas uma defesa da própria essência do que significa ser humano e civilizado. A pretensão de que a folia carnavalesca representa uma forma de resistência ou de subversão social é, na verdade, uma autoilusão perigosa. Longe de subverter o status quo, o Carnaval, em sua forma mercantilizada e espetacularizada, serve como um mecanismo de manutenção da ordem, canalizando as tensões sociais para um extravasamento controlado e inócuo. A "rebeldia" carnavalesca é uma rebeldia domesticada, uma transgressão que não ameaça as estruturas de poder, mas as reforça, ao oferecer uma ilusão de liberdade que desvia a atenção das verdadeiras questões sociais e políticas. A crítica filosófica, portanto, não busca anular a alegria ou a festividade, mas sim desmascarar a falsidade de uma celebração que, sob o manto da euforia, perpetua a alienação e a degradação do ser humano. É um chamado à razão, à responsabilidade e à dignidade, em um mundo que parece cada vez mais disposto a abdicar delas em nome de um prazer efêmero e ilusório.
 
-Referências
+## Referências
 
 [3] Hobbes, Thomas. Leviatã. São Paulo: Martins Fontes, 2003.
 [3] Kant, Immanuel. Fundamentação da Metafísica dos Costumes. Lisboa: Edições 70, 2005.
@@ -101,7 +101,7 @@ Referências
 
 A pretensão de que a folia carnavalesca representa uma forma de resistência ou de subversão social é, na verdade, uma autoilusão perigosa. Longe de subverter o status quo, o Carnaval, em sua forma mercantilizada e espetacularizada, serve como um mecanismo de manutenção da ordem, canalizando as tensões sociais para um extravasamento controlado e inócuo. A "rebeldia" carnavalesca é uma rebeldia domesticada, uma transgressão que não ameaça as estruturas de poder, mas as reforça, ao oferecer uma ilusão de liberdade que desvia a atenção das verdadeiras questões sociais e políticas. A crítica filosófica, portanto, não busca anular a alegria ou a festividade, mas sim desmascarar a falsidade de uma celebração que, sob o manto da euforia, perpetua a alienação e a degradação do ser humano. É um chamado à razão, à responsabilidade e à dignidade, em um mundo que parece cada vez mais disposto a abdicar delas em nome de um prazer efêmero e ilusório.
 
-III-I. O Engano da “Liberdade” e a Tirania do Prazer: Um Fecho Argumentativo
+## III-I. O Engano da “Liberdade” e a Tirania do Prazer: Um Fecho Argumentativo
 
 À luz das análises precedentes, torna-se necessário desmontar, de forma definitiva, as justificativas superficiais que buscam legitimar o Carnaval como uma prática inofensiva, culturalmente neutra ou moralmente irrelevante. A retórica recorrente, sintetizada na fórmula empobrecida de que “é só curtição” ou de que se trata de um “evento cultural”, constitui uma falácia moral grave, pois mascara a normalização da degradação humana sob o vocabulário da liberdade e da autenticidade.
 
@@ -119,7 +119,7 @@ Em síntese, o Carnaval, em sua forma contemporânea, não é uma celebração d
 
 A crítica ao Carnaval não é um ataque à alegria ou à celebração enquanto tais, mas uma defesa da dignidade humana contra sua banalização sistemática. A verdadeira liberdade não reside no frenesi coletivo, mas no autodomínio; não na suspensão da ética, mas na fidelidade a princípios racionais; não na fuga do vazio por meio do excesso, mas na coragem de enfrentá-lo com lucidez. Rejeitar o Carnaval enquanto ideal moral não é moralismo retrógrado, mas um gesto de resistência intelectual contra a estetização da degradação e a tirania do prazer que ameaçam corroer, silenciosamente, os alicerces da civilização.
 
-O Mito da “Curtição Inofensiva”: A Falácia da Neutralidade Moral do Carnaval
+### O Mito da “Curtição Inofensiva”: A Falácia da Neutralidade Moral do Carnaval
 
 A defesa mais recorrente e intelectualmente preguiçosa do Carnaval manifesta-se na alegação de que se trata de uma prática moralmente neutra, um espaço de “mera diversão”, onde cada indivíduo escolheria livremente o grau de sua participação, sem que isso implique um juízo ético mais amplo. Tal argumento repousa sobre uma série de pressupostos implícitos profundamente equivocados, que merecem ser expostos e desmontados com rigor filosófico.
 
@@ -137,7 +137,7 @@ Do ponto de vista existencial, a defesa da “curtição” revela ainda uma rec
 
 O resultado é um paradoxo cruel: em nome da liberdade, o indivíduo se entrega à forma mais primária de heteronomia, a submissão às pulsões, à massa e ao estímulo imediato. A promessa de autenticidade se converte em padronização do excesso; a promessa de alegria, em dependência de estímulos cada vez mais intensos; a promessa de comunidade, em aglomeração sem vínculo. Nada disso produz sentido duradouro, porque nada disso exige compromisso, memória ou responsabilidade.
 
-Conclusão: A Urgência de uma Ética da Dignidade
+## Conclusão: A Urgência de uma Ética da Dignidade
 
 As análises precedentes revelam que o Carnaval, em sua manifestação contemporânea, transcende a mera festividade para se configurar como um sintoma agudo de uma crise civilizatória e moral. A Estética da Transgressão, que celebra o excesso, a vulgaridade e a objetificação, não é um sinal de progresso ou de uma liberdade autêntica, mas um indício alarmante da falência dos valores que sustentam a dignidade humana e a coesão social. Ao confrontar essa realidade com a ética rigorosa de Immanuel Kant, percebemos a incompatibilidade fundamental entre o hedonismo carnavalesco e o Imperativo da Dignidade, que exige que todo ser humano seja tratado como um fim em si mesmo, e nunca meramente como um meio.
 
@@ -147,7 +147,7 @@ O Carnaval, portanto, não é um evento cultural inofensivo, mas uma manifestaç
 
 Diante desse cenário, a urgência de uma ética da dignidade torna-se premente. É um dever moral desmascarar a falsidade de uma celebração que, sob o manto da euforia, perpetua a degradação do ser humano. A verdadeira liberdade reside na capacidade de autodomínio, na adesão a princípios éticos universais e na constante busca pelo aprimoramento moral. A crítica ao Carnaval, longe de ser um ataque puritano à alegria, é um chamado à razão, à responsabilidade e à reafirmação da dignidade humana como o valor supremo, em todas as esferas da vida, e não apenas nos dias que se seguem à folia. É um convite à reflexão sobre o que realmente significa ser humano e civilizado em um mundo que, cada vez mais, parece esquecer-se de si mesmo em meio ao frenesi do efêmero.
 
-Referências
+## Referências
 
 [5] Hobbes, Thomas. Leviatã. São Paulo: Martins Fontes, 2003.
 [5] Kant, Immanuel. Fundamentação da Metafísica dos Costumes. Lisboa: Edições 70, 2005.
