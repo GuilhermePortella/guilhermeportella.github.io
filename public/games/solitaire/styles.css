@@ -35,6 +35,18 @@ body {
   overflow-x: hidden;
 }
 
+.noscript-warning {
+  margin: 14px auto 0;
+  max-width: 900px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(17, 47, 83, 0.9);
+  color: #f4f8ff;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -193,6 +205,11 @@ main.solitaire {
   background: linear-gradient(135deg, #ffd38b, #e8b06c);
 }
 
+.control-btn:focus-visible {
+  outline: 2px solid rgba(255, 214, 145, 0.9);
+  outline-offset: 2px;
+}
+
 .board {
   background: linear-gradient(160deg, rgba(9, 28, 60, 0.8), rgba(19, 56, 104, 0.9));
   border-radius: 26px;
@@ -212,6 +229,10 @@ main.solitaire {
 .top-row {
   grid-template-columns: repeat(2, var(--card-width)) minmax(var(--top-row-spacer), 1fr) repeat(4, var(--card-width));
   column-gap: 18px;
+}
+
+.top-row-spacer {
+  min-height: 1px;
 }
 
 .foundations {
@@ -234,6 +255,11 @@ main.solitaire {
   min-height: var(--card-height);
   border-radius: 14px;
   display: block;
+}
+
+.pile:focus-visible {
+  outline: 2px solid rgba(255, 214, 145, 0.9);
+  outline-offset: 3px;
 }
 
 .pile:empty::after {
@@ -296,6 +322,8 @@ main.solitaire {
 
 .card {
   position: absolute;
+  appearance: none;
+  -webkit-appearance: none;
   width: var(--card-width);
   height: var(--card-height);
   border-radius: 14px;
@@ -309,6 +337,11 @@ main.solitaire {
   font-family: "Cormorant Garamond", "Georgia", serif;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.card:focus-visible {
+  outline: 2px solid rgba(255, 214, 145, 0.9);
+  outline-offset: 2px;
 }
 
 .card.face-down {

@@ -1,3 +1,6 @@
+(() => {
+'use strict';
+
 const suits = [
   { id: 'hearts', symbol: '\u2665', color: 'red', name: 'Copas' },
   { id: 'diamonds', symbol: '\u2666', color: 'red', name: 'Ouros' },
@@ -69,6 +72,10 @@ const dragState = {
   dragStack: null,
   sourceCardEls: [],
   justDragged: false
+};
+
+const uiState = {
+  lastFocusedEl: null
 };
 
 function createDeck() {
@@ -711,13 +718,19 @@ function checkWin() {
 }
 
 function showOverlay() {
+  uiState.lastFocusedEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   elements.overlay.classList.add('is-visible');
   elements.overlay.setAttribute('aria-hidden', 'false');
+  elements.playAgain.focus();
 }
 
 function hideOverlay() {
   elements.overlay.classList.remove('is-visible');
   elements.overlay.setAttribute('aria-hidden', 'true');
+  if (uiState.lastFocusedEl && document.contains(uiState.lastFocusedEl)) {
+    uiState.lastFocusedEl.focus();
+  }
+  uiState.lastFocusedEl = null;
 }
 
 function showHint() {
@@ -959,6 +972,43 @@ function endDrag() {
   dragState.sourceEl = null;
 }
 
+function hasRequiredElements() {
+  return Boolean(
+    elements.stock
+    && elements.waste
+    && elements.timer
+    && elements.moves
+    && elements.wins
+    && elements.message
+    && elements.undo
+    && elements.newGame
+    && elements.hint
+    && elements.difficulty
+    && elements.rulesText
+    && elements.overlay
+    && elements.playAgain
+    && elements.foundations.length === 4
+    && elements.tableau.length === 7
+  );
+}
+
+function handlePileActivation(pileEl) {
+  if (!pileEl) {
+    return;
+  }
+  if (pileEl.dataset.pile === 'stock') {
+    drawFromStock();
+    render();
+    return;
+  }
+  handlePileClick(pileEl);
+  render();
+}
+
+if (!hasRequiredElements()) {
+  return;
+}
+
 document.addEventListener('pointerdown', (event) => {
   const cardEl = event.target.closest('.card');
   if (!cardEl || event.button !== 0) {
@@ -1028,6 +1078,31 @@ document.addEventListener('pointercancel', (event) => {
   dragState.pending = false;
   dragState.pointerId = null;
 });
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && elements.overlay.classList.contains('is-visible')) {
+    event.preventDefault();
+    hideOverlay();
+    return;
+  }
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  if (target.closest('.card')) {
+    return;
+  }
+  const pileEl = target.closest('.pile');
+  if (!pileEl) {
+    return;
+  }
+  event.preventDefault();
+  handlePileActivation(pileEl);
+});
+
 document.addEventListener('click', (event) => {
   if (dragState.justDragged) {
     dragState.justDragged = false;
@@ -1043,8 +1118,7 @@ document.addEventListener('click', (event) => {
   }
 
   if (pileEl.dataset.pile === 'stock') {
-    drawFromStock();
-    render();
+    handlePileActivation(pileEl);
     return;
   }
 
@@ -1054,8 +1128,7 @@ document.addEventListener('click', (event) => {
     return;
   }
 
-  handlePileClick(pileEl);
-  render();
+  handlePileActivation(pileEl);
 });
 
 document.addEventListener('dblclick', (event) => {
@@ -1092,3 +1165,4 @@ syncDifficultyUI();
 updateUndoButton();
 updateStats();
 startNewGame();
+})();

@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f2f5a" />
   <title>Paciência Klondike - versão clássica</title>
   <meta name="description" content="Versão clássica da Paciência (Klondike) inspirada no Windows 7, com compras, fundações e movimentos por clique." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,6 +14,7 @@
 </head>
 
 <body>
+  <noscript class="noscript-warning">Este jogo precisa de JavaScript ativado para funcionar.</noscript>
   <main class="solitaire">
     <header class="hero">
       <div class="hero-text">
@@ -50,25 +52,25 @@
 
     <section class="board" aria-label="Tabuleiro de paciência">
       <div class="row top-row">
-        <div class="pile stock" id="stock" data-pile="stock" data-label="Monte" aria-label="Monte"></div>
-        <div class="pile waste" id="waste" data-pile="waste" data-label="Descarte" aria-label="Descarte"></div>
-        <div></div>
+        <div class="pile stock" id="stock" data-pile="stock" data-label="Monte" aria-label="Monte" tabindex="0"></div>
+        <div class="pile waste" id="waste" data-pile="waste" data-label="Descarte" aria-label="Descarte" tabindex="0"></div>
+        <div class="top-row-spacer" aria-hidden="true"></div>
         <div class="foundations" id="foundations" aria-label="Fundações">
-          <div class="pile foundation" data-pile="foundation" data-suit="hearts" aria-label="Fundação de copas"></div>
-          <div class="pile foundation" data-pile="foundation" data-suit="diamonds" aria-label="Fundação de ouros"></div>
-          <div class="pile foundation" data-pile="foundation" data-suit="clubs" aria-label="Fundação de paus"></div>
-          <div class="pile foundation" data-pile="foundation" data-suit="spades" aria-label="Fundação de espadas"></div>
+          <div class="pile foundation" data-pile="foundation" data-suit="hearts" aria-label="Fundação de copas" tabindex="0"></div>
+          <div class="pile foundation" data-pile="foundation" data-suit="diamonds" aria-label="Fundação de ouros" tabindex="0"></div>
+          <div class="pile foundation" data-pile="foundation" data-suit="clubs" aria-label="Fundação de paus" tabindex="0"></div>
+          <div class="pile foundation" data-pile="foundation" data-suit="spades" aria-label="Fundação de espadas" tabindex="0"></div>
         </div>
       </div>
 
       <div class="row tableau" id="tableau" aria-label="Tableau">
-        <div class="pile tableau-pile" data-pile="tableau" data-index="0" data-label="K" aria-label="Coluna 1"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="1" data-label="K" aria-label="Coluna 2"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="2" data-label="K" aria-label="Coluna 3"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="3" data-label="K" aria-label="Coluna 4"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="4" data-label="K" aria-label="Coluna 5"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="5" data-label="K" aria-label="Coluna 6"></div>
-        <div class="pile tableau-pile" data-pile="tableau" data-index="6" data-label="K" aria-label="Coluna 7"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="0" data-label="K" aria-label="Coluna 1" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="1" data-label="K" aria-label="Coluna 2" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="2" data-label="K" aria-label="Coluna 3" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="3" data-label="K" aria-label="Coluna 4" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="4" data-label="K" aria-label="Coluna 5" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="5" data-label="K" aria-label="Coluna 6" tabindex="0"></div>
+        <div class="pile tableau-pile" data-pile="tableau" data-index="6" data-label="K" aria-label="Coluna 7" tabindex="0"></div>
       </div>
     </section>
 
@@ -90,11 +92,11 @@
     </section>
   </main>
 
-  <div class="overlay" id="win-overlay" aria-hidden="true">
+  <div class="overlay" id="win-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="win-title" aria-describedby="win-message">
     <div class="overlay-card">
       <span class="eyebrow">Parabéns</span>
-      <h2>Você venceu!</h2>
-      <p>Organização perfeita. Que tal jogar outra rodada?</p>
+      <h2 id="win-title">Você venceu!</h2>
+      <p id="win-message">Organização perfeita. Que tal jogar outra rodada?</p>
       <button type="button" id="play-again" class="control-btn primary">Jogar de novo</button>
     </div>
   </div>
