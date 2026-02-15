@@ -33,18 +33,37 @@ Portfolio pessoal construido com React e React Router. O foco e apresentar proje
 ```
 .
 ├─ .github/
-│  └─ workflows/
-│     ├─ pages.yml
-│     ├─ codeql.yml
-│     └─ stale.yml
-├─ public/
-│  └─ index.html
-├─ src/
+│  └─ workflows/              # GitHub Actions (pages, code scanning, stale)
+├─ antigo/                    # Conteúdo antigo / arquivos estáticos anteriores
+│  ├─ assets/
+│  │  ├─ images/
+│  │  ├─ scripts/
+│  │  │  └─ scripts.js
+│  │  └─ styles/
+│  │     ├─ styleBlogPages.css
+│  │     ├─ styleHome.css
+│  │     └─ styleProjects.css
+│  └─ games/                  # Versões antigas dos jogos
+├─ public/                    # Arquivos estáticos servidos no build
+│  ├─ index.html
+│  ├─ manifest.json
+│  ├─ robots.txt
+│  ├─ articles/
+│  ├─ assets/
+│  │  └─ styles/
+│  └─ games/                   # Jogos prontos para deploy (HTML/JS/CSS)
+├─ scripts/                    # scripts utilitários (build, deploy, manutenção)
+├─ src/                        # Aplicação React (SPA)
 │  ├─ pages/
 │  │  ├─ Home.js
 │  │  ├─ Projects.js
 │  │  ├─ Hobbies.js
-│  │  └─ Contato.js
+│  │  ├─ Contato.js
+│  │  └─ (subfolders: rick-morty, swapi, back-to-the-future, ...)
+│  ├─ articles/                # Posts / markdown usados na seção de artigos
++│  ├─ lib/
+│  ├─ pages/
+│  ├─ utils/
 │  ├─ App.js
 │  ├─ App.css
 │  └─ index.js
@@ -60,7 +79,8 @@ Portfolio pessoal construido com React e React Router. O foco e apresentar proje
 - `/hobbies` -> `src/pages/Hobbies.js`
 - `/contato` -> `src/pages/Contato.js`
 
-Definidas em `src/App.js` com `Routes`/`Route`.
+As rotas principais estão definidas em `src/App.js` com `Routes`/`Route`.
+Observação: há páginas e componentes adicionais em `src/pages/` (ex.: `rick-morty`, `swapi`, `back-to-the-future`) e conteúdo estático em `public/games/`.
 
 ## Integracoes externas
 

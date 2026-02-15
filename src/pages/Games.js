@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 
 const games = [
   {
+    id: 'dama-brasileira',
+    title: 'Dama Brasileira',
+    status: 'Novo',
+    description: 'Dama 8x8 com regra da maioria, captura obrigatoria, captura multipla e dama voadora.',
+    details: ['Formato: Damas 8x8', 'Entrada: Clique/Toque', 'Foco: Estrategia e leitura de sequencias'],
+    tags: ['Tabuleiro', 'Estrategia', 'Damas'],
+    href: '/games/dama-brasileira/index.html'
+  },
+  {
     id: 'paciencia-klondike',
     title: 'Paciencia Klondike',
     status: 'Novo',

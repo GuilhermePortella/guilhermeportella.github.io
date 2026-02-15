@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#193327" />
+  <title>Dama Brasileira - tabuleiro 8x8</title>
+  <meta name="description" content="Jogo de dama brasileira com captura obrigatoria, regra da maioria e dama voadora." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Tabuleiro classico</span>
+        <h1>Dama Brasileira</h1>
+        <p class="subtitle">
+          Regras aplicadas: captura obrigatoria, captura pela maior sequencia, captura multipla
+          e dama voadora.
+        </p>
+      </div>
+      <div class="stats" aria-live="polite">
+        <article class="stat">
+          <span class="label">Turno</span>
+          <span class="value" id="turn-label">Brancas</span>
+        </article>
+        <article class="stat">
+          <span class="label">Brancas</span>
+          <span class="value" id="white-count">12</span>
+        </article>
+        <article class="stat">
+          <span class="label">Pretas</span>
+          <span class="value" id="black-count">12</span>
+        </article>
+        <article class="stat">
+          <span class="label">Vitorias B/P</span>
+          <span class="value" id="wins-label">0 / 0</span>
+        </article>
+      </div>
+    </header>
+
+    <section class="arena">
+      <div class="board-shell">
+        <div id="board" class="board" role="grid" aria-label="Tabuleiro de dama brasileira"></div>
+      </div>
+
+      <aside class="panel">
+        <section class="panel-card">
+          <h2>Status da rodada</h2>
+          <p id="mode-label" class="mode-label">Modo: 1 jogador (maquina nas pretas).</p>
+          <p id="rule-label" class="rule-label">Sem captura obrigatoria neste turno.</p>
+          <p id="winner-label" class="winner-label">Partida em andamento.</p>
+          <p id="message" class="message">Brancas iniciam a partida.</p>
+        </section>
+
+        <section class="panel-card controls">
+          <div class="difficulty-control">
+            <label for="ai-level">Dificuldade da maquina</label>
+            <select id="ai-level" class="control-select" aria-label="Selecionar dificuldade da maquina">
+              <option value="easy">Facil</option>
+              <option value="medium">Medio</option>
+              <option value="hard">Dificil</option>
+            </select>
+          </div>
+          <button id="toggle-ai" class="action-btn" type="button">Vs maquina: ON</button>
+          <button id="new-game" class="action-btn primary" type="button">Novo jogo</button>
+          <button id="undo-move" class="action-btn" type="button" disabled>Desfazer</button>
+        </section>
+
+        <section class="panel-card">
+          <h2>Regras rapidas</h2>
+          <ul class="rules">
+            <li>Se houver captura, mover sem capturar e proibido.</li>
+            <li>Com varias capturas, vale a sequencia com maior numero de pecas.</li>
+            <li>Durante captura multipla, a mesma peca deve continuar capturando.</li>
+            <li>Damas movem e capturam em diagonais longas.</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./game.js" defer></script>
+</body>
+
+</html>
